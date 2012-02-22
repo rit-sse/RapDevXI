@@ -7,6 +7,5 @@
 * [LÖVE Wiki] (https://love2d.org/wiki/Main_Page)
 * [LÖVE Forums] (https://love2d.org/forums/)
 
-You can download LÖVE for Mac/Windows/Linux and call it on the folder or on the compressed LoveWare2.love file. 
-'.love' files are renamed zip files, so they can be decompressed normally; inside are all the lua scripts 
-(already on the repo).
+You can download LÖVE for Mac/Windows/Linux and call it on the folder.
+If you want to, you can compress all the files into a zip and call love on the file; it is common convention to give these files a '.love' filename extension.
