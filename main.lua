@@ -36,7 +36,7 @@ local framework = {
             self.gameNumber = self.gameNumber + 1
             self.difficulty = self.difficulty + .1
             print("GAME: "..self.gameNumber..", DIFF: "..self.difficulty)
-            self:playGame((self.gameNumber % #self.games)+1)
+            self:playGame(math.random(1, #self.games))
         else
             self:playGame(0)
         end
