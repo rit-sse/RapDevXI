@@ -11,6 +11,7 @@ local framework = {
     cGame = {},         --current game module
     difficulty = 1,     --current game speed
     scale = 1,          --current scale for game (400*scale x 400*scale)
+    fullscreen = false,
 
     playGame = function(self, gameNumber)
         --set current game to specific game module
@@ -53,7 +54,7 @@ function love.load()
         print("Adding "..listOfGames[i].." at "..i)
     end
 
-    love.graphics.setMode(400*framework.scale, 400*framework.scale, true, true, 0) --set the window dimensions to 400 by 400 with no fullscreen, vsync on, and no antialiasing
+    love.graphics.setMode(400*framework.scale, 400*framework.scale, fullscreen, true, 0) --set the window dimensions to 400 by 400 with no fullscreen, vsync on, and no antialiasing
     framework:playGame(0) --start playing games
 
 end
