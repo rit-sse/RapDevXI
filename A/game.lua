@@ -48,7 +48,7 @@ local game = {
     end,
 
     gupdate = function(self, dt)
-        speed = 250
+        speed = 275
         if love.keyboard.isDown("up") then
             if self.rect.y > 50 then
                 self.rect:move(0,-dt*speed)

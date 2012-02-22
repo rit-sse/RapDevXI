@@ -63,8 +63,10 @@ function love.draw()
     love.graphics.scale(framework.scale, framework.scale)
     framework.cGame:gdraw() --call cGame's draw method
     love.graphics.setColor(255,255,255)
-    love.graphics.print("FPS: "..framework.fps, 10, 4)
-    love.graphics.print("Elapsed Time: "..framework.eTime, 10, 15)
+    if framework.cGame.game_dir ~= "LvlUp" then
+        love.graphics.print("FPS: "..framework.fps, 10, 4)
+        love.graphics.print("Elapsed Time: "..framework.eTime, 10, 15)
+    end
 end
 
 function love.update(dt)
