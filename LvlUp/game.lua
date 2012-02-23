@@ -12,6 +12,7 @@ local game = {
         self.timeLimit = 2.0
 
         love.audio.play(self.music)
+        love.graphics.setFont(50)
     end,
 
     gdraw = function(self)
@@ -24,9 +25,9 @@ local game = {
 
         love.graphics.setColor(255,255,255)
         if self.eTime < 1.5 then
-            love.graphics.print(self.gameNumber, 50, 50)
+            love.graphics.print(self.gameNumber, 100, 100)
         else
-            love.graphics.print(self.gameNumber+1, 50, 50)
+            love.graphics.print(self.gameNumber+1,100, 100)
         end
     end,
 
@@ -52,6 +53,7 @@ local game = {
     gend = function(self) --function called only by Game Framework
         --asks for pass or fail, cleans up any calls to love
         love.audio.stop(self.music)
+        love.graphics.setFont(15)
         return true --always passes
     end
 }
