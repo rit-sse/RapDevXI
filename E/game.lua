@@ -22,7 +22,7 @@ local game = {
         x = math.random(0, 350)
         self.cherry = self.Collider:addRectangle(0, x, 15, 17)
         self.cherry.x = x
-        self.cherry.y = 200
+        self.cherry.y = 400
 
         self.gScore = 0
         self.goal  = 3
@@ -30,7 +30,7 @@ local game = {
 
     gdraw = function(self)
  		love.graphics.setColor(255,255,255)
- 		love.graphics.draw(self.basketImg, self.basket.x, self.basket.y)
+  		love.graphics.draw(self.basketImg, self.basket.x, self.basket.y)
  		love.graphics.draw(self.cherryImg, self.cherry.x, self.cherry.y)
     end,
 

@@ -25,8 +25,6 @@ local game = {
         self.rotList = {}
         for i=0,self.goal do
            self.rotList[i] = math.random(0,3)
-           io.write(self.rotList[i])
-           print()
         end
 
         -- current number
@@ -61,7 +59,6 @@ local game = {
     gkpress = function(self, key)
         keyBind = {} 
         keyBind[2]='left' keyBind[3]='up' keyBind[0]='right' keyBind[1]='down'
-        -- print("key pushed:"..key..", Key wanted: "..keyBind[self.rotList[self.n]])
         if key == keyBind[self.rotList[self.n]] and self.gScore <= self.goal-1 then
             self.n = self.n + 1
             self.gScore = self.gScore + 1
