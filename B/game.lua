@@ -22,9 +22,9 @@ local game = {
 
         --add rectangle
                                             -- x, y,  w, h
-        self.rect = self.Collider:addRectangle(15,100,8,32)
-        self.rect.x = 15 
-        self.rect.y = 100
+        self.rect = self.Collider:addRectangle(15,200,8,32)
+        self.rect.x = 15
+        self.rect.y = 200
 
         self.rect2 = self.Collider:addRectangle(5,0,5,400)
     
@@ -42,8 +42,6 @@ local game = {
     gdraw = function(self)
         love.graphics.setColor(255,0,0)
         love.graphics.setColor(255,255,255)
-        --love.graphics.draw(self.circleImg, self.circle.x-16, self.circle.y-16)
-        --love.graphics.draw(self.cursor, self.rect.x, self.rect.y)
         self.rect2:draw('fill')
         love.graphics.setColor(255,0,0)
         self.circle:draw('fill')
