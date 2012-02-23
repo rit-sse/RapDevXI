@@ -58,6 +58,8 @@ function love.load()
     end
 
     love.graphics.setMode(400*framework.scale, 400*framework.scale, fullscreen, true, 0) --set the window dimensions to 400 by 400 with no fullscreen, vsync on, and no antialiasing
+
+    math.randomseed( os.time() ) --set the seed to the clock
     framework:playGame(0) --start playing games
 
 end
