@@ -13,8 +13,6 @@ local game = {
 
         self.music = love.audio.newSource("B/Resources/f_000240.wav")
         self.sound = love.audio.newSource("B/Resources/BeepWin.wav")
-        self.cursor = love.graphics.newImage("B/Resources/block.gif")
-        self.circleImg = love.graphics.newImage("B/Resources/circlePoint.gif")
 
         self.music:setVolume(0.2)
         self.sound:setVolume(3.0)
