@@ -23,6 +23,17 @@ local game = {
         love.graphics.setColor(146, 201, 87)            --bar Color
         love.graphics.rectangle('fill', 50, 285, 320*(self.eTime/self.timeLimit), 25) --bar shape
 
+        for i=1,self.lives do
+            love.graphics.rectangle('fill', 250+30*i, 50, 25, 25)
+        end
+
+        love.graphics.setColor(205, 227, 161)           --bar border Color
+        if self.pass then
+            love.graphics.print("^.^",150,150)
+        else
+            love.graphics.print("U.U",150,150)
+        end
+
         love.graphics.setColor(255,255,255)
         if self.eTime < 1.5 then
             love.graphics.print(self.gameNumber, 100, 100)
@@ -36,11 +47,13 @@ local game = {
     end,
 
     request = function(self) --returns a list of data asked for from the framework
-        return {'gameNumber'}
+        return {'gameNumber', 'lives','lastPass'}
     end,
 
     fillRequest = function(self, data) --data returned by the framework from request
         self.gameNumber = data[1]
+        self.lives = data[2]
+        self.pass = data[3]
         print(self.gameNumber)
     end,   
 

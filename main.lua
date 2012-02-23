@@ -11,6 +11,8 @@ local framework = {
     cGame = {},         --current game module
     difficulty = 1,     --current game speed
     scale = 1,          --current scale for game (400*scale x 400*scale)
+    lives = 3,          --number of lives
+    lastPass = true,    --status of the last game player
     fullscreen = false,
 
     playGame = function(self, gameNumber)
@@ -48,7 +50,6 @@ local framework = {
 --this function is called exactly once at the beginning of the game
 function love.load()
 
-
     listOfGames = require('listOfGames') --grab list of games
     framework.games[0] = require("LvlUp/game.lua")
     print("Adding LvlUp at 0")
@@ -82,13 +83,15 @@ function love.update(dt)
     framework.eTime = framework.eTime + dt
     framework.fps = 1/dt
     if framework.cGame.eTime > framework.cGame.timeLimit then
-        pass = framework.cGame:gend()
-        if pass then
-            framework:nextGame()
-        else
-            print('failed game')
+        framework.lastPass = framework.cGame:gend()
+        if not framework.lastPass then
+            framework.lives = framework.lives - 1
+        end
+        if framework.lives == 0 then
+            print("Out of lives")
             love.event.push('q')
         end
+        framework:nextGame()
     end
 end
 
