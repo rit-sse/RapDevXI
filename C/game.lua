@@ -58,16 +58,6 @@ local game = {
         self.eTime = self.eTime + dt
     end,
 
-    goc = function (self, dt, shape_a, shape_b, mtv_x, mtv_y)
-    end,
-
-    request = function(self) --returns a list of data asked for from the framework
-        return {}
-    end,
-
-    fillRequest = function(self, data) --data returned by the framework from request
-    end,   
-
     gkpress = function(self, key)
         keyBind = {} 
         keyBind[2]='left' keyBind[3]='up' keyBind[0]='right' keyBind[1]='down'

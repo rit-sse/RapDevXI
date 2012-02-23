@@ -18,12 +18,14 @@ local framework = {
         print("GAMENUMBER: "..gameNumber)
         self.cGame = self.games[gameNumber]
 
-        request = self.cGame:request()  --list of data cGame needs
-        data = {}
-        for i=1,#request do
-            data[i] = self[request[i]]  --fillRequest
+        if self.cGame.request ~= nil then
+            request = self.cGame:request()  --list of data cGame needs
+            data = {}
+            for i=1,#request do
+                data[i] = self[request[i]]  --fillRequest
+            end
+            self.cGame:fillRequest(data)    --send data back to cGame
         end
-        self.cGame:fillRequest(data)    --send data back to cGame
 
         self.cGame:gload() --load new set of game attributes
         print("LOADING "..self.cGame.game_dir)
@@ -43,6 +45,7 @@ local framework = {
     end
 }
 
+--this function is called exactly once at the beginning of the game
 function love.load()
 
 
@@ -59,7 +62,13 @@ function love.load()
 
 end
 
+--callback function used to draw on the screen every frame
 function love.draw()
+    if framework.cGame.draw == nil then
+        print("ERROR: Missing update method")
+        love.event.push('q')
+    end
+
     love.graphics.scale(framework.scale, framework.scale)
     framework.cGame:gdraw() --call cGame's draw method
     love.graphics.setColor(255,255,255)
@@ -69,7 +78,9 @@ function love.draw()
     end
 end
 
+--callback function used to update the state of the game every frame
 function love.update(dt)
+
     framework.cGame:gupdate(dt*framework.difficulty) --call cGame's update method
     framework.eTime = framework.eTime + dt
     framework.fps = 1/dt
@@ -84,14 +95,48 @@ function love.update(dt)
     end
 end
 
-function on_collision(dt, shape_A, shape_B, mtv_x, mtv_y)
-    framework.cGame:goc(dt, shape_A, shape_B, mtv_x, mtv_y) --call cGame's on_collision method
+-- this is called when two shapes collide; called by HardonCollider
+function on_collision(dt, shape_a, shape_b, mtv_x, mtv_y)
+    if framework.cGame.goc ~= nil then
+        framework.cGame:goc(dt, shape_a, shape_b, mtv_x, mtv_y) --call cGame's on_collision method
+    end
 end
 
+-- this is called when two shapes stop colliding; called by HardonCollider
+function collision_stop(dt, shape_a, shape_b)
+    if framework.cGame.gcs ~= nil then
+        framework.cGame:gcs(dt, shape_a, shape_b)
+    end
+end
+
+--callback function triggered when a key is pressed
 function love.keypressed(key)
+    if framework.cGame.gkpress ~= nil then
+        framework.cGame:gkpress(key)
+    end
     --quit the game if ESC is pressed
-    framework.cGame:gkpress(key)
     if key == 'escape' then
         love.event.push('q')
+    end
+end
+
+--callback function triggered when a key is released
+function love.keyreleased(key)
+    if framework.cGame.gkrelease ~= nil then
+        framework.cGame:gkrelease(key)
+    end
+end 
+
+--callback function triggered when a mouse button is pressed
+function love.mousepressed(x, y, button)
+    if framework.cGame.gmpress ~= nil then
+        framework.cGame:gmpress(x, y, button)
+    end
+end
+
+--callback function triggered when a mouse button is released
+function love.mousereleased( x, y, button )
+    if framework.cGame.gmrelease ~= nil then
+        framework.cGame:gmrelease(x, y, button)
     end
 end

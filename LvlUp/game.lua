@@ -35,9 +35,6 @@ local game = {
         self.eTime = self.eTime + dt
     end,
 
-    goc = function(self)
-    end,
-
     request = function(self) --returns a list of data asked for from the framework
         return {'gameNumber'}
     end,
