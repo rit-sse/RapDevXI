@@ -64,11 +64,6 @@ end
 
 --callback function used to draw on the screen every frame
 function love.draw()
-    if framework.cGame.draw == nil then
-        print("ERROR: Missing update method")
-        love.event.push('q')
-    end
-
     love.graphics.scale(framework.scale, framework.scale)
     framework.cGame:gdraw() --call cGame's draw method
     love.graphics.setColor(255,255,255)

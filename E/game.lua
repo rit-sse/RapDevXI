@@ -72,16 +72,6 @@ local game = {
         end
     end,
 
-    request = function(self) --returns a list of data asked for from the framework
-        return {}
-    end,
-
-    fillRequest = function(self, data) --data returned by the framework from request
-    end,   
-
-    gkpress = function(self, key)
-    end,
-        
     gend = function(self) --function called only by Game Framework
         return self.gScore >= self.goal
     end
