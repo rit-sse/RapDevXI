@@ -110,6 +110,10 @@ function love.keypressed(key)
         framework.cGame:gkpress(key)
     end
     --quit the game if ESC is pressed
+    if key == 'n' then
+        framework.cGame:gend()
+        framework:nextGame()
+    end
     if key == 'escape' then
         love.event.push('q')
     end
