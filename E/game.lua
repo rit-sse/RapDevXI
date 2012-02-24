@@ -32,6 +32,8 @@ local game = {
  		love.graphics.setColor(255,255,255)
   		love.graphics.draw(self.basketImg, self.basket.x, self.basket.y)
  		love.graphics.draw(self.cherryImg, self.cherry.x, self.cherry.y)
+        love.graphics.print("Score:"..self.gScore, 300, 5)
+        love.graphics.print("Goal: 3", 300, 27)
     end,
 
     gupdate = function(self, dt)
