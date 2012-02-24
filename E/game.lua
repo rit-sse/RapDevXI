@@ -16,7 +16,7 @@ local game = {
 
         self.eTime = 0
         self.timeLimit = 10
-        self.basket = self.Collider:addRectangle(200,375,30,20)
+        self.basket = self.Collider:addRectangle(200,375,90,20)
         self.basket.x = 200
         self.basket.y = 375
         x = math.random(0, 350)
@@ -30,7 +30,7 @@ local game = {
 
     gdraw = function(self)
  		love.graphics.setColor(255,255,255)
-  		love.graphics.draw(self.basketImg, self.basket.x, self.basket.y)
+  		love.graphics.draw(self.basketImg, self.basket.x, self.basket.y,0,3,1)
  		love.graphics.draw(self.cherryImg, self.cherry.x, self.cherry.y)
         love.graphics.print("Score:"..self.gScore, 300, 5)
         love.graphics.print("Goal: 3", 300, 27)
@@ -41,6 +41,7 @@ local game = {
     	if self.cherry.y < 400 then 
     		self.cherry:move(0,dt*speed*.8)
     		self.cherry.y = self.cherry.y +dt*speed*.8
+            self.cherry.x = self.cherry.x +dt +math.sin(self.cherry.y/20)*5
     	else
     		x = math.random( 0, 350)
     		self.cherry.x = x
