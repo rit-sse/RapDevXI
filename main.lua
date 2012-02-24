@@ -14,6 +14,7 @@ local framework = {
     lives = 3,          --number of lives
     lastPass = true,    --status of the last game player
     fullscreen = false,
+    debug = true,
 
     playGame = function(self, gameNumber)
         --set current game to specific game module
@@ -76,7 +77,7 @@ function love.draw()
     love.graphics.scale(framework.scale, framework.scale)
     framework.cGame:gdraw() --call cGame's draw method
     love.graphics.setColor(255,255,255)
-    if framework.cGame.game_dir ~= "LvlUp" then
+    if framework.debug then
         love.graphics.print("FPS: "..framework.fps, 10, 4)
         love.graphics.print("Elapsed Time: "..framework.eTime, 10, 15)
     end
@@ -109,6 +110,8 @@ function love.update(dt)
             elseif data.fullscreen ~= nil then --trying to change fullScreen
                 framework.fullscreen = data.fullscreen
                 love.graphics.setMode(400*framework.scale, 400*framework.scale, framework.fullscreen, true, 0)
+            elseif data.debug ~= nil then --trying to set debug status
+                framework.debug = data.debug
             end 
        end
        framework.cGame.yell = nil
@@ -137,7 +140,7 @@ function love.keypressed(key)
         framework.cGame:gkpress(key)
     end
     --quit the game if ESC is pressed
-    if key == 'n' then
+    if key == 'n' and framework.debug then
         framework.cGame:gend()
         framework:nextGame()
     end

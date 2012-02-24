@@ -14,6 +14,8 @@ local game = {
         self.eTime = 0
         self.timeLimit = 1
         self.fontSize = 25
+        self.fullscreen = false
+        self.debug = true
         love.graphics.setFont(self.fontSize)
 
         self.cursorImg = love.graphics.newImage("Menu/Resources/cursor.gif")
@@ -21,7 +23,7 @@ local game = {
 
         self.makeButton = function(o, x, y, text, fontSize, r, g, b, runFunction)
             o.x, o.y, o.text, o.r, o.g, o.b = x, y, text, r, g, b
-            o.w, o.h = #o.text*(fontSize/1.5), fontSize*1.5
+            o.w, o.h = #o.text*(fontSize/1.2), fontSize*1.5
             o.bx, o.by = x-3, y-3
             o.bh, o.bw = o.h+6, o.w+6
             o.br, o.bg, o.bb = r+13, g+13, b+13
@@ -32,23 +34,34 @@ local game = {
         end
 
         self.drawButton = function(b)
+            --Draw Border
             love.graphics.setColor(b.br, b.bg, b.bb)
             love.graphics.rectangle('fill', b.bx, b.by, b.bw, b.bh)
-            love.graphics.setColor(b.r, b.g, b.b)
-            love.graphics.rectangle('fill', b.x, b.y, b.w, b.h)
+            --Draw Box
+            if b.hover then
+                love.graphics.setColor(b.r+10, b.g+10, b.b+10)
+                love.graphics.rectangle('fill', b.x, b.y, b.w, b.h)
+            else
+                love.graphics.setColor(b.r, b.g, b.b)
+                love.graphics.rectangle('fill', b.x, b.y, b.w, b.h)
+            end
+            --Draw Text
             love.graphics.setColor(255,255,255)
             love.graphics.print(b.text, b.x+3, b.y+3)
         end
 
         self.buttons = {}
 
-        self.buttons[1] = {} --play button
+        --PLAY BUTTON
+        self.buttons[1] = {}
         play = function()
             self:gend()
         end
         self.makeButton(self.buttons[1], 50, 50, "PLAY", self.fontSize, 218, 72, 78, play)
 
-        self.buttons[2] = {} --FullScreen button
+
+        --FULLSCREEN BUTTON
+        self.buttons[2] = {}
         fullScreen = function()
             self.fullscreen = not self.fullscreen
             self.yell = true
@@ -58,7 +71,11 @@ local game = {
         end
         self.makeButton(self.buttons[2], 50, 100, "FullScreen", self.fontSize, 218, 72, 78, fullScreen)
 
+
+        --SCALE BUTTONS
         for i=1,4 do
+            self.buttons[2+i] = {}
+
             scaleFunc = function()
                 self.screenScale = i
                 love.graphics.scale(self.screenScale, self.screenScale)
@@ -68,9 +85,21 @@ local game = {
                 end
             end
             
-            self.buttons[2+i] = {} --scale button
             self.makeButton(self.buttons[2+i], 50+(i-1)*50, 150, i.."x", self.fontSize, 218, 72, 78, scaleFunc)
+
         end
+
+
+        --DEBUG BUTTONS
+        self.buttons[7] = {}
+        debug = function()
+            self.debug = not self.debug
+            self.yell = true
+            self.listen = function()
+                return {["debug"]=self.debug}
+            end
+        end
+        self.makeButton(self.buttons[7], 150, 50, "Debug", self.fontSize, 218, 72, 78, debug)
 
         -- add a circle to the scene
         self.cursor = self.Collider:addRectangle(0,0,20,20)
@@ -128,7 +157,7 @@ local game = {
         if button == 'l' then
             for i=1,#self.buttons do
                 if self.buttons[i].hover then
-                    self.buttons[i].run()
+                    self.buttons[i]:run()
                     self.buttons[i].hover = false
                 end
             end
