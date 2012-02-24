@@ -51,6 +51,8 @@ local framework = {
 function love.load()
 
     listOfGames = require('listOfGames') --grab list of games
+    framework.games[-1] = require("Menu/game.lua")
+    print("Adding Menu at -1")
     framework.games[0] = require("LvlUp/game.lua")
     print("Adding LvlUp at 0")
     for i=1,#listOfGames do
@@ -59,11 +61,13 @@ function love.load()
     end
 
     love.mouse.setVisible(false)
-
+    love.graphics.setColorMode('replace')
     love.graphics.setMode(400*framework.scale, 400*framework.scale, fullscreen, true, 0) --set the window dimensions to 400 by 400 with no fullscreen, vsync on, and no antialiasing
 
     math.randomseed( os.time() ) --set the seed to the clock
-    framework:playGame(0) --start playing games
+    
+
+    framework:playGame(-1) --start playing games
 
 end
 
