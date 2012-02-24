@@ -10,7 +10,7 @@ local game = {
         self.music = love.audio.newSource("LvlUp/Resources/BeepBoom.wav")
         self.eTime = 0
         self.timeLimit = 2.0
-
+        self.heart = love.graphics.newImage("LvlUp/Resources/Heart.gif")
         love.audio.play(self.music)
         love.graphics.setFont(50)
     end,
@@ -24,7 +24,7 @@ local game = {
         love.graphics.rectangle('fill', 50, 285, 320*(self.eTime/self.timeLimit), 25) --bar shape
 
         for i=1,self.lives do
-            love.graphics.rectangle('fill', 250+30*i, 50, 25, 25)
+            love.graphics.draw(self.heart, 250+30*i, 50,0,1.2,1.2)
         end
 
         love.graphics.setColor(205, 227, 161)           --bar border Color

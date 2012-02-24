@@ -1,6 +1,7 @@
 #RapDevXI SSE WarioWare (tentative title)
 
 ###Links that are useful
+* [Lua Reference Manual](http://www.lua.org/manual/5.2)
 * [Lua Online Book (Programming In Lua)](http://www.lua.org/pil/index.html)
 * [Lua Tutorial](http://lua-users.org/wiki/TutorialDirectory)
 * [LÖVE Homepage](https://love2d.org/)
