@@ -50,11 +50,27 @@ local game = {
 
         self.buttons[2] = {} --FullScreen button
         fullScreen = function()
-            self.fullScreen = not self.fullScreen
-            love.graphics.setMode(400*self.screenScale, 400*self.screenScale, self.fullScreen, true, 0)
+            self.fullscreen = not self.fullscreen
+            self.yell = true
+            self.listen = function()
+                return {["fullscreen"]=self.fullscreen}
+            end
         end
         self.makeButton(self.buttons[2], 50, 100, "FullScreen", self.fontSize, 218, 72, 78, fullScreen)
 
+        for i=1,4 do
+            scaleFunc = function()
+                self.screenScale = i
+                love.graphics.scale(self.screenScale, self.screenScale)
+                self.yell = true
+                self.listen = function()
+                    return {["scale"]=i}
+                end
+            end
+            
+            self.buttons[2+i] = {} --scale button
+            self.makeButton(self.buttons[2+i], 50+(i-1)*50, 150, i.."x", self.fontSize, 218, 72, 78, scaleFunc)
+        end
 
         -- add a circle to the scene
         self.cursor = self.Collider:addRectangle(0,0,20,20)

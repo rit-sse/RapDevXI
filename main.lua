@@ -62,7 +62,7 @@ function love.load()
 
     love.mouse.setVisible(false)
     love.graphics.setColorMode('replace')
-    love.graphics.setMode(400*framework.scale, 400*framework.scale, fullscreen, true, 0) --set the window dimensions to 400 by 400 with no fullscreen, vsync on, and no antialiasing
+    love.graphics.setMode(400*framework.scale, 400*framework.scale, framework.fullscreen, true, 0) --set the window dimensions to 400 by 400 with no fullscreen, vsync on, and no antialiasing
 
     math.randomseed( os.time() ) --set the seed to the clock
     
@@ -99,6 +99,22 @@ function love.update(dt)
         end
         framework:nextGame()
     end
+
+    if framework.cGame.yell ~= nil then --the game is trying to change the framework
+        if framework.cGame.game_dir == "Menu" then --only allow certain games this access
+            data = framework.cGame.listen()
+            if data.scale ~= nil then --trying to change scale
+                framework.scale = data.scale
+                love.graphics.setMode(400*framework.scale, 400*framework.scale, framework.fullscreen, true, 0)
+            elseif data.fullscreen ~= nil then --trying to change fullScreen
+                framework.fullscreen = data.fullscreen
+                love.graphics.setMode(400*framework.scale, 400*framework.scale, framework.fullscreen, true, 0)
+            end 
+       end
+       framework.cGame.yell = nil
+   end
+
+
 end
 
 -- this is called when two shapes collide; called by HardonCollider
