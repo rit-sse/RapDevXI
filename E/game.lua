@@ -12,6 +12,13 @@ local game = {
         self.game_dir = "E"
         self.basketImg = love.graphics.newImage("E/Resources/basket.gif")
         self.cherryImg = love.graphics.newImage("E/Resources/cherry.gif")
+
+        self.music = love.audio.newSource("B/Resources/f_000240.wav")
+        self.sound = love.audio.newSource("B/Resources/BeepWin.wav")
+
+        self.music:setVolume(0.2)
+        self.sound:setVolume(3.0)
+
         self.count = 0
 
         self.eTime = 0
@@ -26,6 +33,8 @@ local game = {
 
         self.gScore = 0
         self.goal  = 3
+
+        love.audio.play(self.music)
     end,
 
     gdraw = function(self)
@@ -72,10 +81,13 @@ local game = {
         	self.cherry.x = x
         	self.cherry.y = 0
         	self.cherry:moveTo(x, 0)
+            love.audio.stop(self.sound)
+            love.audio.play(self.sound)
         end
     end,
 
     gend = function(self) --function called only by Game Framework
+        love.audio.stop(self.music)
         return self.gScore >= self.goal
     end
 }
