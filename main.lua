@@ -13,8 +13,8 @@ local framework = {
     scale = 1,          --current scale for game (400*scale x 400*scale)
     lives = 3,          --number of lives
     lastPass = true,    --status of the last game player
-    fullscreen = false,
-    debug = true,
+    fullscreen = false, --status of fullscreen
+    debug = true,       --allows debug options (skip games, see FPS/eTime, etc...)
 
     playGame = function(self, gameNumber)
         --set current game to specific game module
