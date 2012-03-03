@@ -75,7 +75,7 @@ local game = {
     end,
 
     goc = function (self, dt, shape_a, shape_b, mtv_x, mtv_y)
-    	if shape_b == self.cherry then
+    	if shape_b == self.cherry or shape_a == self.cherry then
     	 	self.gScore = self.gScore + 1
     	 	x = math.random( 0, 350)
         	self.cherry.x = x

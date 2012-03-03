@@ -1,5 +1,8 @@
 --[[
     game 'F'
+    By the awesome spectacular Kristen Mills.
+    With Guidence from the hardoncollider pong tutorial
+    http://vrld.github.com/HardonCollider/tutorial.html
 --]]
 
 local HC = require 'hardoncollider'
@@ -44,6 +47,8 @@ local game = {
         self.ball.x = 200
         self.ball.y = 200
 
+        self.ball.velocity= {x=0, y= 100}
+
         self.gScore = 0
         self.goal  = 3
 
@@ -62,13 +67,21 @@ local game = {
     		end
     		love.graphics.rectangle("fill", self.bricks[i].x, self.bricks[i].y, 75,15)
     	end
-    	love.graphics.setColor(240,255,240)
+    	love.graphics.setColor(170,170,170)
     	love.graphics.rectangle("fill", self.paddle.x, self.paddle.y, 90, 10)
+        love.graphics.setColor(240,255,240)
     	love.graphics.circle("fill", self.ball.x, self.ball.y, 6)
+        love.graphics.print("Score:"..self.gScore, 300, 5)
+        love.graphics.print("Goal: 3", 300, 27)
     end,
 
     gupdate = function(self, dt)
     	speed=250
+        x = self.ball.x + self.ball.velocity.x*dt
+        y = self.ball.y + self.ball.velocity.y*dt
+        self.ball:move(self.ball.velocity.x*dt, self.ball.velocity.y*dt)
+        self.ball.x = x
+        self.ball.y = y
     	if love.keyboard.isDown("left") then
             if self.paddle.x > 0 then
                 self.paddle:move(-dt*speed,0)
@@ -83,8 +96,37 @@ local game = {
         end 
         self.Collider:update(dt)
     end,
-
+    --[[
+        Fun fact: It took me way too long to realize that if two shapes are
+        drawn touching(like the bricks), that counts as a collision. I was
+        having problems where the ball was just kind of shaking in place until
+        I added the else condiional that just returned if neither shape was the ball
+        due to the constant brick collision.
+    ]]--
     goc = function(self, dt, shape_a, shape_b, mtv_x, mtv_y)
+        local object
+        if shape_a == self.ball then 
+            object = shape_b
+        elseif shape_b == self.ball then
+            object = shape_a
+        else
+            return 
+        end
+        px,py = object:center()
+        bx,by = self.ball:center()
+        self.ball.velocity.x = bx-px
+        self.ball.velocity.y = -self.ball.velocity.y
+        len = math.sqrt(self.ball.velocity.x^2 + self.ball.velocity.y^2)
+        self.ball.velocity.x = self.ball.velocity.x / len *100
+        self.ball.velocity.y = self.ball.velocity.y / len *100
+        for i = 1, 12 do
+            if self.bricks[i] == object then
+                self.bricks[i].x = -500
+                self.bricks[i].y = -500
+                self.Collider:remove(self.bricks[i])
+                self.gScore = self.gScore +1
+            end
+        end
     end,
 
     gend = function(self)
