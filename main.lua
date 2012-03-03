@@ -113,10 +113,9 @@ function love.update(dt)
             elseif data.debug ~= nil then --trying to set debug status
                 framework.debug = data.debug
             end 
-       end
-       framework.cGame.yell = nil
-   end
-
+        end
+        framework.cGame.yell = nil
+    end
 
 end
 
