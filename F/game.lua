@@ -83,8 +83,8 @@ local game = {
     gupdate = function(self, dt)
     	speed=250
         x = self.ball.x + self.ball.velocity.x*dt*5
-        y = self.ball.y + self.ball.velocity.y*dt
-        self.ball:move(self.ball.velocity.x*dt*5, self.ball.velocity.y*dt)
+        y = self.ball.y + self.ball.velocity.y*dt*1.2
+        self.ball:moveTo(x, y)
         self.ball.x = x
         self.ball.y = y
     	if love.keyboard.isDown("left") then
