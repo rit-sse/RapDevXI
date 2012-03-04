@@ -4,6 +4,11 @@
 
 local HC = require 'hardoncollider'
 
+preReq = function(o)
+    o.game_dir = "A"
+    o.bindings = {"Left", "Right", "Up", "Down"}
+end
+
 local game = {
 
     gload = function(self)
@@ -99,4 +104,5 @@ local game = {
     end
 }
 
+preReq(game)
 return game --returns game

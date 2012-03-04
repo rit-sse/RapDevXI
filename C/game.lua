@@ -2,6 +2,12 @@
     game 'C'
 --]]
 
+preReq = function(o)
+    o.game_dir = "C"
+    o.bindings = {"Up", "Down", "Left", "Right"}
+end
+
+
 local game = {
 
     gload = function(self)
@@ -75,4 +81,5 @@ local game = {
     end
 }
 
+preReq(game)
 return game --returns game

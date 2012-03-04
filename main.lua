@@ -112,6 +112,9 @@ function love.update(dt)
                 love.graphics.setMode(400*framework.scale, 400*framework.scale, framework.fullscreen, true, 0)
             elseif data.debug ~= nil then --trying to set debug status
                 framework.debug = data.debug
+
+            elseif data.games ~= nil then --trying to set list of games
+                framework.games = data.games
             end 
         end
         framework.cGame.yell = nil

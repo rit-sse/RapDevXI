@@ -4,13 +4,17 @@
 
 local HC = require 'hardoncollider'
 
+preReq = function(o)
+    o.game_dir = "Menu"
+    o.bindings = {"Mouse"}
+end
+
 local game = {
 
     gload = function(self)
 
         self.Collider = HC(100, on_collision, collision_stop)
 
-        self.game_dir = "Menu"
         self.eTime = 0
         self.timeLimit = 1
         self.fontSize = 25
@@ -90,7 +94,7 @@ local game = {
         end
 
 
-        --DEBUG BUTTONS
+        --DEBUG BUTTON
         self.buttons[7] = {}
         debug = function()
             self.debug = not self.debug
@@ -100,6 +104,25 @@ local game = {
             end
         end
         self.makeButton(self.buttons[7], 150, 50, "Debug", self.fontSize, 218, 72, 78, debug)
+
+        --GAME BUTTONS
+        for i=1,#self.games do
+            self.buttons[7+i] = {}
+
+            setGameFunc = function()
+                self.yell = true
+                store = {[-1]=self.games[-1], [0]=self.games[0], [1]=self.games[i]}
+                self.listen = function()
+                    return {["games"]=store}
+                end
+            end
+            
+            rowMax = 5
+            self.makeButton(self.buttons[7+i], 50+((i-1) % rowMax)*30, 250+50*(math.floor((i-1)/rowMax)), self.games[i].game_dir, self.fontSize, 218, 72, 78, setGameFunc)
+        end
+
+
+
 
         -- add a circle to the scene
         self.cursor = self.Collider:addRectangle(0,0,20,20)
@@ -127,12 +150,13 @@ local game = {
     end,
 
     request = function(self)
-        return {'fullScreen', 'scale'}
+        return {'fullScreen', 'scale', 'games'}
     end,
 
     fillRequest = function(self, data)
         self.fullScreen = data[1]
         self.screenScale = data[2]
+        self.games = data[3]
     end,
 
     goc = function (self, dt, shape_a, shape_b, mtv_x, mtv_y)
@@ -173,4 +197,5 @@ local game = {
     end
 }
 
+preReq(game)
 return game --returns game
