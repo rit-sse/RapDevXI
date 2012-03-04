@@ -22,9 +22,9 @@ local game = {
         self.count = 0
 
         self.eTime = 0
-        self.timeLimit = 10
+        self.timeLimit = 6
 
-        x = 87.5
+        x = 72.5
         y = 15
         self.bricks = {}
         for i = 1, 12 do
@@ -32,10 +32,10 @@ local game = {
         	self.bricks[i].x = x
         	self.bricks[i].y = y
         	if i%3 == 0 then
-        		y = y+15
-        		x = 87.5
+        		y = y+30
+        		x = 72.5
         	else
-        		x = x+75
+        		x = x+90
         	end
         end
 
@@ -47,7 +47,12 @@ local game = {
         self.ball.x = 200
         self.ball.y = 200
 
-        self.ball.velocity= {x=0, y= 100}
+        self.ball.velocity= {x=0, y= 250}
+
+        self.top = self.Collider:addRectangle(0,-100,400,100)
+        self.left = self.Collider:addRectangle(-100,0,100,400)
+        self.right = self.Collider:addRectangle(400,0,100,400)
+        self.bottom = self.Collider:addRectangle(0,400,400,100)
 
         self.gScore = 0
         self.goal  = 3
@@ -77,9 +82,9 @@ local game = {
 
     gupdate = function(self, dt)
     	speed=250
-        x = self.ball.x + self.ball.velocity.x*dt
+        x = self.ball.x + self.ball.velocity.x*dt*5
         y = self.ball.y + self.ball.velocity.y*dt
-        self.ball:move(self.ball.velocity.x*dt, self.ball.velocity.y*dt)
+        self.ball:move(self.ball.velocity.x*dt*5, self.ball.velocity.y*dt)
         self.ball.x = x
         self.ball.y = y
     	if love.keyboard.isDown("left") then
@@ -95,13 +100,14 @@ local game = {
             end
         end 
         self.Collider:update(dt)
+        self.eTime = self.eTime + dt
     end,
     --[[
         Fun fact: It took me way too long to realize that if two shapes are
-        drawn touching(like the bricks), that counts as a collision. I was
+        drawn touching that counts as a collision. I was
         having problems where the ball was just kind of shaking in place until
         I added the else condiional that just returned if neither shape was the ball
-        due to the constant brick collision.
+        due to the walls colliding
     ]]--
     goc = function(self, dt, shape_a, shape_b, mtv_x, mtv_y)
         local object
@@ -112,21 +118,35 @@ local game = {
         else
             return 
         end
-        px,py = object:center()
-        bx,by = self.ball:center()
-        self.ball.velocity.x = bx-px
-        self.ball.velocity.y = -self.ball.velocity.y
-        len = math.sqrt(self.ball.velocity.x^2 + self.ball.velocity.y^2)
-        self.ball.velocity.x = self.ball.velocity.x / len *100
-        self.ball.velocity.y = self.ball.velocity.y / len *100
-        for i = 1, 12 do
-            if self.bricks[i] == object then
-                self.bricks[i].x = -500
-                self.bricks[i].y = -500
-                self.Collider:remove(self.bricks[i])
-                self.gScore = self.gScore +1
+
+        if object == self.right or object == self.left then --ball bounces off the side wall
+            self.ball.velocity.x = -self.ball.velocity.x
+        elseif object == self.bottom then -- ball hit the bottom aka done
+            self.ball.velocity = {x=0,y=0}
+            self.Collider:remove(self.ball)
+        elseif object == self.top then --ball hit the top
+            self.ball.velocity.y = -self.ball.velocity.y
+        else -- ball hit the paddle or a brick
+            px,py = object:center()
+            bx,by = self.ball:center()
+            self.ball.velocity.x = bx-px
+            self.ball.velocity.y = -self.ball.velocity.y
+            for i = 1, 12 do
+                if self.bricks[i] == object then 
+                    self.bricks[i].x = -500  --there is probably a better way to remove a brick
+                    self.bricks[i].y = -500  --but for now off the screen we go
+                    self.Collider:remove(self.bricks[i])
+                    love.audio.stop(self.sound)
+                    love.audio.play(self.sound)
+                    self.gScore = self.gScore +1
+                end
             end
+            -- keep the ball moving at the same speed
+            len = math.sqrt(self.ball.velocity.x^2 + self.ball.velocity.y^2)
+            self.ball.velocity.x = self.ball.velocity.x / len *250
+            self.ball.velocity.y = self.ball.velocity.y / len *250
         end
+        
     end,
 
     gend = function(self)
