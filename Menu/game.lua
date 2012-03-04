@@ -23,7 +23,8 @@ local game = {
         love.graphics.setFont(self.fontSize)
 
         self.cursorImg = love.graphics.newImage("Menu/Resources/cursor.gif")
-
+        self.music = love.audio.newSource("Menu/Resources/heman.mp3")
+        self.music:setVolume(0.5)
 
         self.makeButton = function(o, x, y, text, fontSize, r, g, b, runFunction)
             o.x, o.y, o.text, o.r, o.g, o.b = x, y, text, r, g, b
@@ -106,8 +107,9 @@ local game = {
         self.makeButton(self.buttons[7], 150, 50, "Debug", self.fontSize, 218, 72, 78, debug)
 
         --GAME BUTTONS
+        --(must be the last buttons created)
         for i=1,#self.games do
-            self.buttons[7+i] = {}
+            self.buttons[#self.buttons+1] = {}
 
             setGameFunc = function()
                 self.yell = true
@@ -118,15 +120,15 @@ local game = {
             end
             
             rowMax = 5
-            self.makeButton(self.buttons[7+i], 50+((i-1) % rowMax)*30, 250+50*(math.floor((i-1)/rowMax)), self.games[i].game_dir, self.fontSize, 218, 72, 78, setGameFunc)
+            self.makeButton(self.buttons[#self.buttons], 50+((i-1) % rowMax)*30, 250+50*(math.floor((i-1)/rowMax)), self.games[i].game_dir, self.fontSize, 218, 72, 78, setGameFunc)
         end
-
-
 
 
         -- add a circle to the scene
         self.cursor = self.Collider:addRectangle(0,0,20,20)
         self.cursor:moveTo(love.mouse.getPosition())
+
+        love.audio.play(self.music)
 
     end,
 
@@ -193,6 +195,7 @@ local game = {
         --asks for pass or fail, cleans up any calls to love
         love.graphics.setFont(15)
         self.eTime = 2
+        love.audio.stop(self.music)
         return true --always passes
     end
 }
