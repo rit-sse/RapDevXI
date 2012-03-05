@@ -21,7 +21,7 @@ game = {
     self.sound = love.audio.newSource("MoonGame/Resources/Coin.mp3")
     
     self.counter = 0 -- # of times [space] pressed
-    self.goal = 30 -- target # to press space
+    self.goal = 20 -- target # to press space
     self.eTime = 0
     self.timeLimit = 5.0
 
@@ -39,7 +39,7 @@ game = {
       love.audio.play(self.sound)
 
   gend: =>
-    return self.counter >= 20
+    return self.counter >= self.goal
 
 }
 
