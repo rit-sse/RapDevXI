@@ -5,5 +5,6 @@ return {
     "C",
     "D",
     "E",
-    "F"
+    "F",
+    "MoonGame"
 }
