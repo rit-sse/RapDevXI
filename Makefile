@@ -18,7 +18,7 @@ clean:
 
 package: clean
 	zip -r $(GAMEFILE) $(CONTENTS)
-	chmod og+x $(GAMEFILE)
+	chmod 755 $(GAMEFILE)
 
-run: package
-	love $(GAMEFILE)
+run:
+	love .
