@@ -10,7 +10,7 @@ local game = {
   gload = function(self)
     self.sound = love.audio.newSource("MoonGame/Resources/Coin.mp3")
     self.counter = 0
-    self.goal = 30
+    self.goal = 20
     self.eTime = 0
     self.timeLimit = 5.0
   end,
@@ -30,7 +30,7 @@ local game = {
     end
   end,
   gend = function(self)
-    return self.counter >= 20
+    return self.counter >= self.goal
   end
 }
 preReq(game)
