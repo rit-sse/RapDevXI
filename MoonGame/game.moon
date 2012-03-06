@@ -40,7 +40,7 @@ game = {
         self.counter = 0 -- # of times [space] pressed
         self.goal = 20 -- target # to press space
         self.eTime = 0
-        self.timeLimit = 20.0
+        self.timeLimit = 5.0
 
     gdraw: =>
         love.graphics.print((self.goal - self.counter) .. "", 100, 108)

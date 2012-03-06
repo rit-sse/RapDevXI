@@ -149,7 +149,7 @@ local game = {
     self.counter = 0
     self.goal = 20
     self.eTime = 0
-    self.timeLimit = 20.0
+    self.timeLimit = 5.0
   end,
   gdraw = function(self)
     love.graphics.print((self.goal - self.counter) .. "", 100, 108)
