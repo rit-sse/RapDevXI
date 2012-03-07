@@ -108,6 +108,13 @@ local game = {
 
         --GAME BUTTONS
         --(must be the last buttons created)
+        function tWidth(text, size) -- Determines pixel width of text
+          return #text * size / 1.2 -- Algorithm based on self.makeButton
+        end
+        window_width = love.graphics.getWidth()
+        cursorCol, cursorRow = 0, 0 -- "Where to start drawing" (x,y) coordinates
+        colOffset, rowOffset = 50, 250 -- Initial location of x, y
+        rowHeight = 50 -- Row height
         for i=1,#self.games do
             self.buttons[#self.buttons+1] = {}
 
@@ -118,9 +125,28 @@ local game = {
                     return {["games"]=store}
                 end
             end
+
+            game_name = self.games[i].game_dir -- Less typing
+
+            button_right_bound = colOffset + cursorCol + tWidth(game_name, self.fontSize) 
+            -- if right bound of button can be shown and not edge case...
+            if button_right_bound > window_width and cursorCol ~= 0 then
+              cursorCol = 0
+              cursorRow = cursorRow + rowHeight
+            end
             
-            rowMax = 5
-            self.makeButton(self.buttons[#self.buttons], 50+((i-1) % rowMax)*30, 250+50*(math.floor((i-1)/rowMax)), self.games[i].game_dir, self.fontSize, 218, 72, 78, setGameFunc)
+            self.makeButton(self.buttons[#self.buttons],
+              colOffset + cursorCol,
+              -- 50+((i-1) % rowMax)*30,
+              rowOffset + cursorRow,
+              --250+50*(math.floor((i-1)/rowMax)),
+              game_name,
+              self.fontSize,
+              218, 72, 78,
+              setGameFunc)
+
+            -- Advance cursor
+            cursorCol = cursorCol + tWidth(game_name, self.fontSize) + 12
         end
 
 
