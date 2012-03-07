@@ -6,14 +6,14 @@ local HC = require 'hardoncollider'
 
 preReq = function(o)
     o.game_dir = "B"
-    o.bindings = {"Up", "Down"}
+    o.bindings = {"Up","Down"}
 end
 
 local game = {
 
     gload = function(self)
         -- initialize library
-        self.Collider = HC(100, on_collision, collision_stop)
+        self.Collider = HC(100,on_collision,collision_stop)
         self.game_dir = "B"
 
         self.music = love.audio.newSource("B/Resources/f_000240.wav")
@@ -33,7 +33,7 @@ local game = {
 
         self.rect2 = self.Collider:addRectangle(5,0,5,400)
     
-        y = math.random( 40, 360)
+        y = math.random(40,360)
         self.circle = self.Collider:addCircle(500,y,16)
         self.circle.x = 500
         self.circle.y = y
@@ -56,7 +56,7 @@ local game = {
         love.graphics.print(self.gScore.."/"..self.req,220,8)
     end,
 
-    gupdate = function(self, dt)
+    gupdate = function(self,dt)
         speed = 300
         if love.keyboard.isDown("up") then
             if self.rect.y > 30 then
@@ -65,33 +65,33 @@ local game = {
             end
         end 
         if love.keyboard.isDown("down") then
-            if self.rect.y < (370) then
+            if self.rect.y < 370 then
                 self.rect:move(0,dt*speed)
                 self.rect.y = self.rect.y + dt*speed
             end
         end 
 
-        self.circle:move(-dt*speed, 0)
+        self.circle:move(-dt*speed,0)
         self.circle.x = self.circle.x - dt*speed
         self.Collider:update(dt)
  
         self.eTime = self.eTime + dt
     end,
 
-    goc = function (self, dt, shape_a, shape_b, mtv_x, mtv_y)
+    goc = function(self, dt, shape_a, shape_b, mtv_x, mtv_y)
         if shape_b == self.circle then
             if shape_a == self.rect2 then
                 y = 500
             else
                 self.gScore = self.gScore + 10
-                y = math.random( 40, 360)
+                y = math.random(40,360)
                 love.audio.stop(self.sound)
                 love.audio.play(self.sound)
             end
 
             x = 500
             self.circle.y = y
-            self.circle:moveTo(x, y)
+            self.circle:moveTo(x,y)
         end
     end,
 
