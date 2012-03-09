@@ -44,10 +44,10 @@ local game = {
             love.graphics.rectangle('fill', b.bx, b.by, b.bw, b.bh)
             --Draw Box
             if b.hover then
-                love.graphics.setColor(b.r+10, b.g+10, b.b+10)
+                love.graphics.setColor(b.r+15, b.g+15, b.b+15)
                 love.graphics.rectangle('fill', b.x, b.y, b.w, b.h)
             else
-                love.graphics.setColor(b.r, b.g, b.b)
+                love.graphics.setColor(b.r-5, b.g-5, b.b-5)
                 love.graphics.rectangle('fill', b.x, b.y, b.w, b.h)
             end
             --Draw Text
@@ -189,19 +189,13 @@ local game = {
 
     goc = function (self, dt, shape_a, shape_b, mtv_x, mtv_y)
         if shape_b == self.cursor then
-            for i=1,#self.buttons do
-                self.buttons[i].hover = false
-            end
             shape_a.parent.hover = true
         end
     end,
 
-    gsc = function (self, dt, shape_a, shape_b)
-        --NOT WORKING!?!?!?!
-        print("COLLISIONS STOPPED")
-        if shape_a == self.cursor then
-            print("HOVER OFF for "..shape_b.parent.text)
-            shape_b.parent.hover = false
+    gcs = function (self, dt, shape_a, shape_b)
+        for i=1,#self.buttons do
+            self.buttons[i].hover = false
         end
     end,
 
