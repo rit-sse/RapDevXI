@@ -6,5 +6,6 @@ return {
     "D",
     "E",
     "F",
-    "MoonGame"
+    "MoonGame",
+    "S"
 }
