@@ -51,6 +51,7 @@ function love.update(dt)
     if framework.currentGame == nil or framework.currentGame:isDone() 
 		or (framework.limit >0 and framework.elapsed>framework.limit)
 	then
+		love.audio.stop()
         framework.elapsed = 0
         framework.currentGame = framework.mode()
     end
