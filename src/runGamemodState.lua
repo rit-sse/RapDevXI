@@ -1,6 +1,7 @@
 local framework = require('framework')
 local makesplashGame = require('makeSplashGame')
-rungames = function()
+
+local rungames = function()
 	if framework.currentGame ~= nil then 
 		if framework.currentGame.___isSplash then
 			return framework.currentGame.realgame
@@ -30,4 +31,4 @@ rungames = function()
 	end
 end
 
-return rungames
+framework.modes.rungames = rungames

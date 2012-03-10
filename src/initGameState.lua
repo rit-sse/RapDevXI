@@ -1,5 +1,5 @@
 local framework = require('framework')
-return function()
+local initState =  function()
     local base = {}
     local gameNames = require('listOfGames')
     
@@ -44,7 +44,9 @@ return function()
         end
     end 
 
-    framework.mode = chooser
+    framework.mode = framework.modes.chooser
 
     return base
 end
+
+framework.modes.initState = initState

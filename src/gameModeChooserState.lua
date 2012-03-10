@@ -1,5 +1,6 @@
 local framework = require('framework')
-chooser = function()
+
+local chooser = function()
     local base = {}
     base.modeNames = require('gameModes')
     
@@ -31,8 +32,9 @@ chooser = function()
             self.done = true
         end
     end 
-    framework.mode = rungames
+    framework.mode = framework.modes.rungames
 
     return base
 end
-return chooser
+
+framework.modes.chooser = chooser
