@@ -13,7 +13,7 @@ local framework = {
         keyreleased = function(self, key) end,
         mousepressed = function(self, x, y, button) end,
         mousereleased = function(self, x, y, button) end,
-        getScore = function(self) return 1 end,
+        getScore = function(self) return -1 end,
         isDone = function(self) return false end 
     }},
     selectedGames = {},
@@ -99,7 +99,8 @@ chooser = function()
             self.currentPosition = ((self.currentPosition) % #self.modeNames)+1
         end
         if key == 'return' then
-            framework.gameMode = self.modeNames[self.currentPosition]
+            framework.gameMode = require('gameModes/'..self.modeNames[self.currentPosition])()
+			framework.gameMode:setGameList(framework.gameList)
             self.done = true
         end
     end 
@@ -109,10 +110,20 @@ chooser = function()
 end
 
 rungames = function()
+	
+	print('B')
+	if framework.currentGame ~= nil then 
+		framework.gameMode:setResults(framework.currentGame:getScore())
+	end
+	
 	if framework.gameMode:hasNextGame() then
-		return framework.gameMode:nextGame()
+		local game = framework.gameMode:nextGame()
+		setmetatable(game, framework.parentGame)
+		game:getReady()
+		return game
 	else
-		framework.gameMode = chooser()
+		print('out of games')
+		return chooser()
 	end
 end
 
@@ -129,8 +140,7 @@ function love.update(dt)
         framework.currentGame:update(dt)
     end
     if framework.currentGame == nil or framework.currentGame:isDone() then
-        print("Framework:")
-        print(framework.mode)
+        print("swapping")
         framework.currentGame = framework.mode()
     end
 end
