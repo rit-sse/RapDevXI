@@ -1,5 +1,5 @@
 local framework = require('framework')
-local makesplashGame = require('makeSplashGame')
+local makesplashGame = require('splashGameFactory')
 
 local rungames = function()
 	if framework.currentGame ~= nil then 

@@ -31,9 +31,6 @@ package.loaded.framework = framework
 require('initGameState')
 require('gameModeChooserState')
 
---again make a specific method requireable
-package.loaded.makeSplashGame = require('splashGameFactory')
-
 require('runGamemodState')
 
 framework.mode = framework.modes.initState
