@@ -13,34 +13,102 @@ local framework = {
         keyreleased = function(self, key) end,
         mousepressed = function(self, x, y, button) end,
         mousereleased = function(self, x, y, button) end,
-        getScore = function(self) return 1 end
+        getScore = function(self) return 1 end,
+        isDone = function(self) return false end 
     }},
     selectedGames = {},
     outOfGame = nil,
     gameMode = nil, 
+    gameList = {}
 }
 
-local base = {}
-base.listOfGames = require('listOfGames')
-setmetatable(base, framework.parentGame)
-for i=1,#base.listOfGames do
-    base.listOfGames[i] = {listOfGames[i], false}
-end
-base.currentPosition = 1
-
-base.draw = function(self, dt)
-    love.graphics.setColor(255,255,255)
-    love.graphics.print(self.listOfGames[self.currentPosition][1].."|"..
-    ((self.listOfGames[self.currentPosition][2]) and "on" or "off"), 
-    10, love.graphics.getHeight()/2 )
-end
-
-base.keypressed = function(self, key)
-    print(key)
-    if key == 'up' then
-        self.currentPosition = ((self.currentPosition -2) % #self.listOfGames)+1
+initMode = function()
+    local base = {}
+    local gameNames = require('listOfGames')
+    
+    base.listOfGames = {}
+    setmetatable(base, framework.parentGame)
+    for i=1,#gameNames do
+        table.insert(base.listOfGames,{gameNames[i], false})
     end
+    base.currentPosition = 1
+    base.done = false
+    base.isDone = function(self)
+        return self.done
+    end
+
+    base.draw = function(self, dt)
+        love.graphics.setColor(255,255,255)
+        output = self.currentPosition..": "
+        output = output..self.listOfGames[self.currentPosition][1].." | "
+        output = output..((self.listOfGames[self.currentPosition][2]) and "on" or "off")
+        love.graphics.print(output, 10, love.graphics.getHeight()/2)
+        love.graphics.print("PRESS ENTER TO CONTINUE", 10, (love.graphics.getHeight()/2)+20)
+    end 
+
+    base.keypressed = function(self, key)
+        if key == 'up' then
+            self.currentPosition = ((self.currentPosition -2) % #self.listOfGames)+1
+        end
+        if key == 'down' then
+            self.currentPosition = ((self.currentPosition) % #self.listOfGames)+1
+        end
+        if key == 'left' or key == 'right' then
+            self.listOfGames[self.currentPosition][2] = not self.listOfGames[self.currentPosition][2]
+        end
+        if key == 'return' then
+            framework.gameList = {}
+            for i=1,#self.listOfGames do
+                if self.listOfGames[i][2] then
+                    table.insert(framework.gameList, self.listOfGames[i][1])
+                end
+            end
+            self.done = true
+        end
+    end 
+
+    framework.mode = chooser
+
+    return base
 end
+
+chooser = function()
+    local base = {}
+    base.modeNames = require('gameModes')
+    
+    setmetatable(base, framework.parentGame)
+    base.currentPosition = 1
+    base.done = false
+    base.isDone = function(self)
+        return self.done
+    end
+
+    base.draw = function(self, dt)
+        love.graphics.setColor(255,255,255)
+        output = self.currentPosition..": "
+        output = output..self.modeNames[self.currentPosition]
+        love.graphics.print(output, 10, love.graphics.getHeight()/2)
+        love.graphics.print("PRESS ENTER TO CONTINUE", 10, (love.graphics.getHeight()/2)+20)
+    end 
+
+    base.keypressed = function(self, key)
+        if key == 'up' then
+            self.currentPosition = ((self.currentPosition -2) % #self.modeNames)+1
+        end
+        if key == 'down' then
+            self.currentPosition = ((self.currentPosition) % #self.modeNames)+1
+        end
+        if key == 'return' then
+            framework.game = self.modeNames[self.currentPosition]
+            self.done = true
+        end
+    end 
+    framework.mode = initMode
+
+    return base
+end
+
+framework.mode = initMode
 
 function love.load()
     love.graphics.setMode(400,400,false,true,0)
@@ -51,6 +119,11 @@ end
 function love.update(dt)
     if framework.currentGame ~= nil then
         framework.currentGame:update(dt)
+    end
+    if framework.currentGame == nil or framework.currentGame:isDone() then
+        print("Framework:")
+        print(framework.mode)
+        framework.currentGame = framework.mode()
     end
 end
 
@@ -63,6 +136,9 @@ end
 function love.keypressed(key)
     if framework.currentGame ~= nil then
         framework.currentGame:keypressed(key)
+    end
+    if key == "escape" then
+        love.event.push('q')
     end
 end
 
