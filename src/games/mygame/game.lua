@@ -8,8 +8,7 @@ return {
             self.score = 0
         end
         
-        self.update = function(self)
-            print(score)
+        self.update = function(self, dt)
         end
 
         self.draw = function(self)
@@ -29,6 +28,14 @@ return {
             if key==" " then
                 self.score = 0
             end
+        end
+        
+        self.getscore = function(self, key)
+            return self.score
+        end
+
+        isDone = function(self,key)
+            return self.score > 0
         end
         
     end
