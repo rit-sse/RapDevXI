@@ -14,7 +14,7 @@ local framework = {
         mousepressed = function(self, x, y, button) end,
         mousereleased = function(self, x, y, button) end,
         getScore = function(self) return -1 end,
-        isDone = function(self) return false end 
+        isDone = function(self) return false end
     }},
     selectedGames = {},
     outOfGame = nil,
@@ -127,22 +127,24 @@ makesplashGame = function(game, gameclass, info)
 		draw = function(self)
 			local timeLeft = math.floor(self.delay - self.elapsed+0.99)
 			
-			local dx1 = (math.floor(self.elapsed*1000)%(5*timeLeft)==0) and 2 or 0
-			local dy1 = (math.floor(self.elapsed*1000)%(5*timeLeft)==3) and 2 or 0
+			local twitchf = math.floor( (self.delay-self.elapsed)*20)
+			local dx1 = (math.floor(self.elapsed*999)%(twitchf)<3) and 2 or 0
+			local dy1 = (math.floor(self.elapsed*777)%(twitchf)<3) and 2 or 0
 			
-			local dx2 = (math.floor(self.elapsed*1000)%(5*timeLeft)==1) and 2 or 0
-			local dy2 = (math.floor(self.elapsed*1000)%(5*timeLeft)==4) and 2 or 0
+			local dx2 = (math.floor(self.elapsed*444)%(twitchf)<3) and 2 or 0
+			local dy2 = (math.floor(self.elapsed*1234)%(twitchf)<3) and 2 or 0
 		
+			
 			love.graphics.setColor(255,255,255)
 			
 			
-			love.graphics.print("STARTS IN: "..timeLeft,10+dx1,love.graphics.getHeight()/2+dy1)
+			love.graphics.print("STARTS IN: "..timeLeft,10+dx1,love.graphics.getHeight()/2+dy1-40,0,2,2)
 			
-			love.graphics.print("Put your hands on:",10-dx2,love.graphics.getHeight()/2+40+dy2)
-			local y = love.graphics.getHeight()/2+60
+			love.graphics.print("Put your hands on:",10-dx2,love.graphics.getHeight()/2+dy2,0,1.5,1.5)
+			local y = love.graphics.getHeight()/2+20
 			
 			for i=1,#self.gameclass.keys do
-				love.graphics.print(self.gameclass.keys[i],10+dx1,y+dy1)
+				love.graphics.print(self.gameclass.keys[i],10+dx1,y+dy1,0,1.25,1.25)
 				y = y+20
 			end
 			
@@ -176,7 +178,11 @@ rungames = function()
 		}
 		gameClass.makeGameInstance(game, info)
 		
-		return makesplashGame(game,gameClass, info)
+		if gameClass.___skipSplash then
+			return game
+		else
+			return makesplashGame(game,gameClass, info)
+		end
 	else
 		print('out of games')
 		return chooser()
