@@ -12,6 +12,8 @@ local rungames = function()
 	
 	if framework.gameMode:hasNextGame() then
 		local gameClass = framework.gameMode:nextGame()
+		framework.limit = gameClass.maxDuration
+		print('set duration to',framework.limit)
 		local game = {}
 		setmetatable(game, framework.parentGame)
 		local info = {
@@ -26,8 +28,8 @@ local rungames = function()
 			return makesplashGame(game,gameClass, info)
 		end
 	else
-		print('out of games')
-		return chooser()
+		framework.limit = -1
+		return framework.modes.chooser()
 	end
 end
 

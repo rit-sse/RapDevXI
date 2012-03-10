@@ -33,7 +33,8 @@ local chooser = function()
         end
     end 
     framework.mode = framework.modes.rungames
-
+	
+	framework.limit = -1 --About to be in the game mode chooser - need to be unlimited time
     return base
 end
 

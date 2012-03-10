@@ -34,6 +34,7 @@ local makeMode = function()
 	}
 	local pickGame = {
 		___skipSplash = true,
+		maxDuration = -1,
 		makeGameInstance = function(self, info)
 			self.selector = mode
 			self.draw = function(self)

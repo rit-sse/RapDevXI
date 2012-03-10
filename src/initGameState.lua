@@ -1,4 +1,43 @@
 local framework = require('framework')
+
+local loadGame = function(gameName)
+	local gameClass = nil
+	if pcall(function()
+		gameClass = require("games/"..gameName.."/game")
+		
+		gameClass.name = gameName --useful to have around later
+		
+		--Check that all difficulties are recognized difficulties
+		local valid_dif = {easy=true,medium=true,hard=true,impossible=true}
+		for i=1,#gameClass.difficulties do
+			if not valid_dif[gameClass.difficulties[i]] then
+				print("rejecting game",gameName,"for unrecognized difficulty setting",gameClass.difficulties[i])
+				error()
+			end
+		end
+		
+		--Check that the PR setting is recognized
+		local valid_pr = {child=true,rit=true,sse=true}
+		valid_pr['deans car']=true
+		if not valid_pr[gameClass.PR] then
+			print("rejecting game",gameName,"for unrecognized PR setting",gameClass.PR)
+			error()
+		end
+		
+		--Check that the max duration is in range
+		if gameClass.maxDuration==nil or gameClass.maxDuration>30 or gameClass.maxDuration<0 then
+			print("rejecting game",gameName,"because max duration is invalid",gameClass.maxDuration)
+			error()
+		end
+		
+	end) then
+		return gameClass
+	else
+		print('Could not load game',gameName)
+		return nil
+	end
+end
+
 local initState =  function()
     local base = {}
     local gameNames = require('listOfGames')
@@ -37,7 +76,7 @@ local initState =  function()
             framework.gameList = {}
             for i=1,#self.listOfGames do
                 if self.listOfGames[i][2] then
-                    table.insert(framework.gameList, require("games/"..self.listOfGames[i][1].."/game"))
+                    table.insert(framework.gameList, loadGame(self.listOfGames[i][1]))
                 end
             end
             self.done = true
@@ -45,7 +84,7 @@ local initState =  function()
     end 
 
     framework.mode = framework.modes.chooser
-
+	framework.limit = -1 -- about to be in the game menu, no limit on time
     return base
 end
 

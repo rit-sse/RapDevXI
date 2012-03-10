@@ -1,8 +1,8 @@
 return {
-    name = "mygame",
     difficulties = {"medium","hard","impossible"},
-    PR = {"sse"},
+    PR = "sse",
     keys = {"full keyboard"},
+	maxDuration = 5,
     makeGameInstance = function(self, info)
         self.getReady = function(self)
             self.score = 0

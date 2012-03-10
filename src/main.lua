@@ -2,6 +2,7 @@
     Framework
 --]]
 
+
 local framework = {
     currentGame = nil,
 	modes = {},
@@ -20,7 +21,9 @@ local framework = {
     selectedGames = {},
     outOfGame = nil,
     gameMode = nil, 
-    gameList = {}
+    gameList = {},
+	elapsed = 0,
+	limit = -1
 }
 
 --This little trick lets other framework classes require('framework') to get at what they need
@@ -30,7 +33,6 @@ package.loaded.framework = framework
 
 require('initGameState')
 require('gameModeChooserState')
-
 require('runGamemodState')
 
 framework.mode = framework.modes.initState
@@ -42,11 +44,14 @@ function love.load()
 end
 
 function love.update(dt)
+	framework.elapsed=framework.elapsed+dt
     if framework.currentGame ~= nil then
         framework.currentGame:update(dt)
     end
-    if framework.currentGame == nil or framework.currentGame:isDone() then
-        print("swapping")
+    if framework.currentGame == nil or framework.currentGame:isDone() 
+		or (framework.limit >0 and framework.elapsed>framework.limit)
+	then
+        framework.elapsed = 0
         framework.currentGame = framework.mode()
     end
 end
