@@ -125,16 +125,22 @@ makesplashGame = function(game, gameclass, info)
 			end
 		end,
 		draw = function(self)
+			local dx1 = (math.floor(self.elapsed*100)%5==0) and 1 or 0
+			local dy1 = (math.floor(self.elapsed*100)%5==3) and 1 or 0
+			
+			local dx2 = (math.floor(self.elapsed*100)%5==1) and 1 or 0
+			local dy2 = (math.floor(self.elapsed*100)%5==4) and 1 or 0
+		
 			love.graphics.setColor(255,255,255)
 			local timeLeft = math.floor(self.delay - self.elapsed+0.99)
 			
-			love.graphics.print("STARTS IN: "..timeLeft,10,love.graphics.getHeight()/2)
+			love.graphics.print("STARTS IN: "..timeLeft,10+dx1,love.graphics.getHeight()/2+dy1)
 			
-			love.graphics.print("Put your hands on:",10,love.graphics.getHeight()/2+40)
+			love.graphics.print("Put your hands on:",10+dx2,love.graphics.getHeight()/2+40+dy2)
 			local y = love.graphics.getHeight()/2+60
 			
 			for i=1,#self.gameclass.keys do
-				love.graphics.print(self.gameclass.keys[i],10,y)
+				love.graphics.print(self.gameclass.keys[i],10+dx1,y+dy1)
 				y = y+20
 			end
 			
