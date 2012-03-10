@@ -99,13 +99,21 @@ chooser = function()
             self.currentPosition = ((self.currentPosition) % #self.modeNames)+1
         end
         if key == 'return' then
-            framework.game = self.modeNames[self.currentPosition]
+            framework.gameMode = self.modeNames[self.currentPosition]
             self.done = true
         end
     end 
-    framework.mode = initMode
+    framework.mode = rungames
 
     return base
+end
+
+rungames = function()
+	if framework.gameMode:hasNextGame() then
+		return framework.gameMode:nextGame()
+	else
+		framework.gameMode = chooser()
+	end
 end
 
 framework.mode = initMode
