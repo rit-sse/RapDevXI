@@ -22,6 +22,11 @@ local framework = {
     gameList = {}
 }
 
+--This little trick lets other framework classes require('framework') to get at what they need
+--without being in this file
+package.loaded.framework = framework
+
+
 initMode = function()
     local base = {}
     local gameNames = require('listOfGames')
@@ -72,122 +77,12 @@ initMode = function()
     return base
 end
 
-chooser = function()
-    local base = {}
-    base.modeNames = require('gameModes')
-    
-    setmetatable(base, framework.parentGame)
-    base.currentPosition = 1
-    base.done = false
-    base.isDone = function(self)
-        return self.done
-    end
+local chooser = require('gameModeChooserState')
 
-    base.draw = function(self, dt)
-        love.graphics.setColor(255,255,255)
-        output = self.currentPosition..": "
-        output = output..self.modeNames[self.currentPosition]
-        love.graphics.print(output, 10, love.graphics.getHeight()/2)
-        love.graphics.print("PRESS ENTER TO CONTINUE", 10, (love.graphics.getHeight()/2)+20)
-    end 
+--again make a specific method requireable
+package.loaded.makeSplashGame = require('splashGameFactory')
 
-    base.keypressed = function(self, key)
-        if key == 'up' then
-            self.currentPosition = ((self.currentPosition -2) % #self.modeNames)+1
-        end
-        if key == 'down' then
-            self.currentPosition = ((self.currentPosition) % #self.modeNames)+1
-        end
-        if key == 'return' then
-            framework.gameMode = require('gameModes/'..self.modeNames[self.currentPosition])()
-			framework.gameMode:setGameList(framework.gameList)
-            self.done = true
-        end
-    end 
-    framework.mode = rungames
-
-    return base
-end
-
-makesplashGame = function(game, gameclass, info)
-	local splashGame = {
-		ready = false,
-		realgame = game,
-		gameclass = gameclass,
-		geninfo = info,
-		elapsed = 0,
-		delay = 3,
-		update = function(self, dt)
-			self.elapsed = self.elapsed+dt
-			if not self.ready then
-				self.realgame:getReady()
-				self.ready = true
-			end
-		end,
-		draw = function(self)
-			local timeLeft = math.floor(self.delay - self.elapsed+0.99)
-			
-			local twitchf = math.floor( (self.delay-self.elapsed)*20)
-			local dx1 = (math.floor(self.elapsed*999)%(twitchf)<3) and 2 or 0
-			local dy1 = (math.floor(self.elapsed*777)%(twitchf)<3) and 2 or 0
-			
-			local dx2 = (math.floor(self.elapsed*444)%(twitchf)<3) and 2 or 0
-			local dy2 = (math.floor(self.elapsed*1234)%(twitchf)<3) and 2 or 0
-		
-			
-			love.graphics.setColor(255,255,255)
-			
-			
-			love.graphics.print("STARTS IN: "..timeLeft,10+dx1,love.graphics.getHeight()/2+dy1-40,0,2,2)
-			
-			love.graphics.print("Put your hands on:",10-dx2,love.graphics.getHeight()/2+dy2,0,1.5,1.5)
-			local y = love.graphics.getHeight()/2+20
-			
-			for i=1,#self.gameclass.keys do
-				love.graphics.print(self.gameclass.keys[i],10+dx1,y+dy1,0,1.25,1.25)
-				y = y+20
-			end
-			
-		end,
-		isDone = function(self)
-			return self.elapsed > self.delay
-		end,
-		___isSplash = true
-	}
-	setmetatable(splashGame, framework.parentGame)
-	
-	return splashGame
-end
-
-rungames = function()
-	if framework.currentGame ~= nil then 
-		if framework.currentGame.___isSplash then
-			return framework.currentGame.realgame
-		else
-			framework.gameMode:setResults(framework.currentGame:getScore())
-		end
-	end
-	
-	if framework.gameMode:hasNextGame() then
-		local gameClass = framework.gameMode:nextGame()
-		local game = {}
-		setmetatable(game, framework.parentGame)
-		local info = {
-			difficulty = framework.gameMode:nextDifficulty(),
-			player = framework.gameMode:nextPlayer()
-		}
-		gameClass.makeGameInstance(game, info)
-		
-		if gameClass.___skipSplash then
-			return game
-		else
-			return makesplashGame(game,gameClass, info)
-		end
-	else
-		print('out of games')
-		return chooser()
-	end
-end
+local rungames = require('runGamemodState')
 
 framework.mode = initMode
 
