@@ -1,6 +1,6 @@
 return {
-    name = "mygame",
-    difficulties = {"easy"},
+    name = "mygame2",
+    difficulties = {"easy","medium","hard","impossible"},
     PR = {"sse"},
     keys = {"full keyboard", "mouse"},
     makeGameInstance = function(self, info)
