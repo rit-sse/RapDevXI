@@ -60,7 +60,7 @@ initMode = function()
             framework.gameList = {}
             for i=1,#self.listOfGames do
                 if self.listOfGames[i][2] then
-                    table.insert(framework.gameList, self.listOfGames[i][1])
+                    table.insert(framework.gameList, require("games/"..self.listOfGames[i][1].."/game"))
                 end
             end
             self.done = true
