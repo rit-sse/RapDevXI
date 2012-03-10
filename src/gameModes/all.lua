@@ -9,14 +9,13 @@ local makeMode = function()
 			return self.i <= #self.games
 		end,
 		nextGame = function(self)
-			print('making a game')
-			print(self.i)
-			local g = {}
-			self.games[self.i].makeGameInstance(g, {difficulty='easy'} )
-			return g
+			return self.games[self.i]
 		end,
 		nextPlayer = function(self) 
 			return "YOU"
+		end,
+		nextDifficulty = function(self)
+			return self.games[self.i].difficulties[1]
 		end,
 		setResults = function(self, res) 
 			print("got results")

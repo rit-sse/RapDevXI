@@ -109,18 +109,66 @@ chooser = function()
     return base
 end
 
-rungames = function()
+makesplashGame = function(game, gameclass, info)
+	local splashGame = {
+		ready = false,
+		realgame = game,
+		gameclass = gameclass,
+		geninfo = info,
+		elapsed = 0,
+		delay = 3,
+		update = function(self, dt)
+			self.elapsed = self.elapsed+dt
+			if not self.ready then
+				self.realgame:getReady()
+				self.ready = true
+			end
+		end,
+		draw = function(self)
+			love.graphics.setColor(255,255,255)
+			local timeLeft = math.floor(self.delay - self.elapsed+0.99)
+			
+			love.graphics.print("STARTS IN: "..timeLeft,10,love.graphics.getHeight()/2)
+			
+			love.graphics.print("Put your hands on:",10,love.graphics.getHeight()/2+40)
+			local y = love.graphics.getHeight()/2+60
+			
+			for i=1,#self.gameclass.keys do
+				love.graphics.print(self.gameclass.keys[i],10,y)
+				y = y+20
+			end
+			
+		end,
+		isDone = function(self)
+			return self.elapsed > self.delay
+		end,
+		___isSplash = true
+	}
+	setmetatable(splashGame, framework.parentGame)
 	
-	print('B')
+	return splashGame
+end
+
+rungames = function()
 	if framework.currentGame ~= nil then 
-		framework.gameMode:setResults(framework.currentGame:getScore())
+		if framework.currentGame.___isSplash then
+			return framework.currentGame.realgame
+		else
+			framework.gameMode:setResults(framework.currentGame:getScore())
+		end
 	end
 	
 	if framework.gameMode:hasNextGame() then
-		local game = framework.gameMode:nextGame()
+		local gameClass = framework.gameMode:nextGame()
+		local game = {}
 		setmetatable(game, framework.parentGame)
-		game:getReady()
-		return game
+		local info = {
+			difficulty = framework.gameMode:nextDifficulty(),
+			player = framework.gameMode:nextPlayer()
+		}
+		gameClass.makeGameInstance(game, info)
+		
+		return makesplashGame(game,gameClass, info)
 	else
 		print('out of games')
 		return chooser()
