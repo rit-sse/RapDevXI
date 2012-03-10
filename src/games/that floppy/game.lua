@@ -1,5 +1,5 @@
 return {
-    difficulties = {"easy"},
+    difficulties = {"easy","medium","hard","impossible"},
     PR = "child",
     keys = {"arrows"},
 	maxDuration = 15,
@@ -7,7 +7,7 @@ return {
 		self.score = 1
 		self.done = false
 		self.speed = 40
-		self.inequality = 1.7
+		self.inequality = ({easy=2.2, medium=2, hard=1.8, impossible=1.5})[info.difficulty]
 		self.playing = false
         self.getReady = function(self)
             self.f = {x=love.graphics.getWidth()/2,y=0}
@@ -20,6 +20,7 @@ return {
 			self.sound = love.audio.newSource("games/that floppy/back.mp3")
 			self.back= {back1, back2, back3, back2}
 			self.elapsed = 0
+			print(self.inequality)
         end
         
         self.update = function(self, dt)
@@ -86,8 +87,6 @@ return {
 			
 			love.graphics.draw(self.finger,cx+self.f.x,cy+self.f.y,0,1,1,20,20)
 
-			
-			
         end
 
         

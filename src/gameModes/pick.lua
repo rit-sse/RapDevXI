@@ -24,7 +24,7 @@ local makeMode = function()
 			return "YOU"
 		end,
 		nextDifficulty = function(self)
-			return "easy"
+			return self.games[self.sel].difficulties[self.dif]
 		end,
 		setResults = function(self, res) 
 			print("got results")
