@@ -1,5 +1,5 @@
 listOfGames = {
-    "MyGame",
+    "mygame",
     "AnotherGame",
     "ThisGame",
     "ThatGame"
