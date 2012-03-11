@@ -10,15 +10,16 @@ return {
 		self.speedFactor = ({easy=5, medium=4, hard=3, impossible=1})[info.difficulty]
 		self.inequality = ({easy=2.2, medium=2, hard=1.8, impossible=1.5})[info.difficulty]
 		self.playing = false
-        self.getReady = function(self)
+		
+        self.getReady = function(self,basePath)
             self.f = {x=love.graphics.getWidth()/2,y=0}
 			self.b = {x=0,y=0}
-			self.finger = love.graphics.newImage("games/that floppy/finger.png")
-			self.copy = love.graphics.newImage("games/that floppy/copy.png")
-			local back1 = love.graphics.newImage("games/that floppy/back.png")
-			local back2 = love.graphics.newImage("games/that floppy/back2.png")
-			local back3 = love.graphics.newImage("games/that floppy/back3.png")
-			self.sound = love.audio.newSource("games/that floppy/back.mp3")
+			self.finger = love.graphics.newImage(basePath.."finger.png")
+			self.copy = love.graphics.newImage(basePath.."copy.png")
+			local back1 = love.graphics.newImage(basePath.."back.png")
+			local back2 = love.graphics.newImage(basePath.."back2.png")
+			local back3 = love.graphics.newImage(basePath.."back3.png")
+			self.sound = love.audio.newSource(basePath.."back.mp3")
 			self.back= {back1, back2, back3, back2}
 			self.elapsed = 0
 			print(self.inequality)

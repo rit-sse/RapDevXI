@@ -9,7 +9,7 @@ local framework = {
 	modes = {},
     parentGame = {
         __index = {
-        getReady = function(self) end,
+        getReady = function(self,basePath) end,
         update = function(self, dt) end,
         draw = function(self) end,
         keypressed = function(self, key) end,
@@ -17,7 +17,8 @@ local framework = {
         mousepressed = function(self, x, y, button) end,
         mousereleased = function(self, x, y, button) end,
         getScore = function(self) return -1 end,
-        isDone = function(self) return false end
+        isDone = function(self) return false end,
+		on_collision = function( self, dt,shape_a,shape_b,mtv_x,mtv_y) end
     }},
     selectedGames = {},
     outOfGame = nil,
@@ -40,7 +41,6 @@ framework.mode = framework.modes.initState
 
 function love.load()
     love.graphics.setMode(400,400,false,true,0)
-    framework.currentGame = base
     
 end
 

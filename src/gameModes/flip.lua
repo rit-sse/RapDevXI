@@ -42,11 +42,11 @@ local makeMode = function()
 		end,
 		
 		nextDifficulty = function(self)
-			return self.games[self.i].difficulties[1]
+			return self.games[self.i].difficulties[math.random(#self.games[self.i].difficulties)]
 		end,
 		
 		setResults = function(self, res)
-			self.i = (self.i % #self.games)+1
+			self.i = math.random(#self.games)--(self.i % #self.games)+1
 			self.static = not self.static
 		end,
 		
@@ -55,7 +55,8 @@ local makeMode = function()
 			maxDuration = .2,
 			___skipSplash = true,
 			makeGameInstance = function(self, info) 
-				self.getReady = function(self)
+				self.getReady = function(self,basepath)
+					print('making ready')
 					self.elapsed = 0
 					self.sound = love.audio.newSource("gameModes/flip_data/static.wav")
 					self.images = { love.graphics.newImage("gameModes/flip_data/noise1.png"), love.graphics.newImage("gameModes/flip_data/noise2.png") }

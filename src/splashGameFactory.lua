@@ -10,7 +10,7 @@ makesplashGame = function(game, gameclass, info)
 		update = function(self, dt)
 			self.elapsed = self.elapsed+dt
 			if not self.ready then
-				self.realgame:getReady()
+				self.realgame:getReady("games/"..self.gameclass.name.."/")
 				self.ready = true
 			end
 		end,

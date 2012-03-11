@@ -6,7 +6,9 @@ local rungames = function()
 		if framework.currentGame.___isSplash then
 			return framework.currentGame.realgame
 		else
-			framework.gameMode:setResults(framework.currentGame:getScore())
+			if not pcall(function() framework.gameMode:setResults(framework.currentGame:getScore()) end) then
+				framework.gameMode.setResults(0)
+			end
 		end
 	end
 	
@@ -25,7 +27,13 @@ local rungames = function()
 		pcall(function() gameClass.makeGameInstance(game, info) end)
 		
 		if gameClass.___skipSplash then
-			pcall(function() game:getReady() end)
+			pcall(function() 
+				if gameClass.name ~=nill then
+					game:getReady("games/"..gameClass.name.."/")
+				else
+					game:getReady("")
+				end
+			end)
 			return game
 		else
 			return makesplashGame(game,gameClass, info)
