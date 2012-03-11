@@ -23,6 +23,7 @@ local rungames = function()
 		gameClass.makeGameInstance(game, info)
 		
 		if gameClass.___skipSplash then
+			game:getReady()
 			return game
 		else
 			return makesplashGame(game,gameClass, info)
