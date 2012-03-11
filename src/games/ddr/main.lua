@@ -28,17 +28,23 @@ function love.update(dt)
 		ready = true
 		game:getReady("")
 	else
-		elapsed = elapsed+dt
-		game:update(dt)
-		if game:isDone() or elapsed> gameClass.maxDuration then
-			love.event.push('q')
+		if not (game:isDone() or elapsed> gameClass.maxDuration) then
+			elapsed = elapsed+dt
+			game:update(dt)
 		end
 	end
 end
 
 function love.draw()
-	love.graphics.setColor(255,255,255)
-    game:draw()
+	if (game:isDone() or elapsed> gameClass.maxDuration) then
+		love.graphics.setColor(255,255,255)
+		love.graphics.print("Score was: "..game:getScore(),10,10)
+	else
+		love.graphics.setColor(255,255,255)
+		game:draw()
+	end
+
+	
 end
 
 function love.keypressed(key)
