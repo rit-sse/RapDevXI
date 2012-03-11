@@ -3,7 +3,8 @@ listOfGames = {
 	"mygame2",
 	"HelloWorld",
 	"that floppy",
-	"bricks bricks everywhere"
+	"bricks bricks everywhere",
+	"ddr"
 }
 
 return listOfGames
