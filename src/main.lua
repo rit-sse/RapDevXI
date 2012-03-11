@@ -2,6 +2,7 @@
     Framework
 --]]
 
+local HC = require 'hardoncollider'
 
 local framework = {
     currentGame = nil,
@@ -88,5 +89,11 @@ end
 function love.mousereleased(x, y, button)
     if framework.currentGame ~= nil then
         pcall(function() framework.currentGame:mousereleased(x, y, button) end)
+    end
+end
+
+function on_collision(self, dt, shape_a, shape_b, mtv_x, mtv_y)
+    if framework.currentGame ~= nil then
+        pcall(function() framework.currentGame:on_collision(dt,shape_a,shape_b,mtv_x,mtv_y) end)
     end
 end
