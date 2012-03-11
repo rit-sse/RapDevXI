@@ -1,9 +1,3 @@
---[[
-    game 'A'
---]]
-
---local HC = require 'hardoncollider'
-
 return {
     difficulties = {"easy","medium","hard"},
     PR = "sse",
@@ -13,12 +7,14 @@ return {
     makeGameInstance = function(self, info)
         self.getReady = function(self)
             -- initialize library
+            HC = require 'hardoncollider'
+            
             self.Collider = HC(100, on_collision, collision_stop)
 
-            self.music = love.audio.newSource("A/Resources/f_000240.wav")
-            self.sound = love.audio.newSource("A/Resources/BeepWin.wav")
-            self.cursor = love.graphics.newImage("A/Resources/block.gif")
-            self.circleImg = love.graphics.newImage("A/Resources/circlePoint.gif")
+            self.music = love.audio.newSource("games/game_a/f_000240.wav")
+            self.sound = love.audio.newSource("games/game_a/BeepWin.wav")
+            self.cursor = love.graphics.newImage("games/game_a/block.gif")
+            self.circleImg = love.graphics.newImage("games/game_a/circlePoint.gif")
 
             self.music:setVolume(0.2)
             self.sound:setVolume(3.0)
@@ -35,7 +31,7 @@ return {
             self.score = -2
 
             love.audio.play(self.music)
-        end,
+        end
 
         self.draw = function(self)
             love.graphics.setColor(255,0,0)
@@ -44,7 +40,7 @@ return {
             love.graphics.draw(self.cursor, self.rect.x, self.rect.y)
             love.graphics.setColor(255,255,255)
             love.graphics.print(self.gScore.."/"..self.req,220,8)
-        end,
+        end
 
         self.update = function(self, dt)
             speed = 275
@@ -73,7 +69,7 @@ return {
                 end
             end 
             self.Collider:update(dt)
-        end,
+        end
 
         self.on_collision = function (self, dt, shape_a, shape_b, mtv_x, mtv_y)
             if shape_b == self.circle then
@@ -87,11 +83,11 @@ return {
                 love.audio.stop(self.sound)
                 love.audio.play(self.sound)
             end
-        end,
+        end
 
         self.getScore = function(self)
             return self.score
-        end,
+        end
         
         self.isDone = function(self)
             return self.score > 0
