@@ -1,5 +1,5 @@
 local framework = require('framework')
-makesplashGame = function(game, gameclass, info)
+makesplashGame = function(game, gameclass, info, gameMode)
 	local splashGame = {
 		ready = false,
 		realgame = game,
@@ -36,6 +36,10 @@ makesplashGame = function(game, gameclass, info)
 			for i=1,#self.gameclass.keys do
 				love.graphics.print(self.gameclass.keys[i],10+dx1,y+dy1,0,1.25,1.25)
 				y = y+20
+			end
+			
+			if framework.gameMode.draw then
+				framework.gameMode:draw()
 			end
 			
 		end,

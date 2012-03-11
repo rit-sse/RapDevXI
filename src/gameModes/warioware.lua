@@ -63,6 +63,10 @@ local makeMode = function()
 				print("Won a game")
 			end
 			self.curgame = self.curgame+1
+		end,
+		
+		draw = function(self)
+			love.graphics.print(""..self.lives,love.graphics.getWidth()-30,30,0,3,3)
 		end
 	}
 
