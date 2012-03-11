@@ -1,5 +1,6 @@
 modes = {
     "all",
+	"flip",
     "random",
     "pick"
 }

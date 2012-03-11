@@ -29,6 +29,7 @@ return {
 			if not self.playing then
 				self.playing = true
 				love.audio.play(self.sound)
+				
 			end
 			
 			if love.keyboard.isDown("up") then
