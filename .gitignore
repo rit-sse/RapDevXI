@@ -2,4 +2,3 @@
 *.swp
 *.love
 src/games/*/hardoncollider/*
-src/games/*/main.lua
