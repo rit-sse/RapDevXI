@@ -11,7 +11,8 @@ local rungames = function()
 	end
 	
 	if framework.gameMode:hasNextGame() then
-		local gameClass = framework.gameMode:nextGame()
+		local gameClass = nil
+		pcall(function() gameClass = framework.gameMode:nextGame() end)
 		framework.limit = gameClass.maxDuration
 		print('set duration to',framework.limit)
 		local game = {}
@@ -20,10 +21,11 @@ local rungames = function()
 			difficulty = framework.gameMode:nextDifficulty(),
 			player = framework.gameMode:nextPlayer()
 		}
-		gameClass.makeGameInstance(game, info)
+		
+		pcall(function() gameClass.makeGameInstance(game, info) end)
 		
 		if gameClass.___skipSplash then
-			game:getReady()
+			pcall(function() game:getReady() end)
 			return game
 		else
 			return makesplashGame(game,gameClass, info)

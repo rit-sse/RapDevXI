@@ -58,14 +58,15 @@ function love.update(dt)
 end
 
 function love.draw()
+	love.graphics.setColor(255,255,255)
     if framework.currentGame ~= nil then
-        framework.currentGame:draw()
+        pcall(function() framework.currentGame:draw() end)
     end
 end
 
 function love.keypressed(key)
     if framework.currentGame ~= nil then
-        framework.currentGame:keypressed(key)
+        pcall(function() framework.currentGame:keypressed(key) end)
     end
     if key == "escape" then
         love.event.push('q')
@@ -74,18 +75,18 @@ end
 
 function love.keyreleased(key)
     if framework.currentGame ~= nil then
-        framework.currentGame:keyreleased(key)
+        pcall(function() framework.currentGame:keyreleased(key) end)
     end
 end
 
 function love.mousepressed(x, y, button)
     if framework.currentGame ~= nil then
-        framework.currentGame:mousepressed(x, y, button)
+        pcall(function() framework.currentGame:mousepressed(x, y, button) end)
     end
 end
 
 function love.mousereleased(x, y, button)
     if framework.currentGame ~= nil then
-        framework.currentGame:mousereleased(x, y, button)
+        pcall(function() framework.currentGame:mousereleased(x, y, button) end)
     end
 end
