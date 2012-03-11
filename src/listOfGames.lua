@@ -1,10 +1,8 @@
 listOfGames = {
     "mygame",
 	"mygame2",
-	"that floppy",
-    "AnotherGame",
-    "ThisGame",
-    "ThatGame"
+    "game_a",
+	"that floppy"
 }
 
 return listOfGames

@@ -33,11 +33,11 @@ return {
             end
         end
         
-        self.getScore = function(self, key)
+        self.getScore = function(self)
             return self.score
         end
 
-        self.isDone = function(self,key)
+        self.isDone = function(self)
             return self.score > 0
         end
         
