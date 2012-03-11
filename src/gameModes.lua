@@ -1,7 +1,7 @@
 modes = {
+    "warioware",
     "all",
 	"flip",
-    "random",
     "pick"
 }
 
