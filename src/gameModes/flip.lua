@@ -2,7 +2,7 @@ local makeMode = function()
 	local mode = {
 		static = false,
 		i = 1,
-		baseTime = 0.5,
+		baseTime = 1.5,
 		modTime = 1,
 		games = {},
 		
@@ -32,7 +32,7 @@ local makeMode = function()
 				return self.staticGame
 			else
 				self.games[self.i].maxDuration = self.baseTime + self.modTime
-				self.modTime = self.modTime*0.95
+				self.modTime = self.modTime*0.7
 				return self.games[self.i]
 			end
 		end,

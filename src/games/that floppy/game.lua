@@ -7,6 +7,7 @@ return {
 		self.score = 1
 		self.done = false
 		self.speed = 40
+		self.speedFactor = ({easy=5, medium=4, hard=3, impossible=1})[info.difficulty]
 		self.inequality = ({easy=2.2, medium=2, hard=1.8, impossible=1.5})[info.difficulty]
 		self.playing = false
         self.getReady = function(self)
@@ -75,7 +76,7 @@ return {
         end
 
         self.draw = function(self)
-			self.speed = love.graphics.getWidth()/5
+			self.speed = love.graphics.getWidth()/self.speedFactor
 			local cx = love.graphics.getWidth()/2
 			local cy = love.graphics.getHeight()/2
 			
