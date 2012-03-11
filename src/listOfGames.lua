@@ -1,7 +1,7 @@
 listOfGames = {
     "mygame",
 	"mygame2",
-    "game_a",
+	"HelloWorld",
 	"that floppy",
 	"bricks bricks everywhere"
 }

@@ -18,7 +18,7 @@ local framework = {
         mousereleased = function(self, x, y, button) end,
         getScore = function(self) return -1 end,
         isDone = function(self) return false end,
-		on_collision = function( self, dt,shape_a,shape_b,mtv_x,mtv_y) end
+        on_collision = function( self, dt,shape_a,shape_b,mtv_x,mtv_y) end
     }},
     selectedGames = {},
     outOfGame = nil,
@@ -92,7 +92,7 @@ function love.mousereleased(x, y, button)
     end
 end
 
-function on_collision(self, dt, shape_a, shape_b, mtv_x, mtv_y)
+function on_collision(dt, shape_a, shape_b, mtv_x, mtv_y)
     if framework.currentGame ~= nil then
         pcall(function() framework.currentGame:on_collision(dt,shape_a,shape_b,mtv_x,mtv_y) end)
     end

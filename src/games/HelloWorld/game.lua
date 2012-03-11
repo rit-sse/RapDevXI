@@ -11,10 +11,10 @@ return {
             
             self.Collider = HC(100, on_collision, collision_stop)
 
-            self.music = love.audio.newSource("games/game_a/f_000240.wav")
-            self.sound = love.audio.newSource("games/game_a/BeepWin.wav")
-            self.cursor = love.graphics.newImage("games/game_a/block.gif")
-            self.circleImg = love.graphics.newImage("games/game_a/circlePoint.gif")
+            self.music = love.audio.newSource("games/HelloWorld/f_000240.wav")
+            self.sound = love.audio.newSource("games/HelloWorld/BeepWin.wav")
+            self.cursor = love.graphics.newImage("games/HelloWorld/block.gif")
+            self.circleImg = love.graphics.newImage("games/HelloWorld/circlePoint.gif")
 
             self.music:setVolume(0.2)
             self.sound:setVolume(3.0)
@@ -30,7 +30,7 @@ return {
     
             self.score = -2
 
-            love.audio.play(self.music)
+            self.playingMusic = false
         end
 
         self.draw = function(self)
@@ -43,6 +43,10 @@ return {
         end
 
         self.update = function(self, dt)
+            if not self.playingMusic then
+                love.audio.play(self.music)
+                self.playingMusic = true
+            end
             speed = 275
             if love.keyboard.isDown("up") then
                 if self.rect.y > 50 then
