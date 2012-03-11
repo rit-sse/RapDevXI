@@ -1,6 +1,6 @@
 modes = {
+    "warioware",
     "all",
-    "random",
     "pick"
 }
 
