@@ -5,16 +5,16 @@ return {
     maxDuration = 5,
 
     makeGameInstance = function(self, info)
-        self.getReady = function(self)
+        self.getReady = function(self, basePath)
             -- initialize library
             HC = require 'hardoncollider'
             
             self.Collider = HC(100, on_collision, collision_stop)
 
-            self.music = love.audio.newSource("games/HelloWorld/f_000240.wav")
-            self.sound = love.audio.newSource("games/HelloWorld/BeepWin.wav")
-            self.cursor = love.graphics.newImage("games/HelloWorld/block.gif")
-            self.circleImg = love.graphics.newImage("games/HelloWorld/circlePoint.gif")
+            self.music = love.audio.newSource(basePath.."f_000240.wav")
+            self.sound = love.audio.newSource(basePath.."BeepWin.wav")
+            self.cursor = love.graphics.newImage(basePath.."block.gif")
+            self.circleImg = love.graphics.newImage(basePath.."circlePoint.gif")
 
             self.music:setVolume(0.2)
             self.sound:setVolume(3.0)
@@ -29,6 +29,8 @@ return {
             self.circle.y = 300
     
             self.score = -2
+            self.req = 30
+            self.gScore = 0
 
             self.playingMusic = false
         end
@@ -77,6 +79,7 @@ return {
 
         self.on_collision = function (self, dt, shape_a, shape_b, mtv_x, mtv_y)
             if shape_b == self.circle then
+                self.gScore = self.gScore + 10
                 self.score = self.score + 1
                 x = math.random( 0, 400)
                 y = math.random( 50, 400)
