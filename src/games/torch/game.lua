@@ -78,7 +78,6 @@ return {
             end
             self.system:setPosition(love.mouse.getX(), love.mouse.getY())
             self.system:setPosition(love.mouse.getX(), love.mouse.getY())
-            print(love.mouse.getX(),love.mouse.getY())
 
             self.system:update(dt)
             self.systemP1:update(dt)
