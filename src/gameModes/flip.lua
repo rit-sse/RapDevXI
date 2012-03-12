@@ -42,7 +42,7 @@ local makeMode = function()
 		end,
 		
 		nextDifficulty = function(self)
-			return self.games[self.i].difficulties[math.random(#self.games[self.i].difficulties)]
+			return self.games[self.i].difficulties[#self.games[self.i].difficulties]
 		end,
 		
 		setResults = function(self, res)

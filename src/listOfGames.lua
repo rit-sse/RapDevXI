@@ -4,7 +4,8 @@ listOfGames = {
 	"HelloWorld",
 	"that floppy",
 	"bricks bricks everywhere",
-	"ddr"
+	"ddr",
+	"the car"
 }
 
 return listOfGames
