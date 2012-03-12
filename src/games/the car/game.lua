@@ -3,7 +3,7 @@ return {
 	difficulties = {"easy","medium","hard","impossible"},
     PR = "sse",
 	
-    keys = {"arrows"},
+    keys = {"full keyboard"},
 	maxDuration = 5,
 	
     makeGameInstance = function(self, info)
