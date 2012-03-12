@@ -2,7 +2,7 @@ return {
  
 	difficulties = {"easy","medium","hard","impossible"},
 	PR = "child",
-	keys = {"arrows"},
+	keys = {"space"},
 	
 	maxDuration = 15,
 	
