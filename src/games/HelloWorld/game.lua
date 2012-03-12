@@ -9,7 +9,15 @@ return {
             -- initialize library
             HC = require 'hardoncollider'
             
-            self.Collider = HC(100, on_collision, collision_stop)
+			local oc = function(dt, shape_a, shape_b, mtv_x, mtv_y)
+				self:on_collision(dt, shape_a, shape_b, mtv_x, mtv_y)
+			end
+			
+			local osc = function(dt, shape_a, shape_b)
+				--nothing
+			end
+			
+            self.Collider = HC(100, oc, osc)
 
             self.music = love.audio.newSource(basePath.."f_000240.wav")
             self.sound = love.audio.newSource(basePath.."BeepWin.wav")

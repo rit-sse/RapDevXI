@@ -37,6 +37,10 @@ return {
 				love.graphics.newImage(basePath.."up.png"),
 				love.graphics.newImage(basePath.."right.png")
 			}
+			self.back_images = {
+				love.graphics.newImage(basePath.."back1.png"),
+				love.graphics.newImage(basePath.."back2.png")
+			}
 			self.sound = love.audio.newSource(basePath.."heman30.mp3")
 			self.playing = false
 			self.ddr_score = 5*self.hitRange
@@ -56,6 +60,12 @@ return {
 		
 		self.draw = function(self)
 			love.graphics.print(""..self.ddr_score,love.graphics.getWidth()-100,10)
+			
+			
+			local backImage = self.back_images[ (math.floor(self.elapsed_time*2)%2)+1]
+			love.graphics.draw(backImage, love.graphics.getWidth()/2-backImage:getWidth()/2,
+				love.graphics.getHeight()/2-backImage:getHeight()/2,0,1,1)
+			
 			for i=1,#self.staticArrows do
 				self:drawArrow(self.staticArrows[i],0)
 			end
