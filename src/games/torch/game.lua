@@ -19,8 +19,9 @@ return {
                 self.P[i].y = math.random(50,350)
                 self.P[i].onFire = false
             end
-            self.torch.img = love.graphics.newImage("torch.png")
-            self.person = love.graphics.newImage("person.png")
+            self.torch.img = love.graphics.newImage("games/torch/torch.png")
+            self.torch.sImg = love.graphics.newImage("games/torch/torchstaff.png")
+            self.person = love.graphics.newImage("games/torch/person.png")
             self.speedFactor = ({easy = 1, medium = 2, hard = 3})[info.difficulty]
             self.done = false
             
@@ -43,7 +44,7 @@ return {
                 self.P[i].system:setSize(1,.2)
                 self.P[i].system:setColor(220, 120, 20, 255, 220, 20, 20, 0)
                 self.P[i].system:setLifetime(-1) -- infinite
-                self.P[i].system:setParticleLife(.5)
+                self.P[i].system:setParticleLife(.2)
                 self.P[i].system:setDirection(0)
                 self.P[i].system:setSpread(360)
                 self.P[i].system:setTangentialAcceleration(1000)
@@ -61,8 +62,10 @@ return {
             for i=1,self.targets do
                 local mouseX = self.P[i].x - love.mouse.getX()
                 local mouseY = love.mouse.getY() - self.P[i].y
-                if mouseX < 80 and mouseY < 32 and mouseX == math.abs(mouseX) and mouseY == math.abs(mouseY) then
-                    self.P[i].onFire = true
+                if mouseX < 80 and mouseY < 32 
+                    and mouseX == math.abs(mouseX) 
+                    and mouseY == math.abs(mouseY) then
+                        self.P[i].onFire = true
                 end
             end
 
@@ -90,6 +93,7 @@ return {
         end
         
         self.draw = function(self)
+            love.graphics.draw(self.torch.sImg, love.mouse.getX()-30, love.mouse.getY()-4)
             love.graphics.setColorMode("modulate")
             love.graphics.setBlendMode("additive")
             for i=1,self.targets do
