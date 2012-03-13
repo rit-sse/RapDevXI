@@ -7,20 +7,15 @@ return {
         self.score = 1
         self.done = false
         self.torch = {}
+        self.targets = 3 -- number of targets
         self.getReady = function(self,basePath)
-            self.P1 = {}
-            self.P2 = {}
-            self.P3 = {}
+            self.P = {}
             math.randomseed(os.time())
-            self.P1.x = math.random(50,350)
-            self.P1.y = math.random(50,350)
-            self.P2.x = math.random(50,350)
-            self.P2.y = math.random(50,350)
-            self.P3.x = math.random(50,350)
-            self.P3.y = math.random(50,350)
-            self.P1.onFire = false
-            self.P2.onFire = false
-            self.P3.onFire = false
+            for i=1,self.targets do 
+                self.P.x = math.random(50,350)
+                self.P.y = math.random(50,350)
+                self.P.onFire = false
+            end
             self.torch.img = love.graphics.newImage("torch.png")
             self.person = love.graphics.newImage("person.png")
             self.speedFactor = ({easy = 1, medium = 2, hard = 3})[info.difficulty]
@@ -66,6 +61,11 @@ return {
         self.update = function(self, dt)
             if love.mouse.isDown("l") then
                 self.system:start()
+            end
+            if love.keyboard.isDown("m") then
+                self.systemP1:start()
+                self.systemP2:start()
+                self.systemP3:start()
             end
             if self.P1.onFire then
                 self.systemP1:start()
