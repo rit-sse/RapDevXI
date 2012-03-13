@@ -7,14 +7,17 @@ return {
         self.score = 1
         self.done = false
         self.torch = {}
-        self.targets = 3 -- number of targets
+        self.targets = ({easy = 5, medium = 15, hard = 30})[info.difficulty] -- number of targets
         self.getReady = function(self,basePath)
             self.P = {}
+            for i=1,self.targets do
+                self.P[i] = {}
+            end
             math.randomseed(os.time())
             for i=1,self.targets do 
-                self.P.x = math.random(50,350)
-                self.P.y = math.random(50,350)
-                self.P.onFire = false
+                self.P[i].x = math.random(50,350)
+                self.P[i].y = math.random(50,350)
+                self.P[i].onFire = false
             end
             self.torch.img = love.graphics.newImage("torch.png")
             self.person = love.graphics.newImage("person.png")
@@ -25,33 +28,29 @@ return {
             self.system:setEmissionRate(500)
             self.system:setSpeed(300,400)
             self.system:setGravity(100,200)
-            self.system:setSize(1,2)
-            self.system:setColor(220, 120, 50, 200, 20, 20, 220, 0)
+            self.system:setSize(1,1)
+            self.system:setColor(220, 120, 50, 100, 20, 20, 120, 0)
             self.system:setLifetime(-1) -- infinite
             self.system:setParticleLife(.5)
             self.system:setDirection(0)
-            self.system:setSpread(.25)
-            self.system:stop()
-
-            self.systemP = love.graphics.newParticleSystem( self.torch.img, 1000 )
-            self.systemP:setEmissionRate(200)
-            self.systemP:setSpeed(300,400)
-            self.systemP:setGravity(100,200)
-            self.systemP:setSize(1,.2)
-            self.systemP:setColor(220, 120, 20, 255, 220, 20, 20, 0)
-            self.systemP:setLifetime(-1) -- infinite
-            self.systemP:setParticleLife(.5)
-            self.systemP:setDirection(0)
-            self.systemP:setSpread(360)
-            self.systemP:setTangentialAcceleration(1000)
-            self.systemP:setRadialAcceleration(-2000)
-            self.systemP:stop()
-            self.systemP1 = self.systemP
-            self.systemP2 = self.systemP
-            self.systemP3 = self.systemP
-            self.systemP1:setPosition(self.P1.x+9,self.P1.y+6)
-            self.systemP2:setPosition(self.P2.x+9,self.P2.y+6)
-            self.systemP3:setPosition(self.P3.x+9,self.P3.y+6)
+            self.system:setSpread(.2)
+            self.system:start()
+            for i=1,self.targets do
+                self.P[i].system = love.graphics.newParticleSystem( self.torch.img, 1000 )
+                self.P[i].system:setEmissionRate(200)
+                self.P[i].system:setSpeed(300,400)
+                self.P[i].system:setGravity(100,200)
+                self.P[i].system:setSize(1,.2)
+                self.P[i].system:setColor(220, 120, 20, 255, 220, 20, 20, 0)
+                self.P[i].system:setLifetime(-1) -- infinite
+                self.P[i].system:setParticleLife(.5)
+                self.P[i].system:setDirection(0)
+                self.P[i].system:setSpread(360)
+                self.P[i].system:setTangentialAcceleration(1000)
+                self.P[i].system:setRadialAcceleration(-2000)
+                self.P[i].system:stop()
+                self.P[i].system:setPosition(self.P[i].x+9,self.P[i].y+6)
+            end
         end
         
         self.getScore = function(self, key)
@@ -59,42 +58,45 @@ return {
         end
         
         self.update = function(self, dt)
-            if love.mouse.isDown("l") then
-                self.system:start()
+            for i=1,self.targets do
+                local mouseX = self.P[i].x - love.mouse.getX()
+                local mouseY = love.mouse.getY() - self.P[i].y
+                if mouseX < 80 and mouseY < 32 and mouseX == math.abs(mouseX) and mouseY == math.abs(mouseY) then
+                    self.P[i].onFire = true
+                end
             end
-            if love.keyboard.isDown("m") then
-                self.systemP1:start()
-                self.systemP2:start()
-                self.systemP3:start()
-            end
-            if self.P1.onFire then
-                self.systemP1:start()
-            end
-            if self.P2.onFire then
-                self.systemP2:start()
-            end
-            if self.P3.onFire then
-                self.systemP3:start()
-            end
-            self.system:setPosition(love.mouse.getX(), love.mouse.getY())
-            self.system:setPosition(love.mouse.getX(), love.mouse.getY())
 
+            for i=1,self.targets do
+                if self.P[i].onFire then
+                    self.P[i].system:start()
+                end
+            end
+            self.system:setPosition(love.mouse.getX(), love.mouse.getY())
             self.system:update(dt)
-            self.systemP1:update(dt)
-            self.systemP2:update(dt)
-            self.systemP3:update(dt)
+            for i=1,self.targets do
+                self.P[i].system:update(dt)
+            end
+            local check = 0
+            for i=1,self.targets do
+                if self.P[i].onFire then
+                    check = check + 1
+                end
+            end
+            if check == self.targets then
+                print("you totally won! ps. they're scarecrows!!")
+                self.done = true
+            end
+
         end
         
         self.draw = function(self)
             love.graphics.setColorMode("modulate")
             love.graphics.setBlendMode("additive")
-            love.graphics.draw(self.person,self.P1.x,self.P1.y)
-            love.graphics.draw(self.person,self.P2.x,self.P2.y)
-            love.graphics.draw(self.person,self.P3.x,self.P3.y)
+            for i=1,self.targets do
+                love.graphics.draw(self.person,self.P[i].x,self.P[i].y)
+                love.graphics.draw(self.P[i].system,0,0)
+            end
             love.graphics.draw(self.system,0,0)
-            love.graphics.draw(self.systemP1,0,0)
-            love.graphics.draw(self.systemP2,0,0)
-            love.graphics.draw(self.systemP3,0,0)
         end
         
         self.isDone = function(self,key)
