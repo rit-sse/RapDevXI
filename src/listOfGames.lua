@@ -4,8 +4,8 @@ listOfGames = {
 	"bricks bricks everywhere",
 	"ddr",
 	"the car",
-    "torch",
-	"don't blink"
+	"don't blink",
+	"dodge everything"
 }
 
 return listOfGames
