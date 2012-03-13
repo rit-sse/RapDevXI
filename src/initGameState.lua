@@ -58,6 +58,8 @@ local initState =  function()
         output = self.currentPosition..": "
         output = output..self.listOfGames[self.currentPosition][1].." | "
         output = output..((self.listOfGames[self.currentPosition][2]) and "on" or "off")
+        love.graphics.print("Press 'a' to select all games", 10, love.graphics.getHeight() / 4)
+        love.graphics.print("Press 'o' to turn of all games", 10, love.graphics.getHeight() / 4 + 20)
         love.graphics.print(output, 10, love.graphics.getHeight()/2)
         love.graphics.print("PRESS ENTER TO CONTINUE", 10, (love.graphics.getHeight()/2)+20)
     end 
@@ -72,6 +74,16 @@ local initState =  function()
         if key == 'left' or key == 'right' then
             self.listOfGames[self.currentPosition][2] = not self.listOfGames[self.currentPosition][2]
         end
+        if key == 'a' then
+            for i,game in ipairs(self.listOfGames) do
+                game[2] = true
+            end
+        end
+        if key == 'o' then
+            for i,game in ipairs(self.listOfGames) do
+                game[2] = false
+            end
+        end
         if key == 'return' then
             framework.gameList = {}
             for i=1,#self.listOfGames do
@@ -84,7 +96,7 @@ local initState =  function()
     end 
 
     framework.mode = framework.modes.chooser
-	framework.limit = -1 -- about to be in the game menu, no limit on time
+        framework.limit = -1 -- about to be in the game menu, no limit on time
     return base
 end
 
