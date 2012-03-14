@@ -14,7 +14,7 @@ local rungames = function()
 	
 	if framework.gameMode:hasNextGame() then
         love.graphics.setColorMode("modulate")
-        love.graphics.setBlendMode("additive")
+        love.graphics.setBlendMode("alpha")
 		local gameClass = nil
 		pcall(function() gameClass = framework.gameMode:nextGame() end)
 		framework.limit = gameClass.maxDuration
