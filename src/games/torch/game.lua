@@ -95,7 +95,7 @@ return {
         self.draw = function(self)
             love.graphics.draw(self.torch.sImg, love.mouse.getX()-30, love.mouse.getY()-4)
             love.graphics.setColorMode("modulate")
-            love.graphics.setBlendMode("additive")
+            love.graphics.setBlendMode("alpha")
             for i=1,self.targets do
                 love.graphics.draw(self.person,self.P[i].x,self.P[i].y)
                 love.graphics.draw(self.P[i].system,0,0)
