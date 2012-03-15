@@ -1,5 +1,5 @@
 return {
-    
+    standalone_difficulty = "easy",
 	--Here go all of the static info values for our game
 	--  Remember a comma after each entry, as we are in a table initialization
 	

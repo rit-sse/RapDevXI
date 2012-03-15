@@ -14,7 +14,9 @@ local game = {
 }
 
 local gameClass = require('game.lua')
-gameClass.makeGameInstance(game,{difficulty=gameClass.difficulties[1], player="player1"})
+local difficulty = gameClass.standalone_difficulty
+if difficulty == 0 then difficulty = gameClass.difficulties[1] end
+gameClass.makeGameInstance(game,{difficulty=difficulty, player="player1"})
 
 function love.load()
     love.graphics.setMode(400,400,false,true,0)

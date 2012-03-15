@@ -1,5 +1,5 @@
 return {
- 
+ 	standalone_difficulty = "easy",
 	difficulties = {"easy","medium","hard","impossible"},
 	PR = "child",
 	keys = {"space"},
