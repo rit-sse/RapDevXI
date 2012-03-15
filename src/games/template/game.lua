@@ -22,7 +22,7 @@ return {
 	
 	--Keys is an indication to the user that says where to put their hands.
 	--It needs to be a list with any values from:
-	--  {"arrows","wasd","full keyboard","mouse"}
+	--  {"arrows","wasd","full keyboard","mouse","space"}
 	keys = {"arrows"},
 	
 	--The longest this game will EVER take. Note: by overriding the isDone method you can end
