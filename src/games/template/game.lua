@@ -60,8 +60,6 @@ return {
 			--self.sound = love.sound.newSource(basePath.."sound.mp3")
 
 			--Aso set up your own initial game state here.
-
-			--Data members
 			self.elapsed_time = 0
 		end
 
