@@ -1,5 +1,5 @@
 return {
-    standalone_difficulty = "easy",
+	standalone_difficulty = "easy",
 	--Here go all of the static info values for our game
 	--  Remember a comma after each entry, as we are in a table initialization
 	
@@ -13,17 +13,17 @@ return {
 	difficulties = {"easy","medium","hard","impossible"},
 	
 	--PR is how appropriate your game is. Valid values are:
-	--  "child"     approprate to show at imagine RIT
-	--  "rit"       approprate to show to other RIT students
-	--  "sse"       approprate only to show to SSE members
+	--  "child"	 approprate to show at imagine RIT
+	--  "rit"	   approprate to show to other RIT students
+	--  "sse"	   approprate only to show to SSE members
 	--  "deans car" this game will be deleted out of the repository on Monday before anyone sees it who wasn't here
-	--              (grab your own local copy)
-    PR = "child",
+	--			  (grab your own local copy)
+	PR = "child",
 	
 	--Keys is an indication to the user that says where to put their hands.
 	--It needs to be a list with any values from:
 	--  {"arrows","wasd","full keyboard","mouse"}
-    keys = {"arrows"},
+	keys = {"arrows"},
 	
 	--The longest this game will EVER take. Note: by overriding the isDone method you can end
 	--the game sooner. This is just how long until the engine kills your game and asks it for
@@ -34,42 +34,72 @@ return {
 	--The first parameter is a table you must fill in with your desired callbacks,
 	--as well as any user data. Info is a table with key/values:
 	--  difficulty = a value from the difficulties list defined above. You should change at least some aspect
-	--               of how your game is initialized based on this difficulty.
+	--			   of how your game is initialized based on this difficulty.
 	--
 	--  player = some string naming the current player. Don't do anything with this but display it, if even that.
 	
-    makeGameInstance = function(self, info)
-	
-		--Fill the self table with callback and data
-		
-		
-		--Data members
-		self.elapsed_time = 0
-		
-		--The easiest way to change a game based on difficulty is to use a changing time limit
-		-- The code below creates a table with keys of the possible difficulties, and values of what
-		-- the time limit should be based on it.
+	makeGameInstance = function(self, info)
+		--Each game may choose how to scale difficulty. The template imposes a time limit
+		--that is modified by the difficulty of the game
 		self.time_limit = ({easy=15, medium=10, hard=8, impossible=4})[info.difficulty]
 		
 		--Callbacks
+
 		
-		--update is called in between draws. dt is the time in seconds since the last time
-		--update was called
-		self.update = function(self, dt)
-			--here we just keep track of how much time has passed
-			self.elapsed_time = self.elapsed_time+dt
-			
+		self.getReady = function(self, basePath)
+			--get ready is called during the splash screen.
+			--The intent is to load all sounds and images during getReady
+
+			--Concatenate basePath with any resource names. This makes your game work in both standalone
+			--and the main game mode
+
+			--DON'T START SOUNDS IN GET READY! They will begin playing during the splash screen, and
+			--be stopped before your game is actually shown
+
+			--self.image = love.graphics.newImage(basePath.."sprite.png")
+			--self.sound = love.sound.newSource(basePath.."sound.mp3")
+
+			--Aso set up your own initial game state here.
+
+			--Data members
+			self.elapsed_time = 0
 		end
-        
+
+		self.update = function(self, dt)
+			--update is called in between draws. dt is the time in seconds since the last time
+			--update was called
+
+			--here we just keep track of how much time has passed
+			self.elapsed_time = self.elapsed_time+dt			
+		end
+		
 		self.draw = function(self)
 			--here we just put how much time is left in the upper left corner
+			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
 		end
 		
 		self.isDone = function(self)
+			--This can return true to have the game end sooner that the time_limit
+			--set for the type of game.
+	
 			--we are done when we are out of time.
 			return self.elapsed_time > self.time_limit
 		end
 		
-    end
+		self.getScore = function(self)
+			--return a number -1 to 1. anything >0 is a "passing" score
+
+			return -1 --the player always looses. 
+		end
+		
+		self.keypressed = function(self, key)
+			
+			print(key.." was pressed")
+		end
+		
+		self.keyreleased = function(self, key)
+			print(key.." was released")
+		end
+	end
 }
