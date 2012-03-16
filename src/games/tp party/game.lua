@@ -1,28 +1,28 @@
 return {
 	standalone_difficulty = "easy",
 	--Here go all of the static info values for our game
-	--  Remember a comma after each entry, as we are in a table initialization
+	--	Remember a comma after each entry, as we are in a table initialization
 	
 	--Difficulties should be a list of difficulties this game can be.
 	--For Example:
-	--  If your game going to be a medium difficulty, and can't
-	--  be made easier or harder just make it {"medium"}
+	--	If your game going to be a medium difficulty, and can't
+	--	be made easier or harder just make it {"medium"}
 	
-	--  If your game can be made to be easy or impossible,
-	--  make it {"easy","impossible"}
+	--	If your game can be made to be easy or impossible,
+	--	make it {"easy","impossible"}
 	difficulties = {"easy","medium","hard","impossible"},
 	
 	--PR is how appropriate your game is. Valid values are:
-	--  "child"	 approprate to show at imagine RIT
-	--  "rit"	   approprate to show to other RIT students
-	--  "sse"	   approprate only to show to SSE members
-	--  "deans car" this game will be deleted out of the repository on Monday before anyone sees it who wasn't here
-	--			  (grab your own local copy)
+	--	"child"	 approprate to show at imagine RIT
+	--	"rit"	   approprate to show to other RIT students
+	--	"sse"	   approprate only to show to SSE members
+	--	"deans car" this game will be deleted out of the repository on Monday before anyone sees it who wasn't here
+	--		(grab your own local copy)
 	PR = "child",
 	
 	--Keys is an indication to the user that says where to put their hands.
 	--It needs to be a list with any values from:
-	--  {"arrows","wasd","full keyboard","mouse","space"}
+	--	{"arrows","wasd","full keyboard","mouse","space"}
 	keys = {"arrows"},
 	
 	--The longest this game will EVER take. Note: by overriding the isDone method you can end
@@ -33,10 +33,10 @@ return {
 	--This is where you define what an actual running version of your game is.
 	--The first parameter is a table you must fill in with your desired callbacks,
 	--as well as any user data. Info is a table with key/values:
-	--  difficulty = a value from the difficulties list defined above. You should change at least some aspect
-	--			   of how your game is initialized based on this difficulty.
+	--	difficulty = a value from the difficulties list defined above. You should change at least some aspect
+	--		of how your game is initialized based on this difficulty.
 	--
-	--  player = some string naming the current player. Don't do anything with this but display it, if even that.
+	--	player = some string naming the current player. Don't do anything with this but display it, if even that.
 	
 	makeGameInstance = function(self, info)
 		--Each game may choose how to scale difficulty. The template imposes a time limit
