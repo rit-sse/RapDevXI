@@ -48,7 +48,7 @@ return {
 		
 		self.getReady = function(self, basePath)
             cir1 = {x = 50,                 y = 50,         r = 30} -- the circle left
-            box1 = {x = cir1.x,             y = cir1.y,     w = 200, l = 2*cir1.r } -- box
+            box1 = {x = cir1.x,             y = cir1.y-cir1.r,     w = 200, l = 2*cir1.r } -- box
             box2 = {x = cir1.x + cir1.r,    y = cir1.y,     w = 200, l = 800} -- toliet paper
             cir2 = {x = cir1.x + box2.w,    y = cir1.y} -- the circle right
             handL = {x = cir1.x + 30,       y = cir1.y+2*cir1.r+ 30} -- left hand
@@ -88,7 +88,11 @@ return {
 			--update was called
 
 			--here we just keep track of how much time has passed
-			self.elapsed_time = self.elapsed_time+dt			
+			self.elapsed_time = self.elapsed_time+dt	
+
+            box1 = {x = cir1.x,             y = cir1.y-cir1.r,     w = 200, l = 2*cir1.r } -- box
+            box2 = {x = cir1.x + cir1.r,    y = cir1.y,     w = 200, l = 800} -- toliet paper
+            cir2 = {x = cir1.x + box2.w,    y = cir1.y} -- the circle right			
 		end
 		
 		self.draw = function(self)
@@ -96,6 +100,11 @@ return {
 			--here we just put how much time is left in the upper left corner
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
+					
+			love.graphics.circle("line", cir1.x, cir1.y, cir1.r, 100)
+			love.graphics.circle("line", cir2.x, cir2.y, cir1.r, 100)
+			love.graphics.rectangle("line", box1.x, box1.y, box1.w, box1.l)
+			love.graphics.rectangle("line", box2.x, box2.y, box2.w, box2.l)
 		end
 		
 		self.isDone = function(self)
@@ -113,6 +122,9 @@ return {
 		end
 		
 		self.keypressed = function(self, key)
+			if key == "right" then
+			cir1.r = cir1.r-1
+			end
 			
 			print(key.." was pressed")
 		end
