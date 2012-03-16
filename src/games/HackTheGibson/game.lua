@@ -117,9 +117,9 @@ return {
 
             --enemy AI
             if self.playerY > self.enemyY then
-                self.enemyY + 10*dt
+                self.enemyY = self.enemyY + 10*dt
             else
-                self.enemyY - 10*dt
+                self.enemyY = self.enemyY - 10*dt
             end
 
 
