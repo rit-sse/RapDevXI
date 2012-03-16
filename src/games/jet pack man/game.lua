@@ -43,6 +43,8 @@ return {
 		--that is modified by the difficulty of the game
 		self.time_limit = ({easy=15, medium=10, hard=8, impossible=4})[info.difficulty]
 
+    self.lost = false
+
     -- Hardon Collider
     local HC = require 'hardoncollider'
 
@@ -59,8 +61,8 @@ return {
       return o
     end
 
-    JetMan = { gravity = 10, thrust = 14, fire = false,
-               horizontal_speed = 12, left = false, right = false }
+    JetMan = { gravity = 160, thrust = 320, vertical_speed = 0, fire = false,
+               horizontal_speed = 48, left = false, right = false }
     function JetMan:new(image, hc)
       o = {
         image = love.graphics.newImage(image),
@@ -94,11 +96,13 @@ return {
         self:move(self.horizontal_speed * dt, 0)  -- positive -> right
       end
 
-      if self.thrust then
-        self:move(0, self.thrust * dt)
+      if self.fire then
+        self.vertical_speed = self.vertical_speed - self.thrust * dt
       else
-        self:move(0, -self.gravity * dt)
+        self.vertical_speed = self.vertical_speed + self.gravity * dt
       end
+
+      self:move(0, self.vertical_speed * dt)
     end
 		
 		-- Callbacks
@@ -124,10 +128,12 @@ return {
       -- Update jet man
       self.player:update(dt)
 
+      self:check_lose()
+
 			--here we just keep track of how much time has passed
 			self.elapsed_time = self.elapsed_time+dt			
 		end
-		
+
 		self.draw = function(self)
 			--here we just put how much time is left in the upper left corner
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
@@ -140,11 +146,20 @@ return {
       self.player:draw()
 		end
 
-    function self.collide(self, dt, a, b, x, y)
+    self.check_lose = function(self)
+      self.lost = self.lost or self.player.x < -1 * self.player.image:getWidth() * 0.5
+                            or self.player.x > love.graphics.getWidth() - self.player.image:getWidth() * 0.5
+                            or self.player.y < -1 * self.player.image:getHeight() * 0.5
+                            or self.player.y > love.graphics.getHeight() - self.player.image:getHeight() * 0.5
+
+      return self.lost
+    end
+
+    function self:collide(self, dt, a, b, x, y)
       -- TODO
     end
 
-    function self.collide_leave(self, dt, a, b)
+    function self:collide_leave(self, dt, a, b)
       -- TODO
     end
 		
@@ -153,7 +168,7 @@ return {
 			--set for the type of game.
 	
 			--we are done when we are out of time.
-			return self.elapsed_time > self.time_limit
+			return self.elapsed_time > self.time_limit or self.lost
 		end
 		
 		self.getScore = function(self)
@@ -163,12 +178,15 @@ return {
 		end
 		
 		self.keypressed = function(self, key)
-			
-			print(key.." was pressed")
+			if key == 'left'  then self.player.left  = true end
+			if key == 'right' then self.player.right = true end
+      if key == 'up'    then self.player.fire  = true end
 		end
 		
 		self.keyreleased = function(self, key)
-			print(key.." was released")
+			if key == 'left'  then self.player.left  = false end
+			if key == 'right' then self.player.right = false end
+      if key == 'up'    then self.player.fire  = false end
 		end
 	end
 }
