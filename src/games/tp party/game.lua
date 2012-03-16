@@ -47,7 +47,7 @@ return {
 
 		
 		self.getReady = function(self, basePath)
-            cir1 = {x = 50,                 y = 50,         cir1.r = 30} -- the circle left
+            cir1 = {x = 50,                 y = 50,         r = 30} -- the circle left
             box1 = {x = cir1.x,             y = cir1.y,     w = 200, l = 2*cir1.r } -- box
             box2 = {x = cir1.x + cir1.r,    y = cir1.y,     w = 200, l = 800} -- toliet paper
             cir2 = {x = cir1.x + box2.w,    y = cir1.y} -- the circle right
