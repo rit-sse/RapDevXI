@@ -51,9 +51,13 @@ return {
             box1 = {x = cir1.x,             y = cir1.y,     w = 200, l = 2*cir1.r } -- box
             box2 = {x = cir1.x + cir1.r,    y = cir1.y,     w = 200, l = 800} -- toliet paper
             cir2 = {x = cir1.x + box2.w,    y = cir1.y} -- the circle right
-            handL = {x = cir1.x + 30,       y = cir1.y+2*cir1.r+ animation[0]} -- left hand
-            handR = {x = cir2.x + 30,       y = cir2.y+2*cir2.r+ animation[0]} -- right hand
-			--get ready is called during the splash screen.
+            handL = {x = cir1.x + 30,       y = cir1.y+2*cir1.r+ 30} -- left hand
+            handR = {x = cir2.x + 30,       y = cir2.y+2*cir2.r+ 30} -- right hand
+			
+            handL = love.graphics.newImage("hand.png")
+            handR = love.graphics.newImage("hand.png")
+
+            --get ready is called during the splash screen.
 			--The intent is to load all sounds and images during getReady
 
 			--Concatenate basePath with any resource names. This makes your game work in both standalone
@@ -69,6 +73,16 @@ return {
 			self.elapsed_time = 0
 		end
 
+        function love.keypressed(key)
+            if hand2.y == 2*cir1.r + 30 and key == "right" then
+                hand2.y = 2*cir1.r + 80
+                hand1.y = 2*cir1.r 30
+            elseif hand1.y == 2*cir1.r + 30 and key == "left" then
+                hand1.y = 2*cir1.r + 80
+                hand2.y = 2*cir1.r + 30
+            end
+        end
+
 		self.update = function(self, dt)
 			--update is called in between draws. dt is the time in seconds since the last time
 			--update was called
@@ -78,6 +92,7 @@ return {
 		end
 		
 		self.draw = function(self)
+            
 			--here we just put how much time is left in the upper left corner
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
