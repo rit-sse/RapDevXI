@@ -119,7 +119,7 @@ return {
             end
 
             for i=1,#self.bkgdQueue do
-                if self.bkgdQueue[i].x < 400 and self.bkgdQueue[i] > 0 then
+                if self.bkgdQueue[i].x < 400 then
                     love.graphics.draw(self.bkgdQueue[i].img, self.bkgdQueue[i].x, 0)
                 end
             end
