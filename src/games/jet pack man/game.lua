@@ -43,6 +43,14 @@ return {
 		--that is modified by the difficulty of the game
 		self.time_limit = ({easy=15, medium=10, hard=8, impossible=4})[info.difficulty]
 
+    -- Hardon Collider
+    local HC = require 'hardoncollider'
+
+    self.hc = HC(100, oc, ocl)
+
+    local oc  = function(dt, a, b, x, y) self:collide(dt, a, b, x, y) end
+    local ocl = function(dt, a, b)       self:collide_leave(dt, a, b) end
+
     -- Classes
     Opening = { }
     function Opening:new(top, bottom)
@@ -50,10 +58,53 @@ return {
       setmetatable(o, { __index = Opening })
       return o
     end
+
+    JetMan = { gravity = 10, thrust = 14, fire = false,
+               horizontal_speed = 12, left = false, right = false }
+    function JetMan:new(image, hc)
+      o = {
+        image = love.graphics.newImage(image),
+        y = love.graphics.getHeight() * 0.4,
+        x = love.graphics.getWidth() * 0.1
+      }
+
+      o.object = hc:addRectangle(o.x + 1,                o.y + 1,
+                                 o.image:getWidth() - 1, o.image:getHeight() - 1)
+      o.object:moveTo(love.graphics.getWidth() * 0.1,
+                     love.graphics.getHeight() * 0.4)
+      setmetatable(o, { __index = JetMan })
+      return o
+    end
+
+    function JetMan:draw()
+      love.graphics.draw(self.image, self.x, self.y)
+    end
+
+    function JetMan:move(dx, dy)
+      self.x = self.x + dx
+      self.y = self.y + dy
+
+      self.object:move(dx, dy)
+    end
+
+    function JetMan:update(dt)
+      if self.left then
+        self:move(-self.horizontal_speed * dt, 0) -- negative -> left
+      elseif self.right then
+        self:move(self.horizontal_speed * dt, 0)  -- positive -> right
+      end
+
+      if self.thrust then
+        self:move(0, self.thrust * dt)
+      else
+        self:move(0, -self.gravity * dt)
+      end
+    end
 		
 		-- Callbacks
 		
 		self.getReady = function(self, basePath)
+      -- Load hardoncollider
       -- Load Background
       self.background = {
         image  = love.graphics.newImage(basePath .. "cave.jpg")
@@ -62,13 +113,16 @@ return {
       self.background.scalex = love.graphics.getWidth() / self.background.image:getWidth()
       self.background.scaley = love.graphics.getHeight() / self.background.image:getHeight()
 
+      -- Set up player
+      self.player = JetMan:new(basePath .. "jet-pack.png", self.hc)
+
 			--Aso set up your own initial game state here.
 			self.elapsed_time = 0
 		end
 
 		self.update = function(self, dt)
-			--update is called in between draws. dt is the time in seconds since the last time
-			--update was called
+      -- Update jet man
+      self.player:update(dt)
 
 			--here we just keep track of how much time has passed
 			self.elapsed_time = self.elapsed_time+dt			
@@ -81,7 +135,18 @@ return {
 
       -- Draw background
       love.graphics.draw(self.background.image, 0, 0, 0, self.background.scalex, self.background.scaley)
+
+      -- Draw player
+      self.player:draw()
 		end
+
+    function self.collide(self, dt, a, b, x, y)
+      -- TODO
+    end
+
+    function self.collide_leave(self, dt, a, b)
+      -- TODO
+    end
 		
 		self.isDone = function(self)
 			--This can return true to have the game end sooner that the time_limit
