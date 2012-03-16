@@ -1,4 +1,4 @@
-#RapDevXI SSE WarioWare (tentative title)
+#RapDevXI SSE WarioWare
 
 ###Links that are useful
 * [Lua Reference Manual](http://www.lua.org/manual/5.1)
