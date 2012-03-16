@@ -42,22 +42,25 @@ return {
 		--Each game may choose how to scale difficulty. The template imposes a time limit
 		--that is modified by the difficulty of the game
 		self.time_limit = ({easy=15, medium=10, hard=8, impossible=4})[info.difficulty]
-		
-		--Callbacks
 
+    -- Classes
+    Opening = { }
+    function Opening:new(top, bottom)
+      o = { top = top, bottom = bottom }
+      setmetatable(o, { __index = Opening })
+      return o
+    end
+		
+		-- Callbacks
 		
 		self.getReady = function(self, basePath)
-			--get ready is called during the splash screen.
-			--The intent is to load all sounds and images during getReady
+      -- Load Background
+      self.background = {
+        image  = love.graphics.newImage(basePath .. "cave.jpg")
+      }
 
-			--Concatenate basePath with any resource names. This makes your game work in both standalone
-			--and the main game mode
-
-			--DON'T START SOUNDS IN GET READY! They will begin playing during the splash screen, and
-			--be stopped before your game is actually shown
-
-			--self.image = love.graphics.newImage(basePath.."sprite.png")
-			--self.sound = love.sound.newSource(basePath.."sound.mp3")
+      self.background.scalex = love.graphics.getWidth() / self.background.image:getWidth()
+      self.background.scaley = love.graphics.getHeight() / self.background.image:getHeight()
 
 			--Aso set up your own initial game state here.
 			self.elapsed_time = 0
@@ -75,6 +78,9 @@ return {
 			--here we just put how much time is left in the upper left corner
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
+
+      -- Draw background
+      love.graphics.draw(self.background.image, 0, 0, 0, self.background.scalex, self.background.scaley)
 		end
 		
 		self.isDone = function(self)
