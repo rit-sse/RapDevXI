@@ -129,7 +129,7 @@ return {
 			--here we just put how much time is left in the upper left corner
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
-            love.graphics.setMode('replace')
+            love.graphics.setColorMode('replace')
             love.graphics.draw(self.player.img, self.playerX, self.playerY)
             love.graphics.draw(self.enemy.img, self.enemyX, self.enemyY)
 
