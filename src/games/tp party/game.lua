@@ -47,12 +47,12 @@ return {
 
 		
 		self.getReady = function(self, basePath)
-            cir1 = {x = 50,                 y = 50, cir1.r} -- the circle to the left
-            box1 = {x = cir1.x,             y = cir1.y} -- box
-            box2 = {x = cir1.x + cir1.r,    y = cir1.y} -- toliet paper
-            cir2 = {x = cir1.x + box2.w,    y = cir1.y} -- the circle to the right
-            handL = {x = cir1.x + 30, y = cir1.y+2*cir1.r+ animation[0]} -- left hand
-            handR = {x = cir2.x + 30, y = cir2.y+2*cir2.r+ animation[0]} -- right hand
+            cir1 = {x = 50,                 y = 50,         cir1.r = 30} -- the circle left
+            box1 = {x = cir1.x,             y = cir1.y,     w = 200, l = 2*cir1.r } -- box
+            box2 = {x = cir1.x + cir1.r,    y = cir1.y,     w = 200, l = 800} -- toliet paper
+            cir2 = {x = cir1.x + box2.w,    y = cir1.y} -- the circle right
+            handL = {x = cir1.x + 30,       y = cir1.y+2*cir1.r+ animation[0]} -- left hand
+            handR = {x = cir2.x + 30,       y = cir2.y+2*cir2.r+ animation[0]} -- right hand
 			--get ready is called during the splash screen.
 			--The intent is to load all sounds and images during getReady
 
