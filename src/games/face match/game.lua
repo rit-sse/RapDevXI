@@ -41,7 +41,7 @@ return {
 	makeGameInstance = function(self, info)
 		--Each game may choose how to scale difficulty. The template imposes a time limit
 		--that is modified by the difficulty of the game
-		self.time_limit = ({easy=15, medium=10, hard=8, impossible=4})[info.difficulty]
+		self.time_limit = ({easy=25, medium=20, hard=15, impossible=6})[info.difficulty]
 		
 		--Callbacks
 
@@ -55,6 +55,11 @@ return {
 
 			--DON'T START SOUNDS IN GET READY! They will begin playing during the splash screen, and
 			--be stopped before your game is actually shown
+
+			self.failhorn = love.audio.newSource(basePath..'failhorn.ogg', 'static')
+			self.openchest = love.audio.newSource(basePath..'openchest.ogg', 'static')
+			self.bgm = love.audio.newSource(basePath..'bgm.ogg')
+			self.musicstarted = false
 
 			self.allFaces = {
 				"megusta.png",
@@ -78,23 +83,12 @@ return {
 				i3 = math.random(#self.allFaces);
 			until i3 ~= i1 and i3 ~= i2
 
-			print(i1)
-			print(i2)
-			print(i3)
 
 			self.faces = {
 				love.graphics.newImage(basePath.."faces/"..self.allFaces[i1]),
 				love.graphics.newImage(basePath.."faces/"..self.allFaces[i2]),
 				love.graphics.newImage(basePath.."faces/"..self.allFaces[i3])
 			}
-
-
-			--Load all the faces
-			--self.faces = {
-			--	love.graphics.newImage(basePath.."faces/megusta.png"),
-			--	love.graphics.newImage(basePath.."faces/okay.png"),
-			--	love.graphics.newImage(basePath.."faces/derp.png")
-			--}
 
 			--Setup all the face quads
 			self.faceQuads = {
@@ -125,6 +119,11 @@ return {
 		end
 
 		self.update = function(self, dt)
+			if not self.musicstarted then
+				love.audio.play(self.bgm)
+				self.musicstarted = true
+			end
+
 			--update is called in between draws. dt is the time in seconds since the last time
 			--update was called
 
@@ -164,11 +163,25 @@ return {
 				if self.bottomPos >= self.bottomTarget then
 					self.bottomDelta = 0;
 					self.bottomPos = self.bottomTarget
-					self.state = 'end'
+					love.audio.stop(self.bgm)
+					if self.topTarget == self.midTarget and self.topTarget == self.bottomTarget then
+						self.state = 'win'
+						love.audio.play(self.openchest)
+					else 
+						self.state = 'lose'
+						love.audio.play(self.failhorn)
+					end
 				elseif self.bottomTarget == 1200 and (self.bottomPos - self.bottomDelta) < 0 then
 					self.bottomDelta = 0;
 					self.bottomPos = 0
-					self.state = 'end'
+					love.audio.stop(self.bgm)
+					if self.topTarget == self.midTarget and self.topTarget == self.bottomTarget then
+						self.state = 'win'
+						love.audio.play(self.openchest)
+					else 
+						self.state = 'lose'
+						love.audio.play(self.failhorn)
+					end
 				end
 			end
 		end
