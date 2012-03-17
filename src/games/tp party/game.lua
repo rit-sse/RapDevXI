@@ -8,39 +8,40 @@ return {
         self.done = false
 		self.time_limit = ({easy=15, medium=10, hard=8, impossible=4})[info.difficulty]
 		self.getReady = function(self, basePath)
-            self.cir1 = {x = 50,                 y = 50,         r = 30} -- the circle left
-            self.box1 = {x = self.cir1.x,             y = self.cir1.y-self.cir1.r,     w = 200, l = 2*self.cir1.r } -- box
-            self.box2 = {x = self.cir1.x + self.cir1.r,    y = self.cir1.y,     w = 200, l = 800} -- toliet paper
-            self.cir2 = {x = self.cir1.x + self.box2.w,    y = self.cir1.y,     r = self.cir1.r} -- the circle right
-            self.handL = {x = self.cir1.x + 30,       y = (self.cir1.y + (2 * self.cir1.r)) + 30} -- left hand
-            self.handR = {x = self.cir2.x + 30,       y = (self.cir2.y + (2 * self.cir2.r)) + 30} -- right hand
+            self.cir1 = {x = 50, y = 50, r = 30} -- the circle left
+            self.box1 = {x = self.cir1.x, y = self.cir1.y-self.cir1.r, w = 200, l = 2*self.cir1.r } -- box
+            self.box2 = {x = self.cir1.x + self.cir1.r, y = self.cir1.y, w = 200, l = 800} -- toliet paper
+            self.cir2 = {x = self.cir1.x + self.box2.w, y = self.cir1.y, r = self.cir1.r} -- the circle right
+            self.handL = {x = self.cir1.x + 30, y = self.cir1.y + 2 * self.cir1.r + 30} -- left hand
+            self.handR = {x = self.cir2.x + 30, y = self.cir2.y + 2 * self.cir2.r + 30} -- right hand
 			
             self.handL.img = love.graphics.newImage("hand.png")
             self.handR.img = love.graphics.newImage("hand.png")
 			self.elapsed_time = 0
 		end
 
-        function love.keypressed(self, key)
+        self.keypressed = function(self, key)
             if self.handR.y == self.cir1.y + 2 * self.cir1.r + 30 and key == "right" then
                 self.handR.y = self.cir1.y + 2 * self.cir1.r + 80
                 self.handL.y = self.cir1.y + 2 * self.cir1.r + 30
                 if self.cir1.r > 5 then -- 5 is the end goal
-                    self.cir1.r = cir1.r - 3
+                    self.cir1.r = self.cir1.r - 1
                 else
                     self.done = true
                 end
-            elseif self.handL.y == self.cir1.y + 2*self.cir1.r + 30 and key == "left" then
-                self.handR.y = self.cir1.y + 2*self.cir1.r + 80
-                self.handR.y = self.cir1.y + 2*self.cir1.r + 30
+            
+            elseif self.handR.y == self.cir1.y + 2 * self.cir1.r + 80 and key == "left" then
+                self.handR.y = self.cir1.y + 2 * self.cir1.r + 30
+                self.handL.y = self.cir1.y + 2 * self.cir1.r + 80
             end
         end
 
 		self.update = function(self, dt)
 			self.elapsed_time = self.elapsed_time+dt	
 
-            self.box1 = {x = self.cir1.x,             y = self.cir1.y - self.cir1.r,    w = 200, l = 2*self.cir1.r } -- box
-            self.box2 = {x = self.cir1.x + self.cir1.r,    y = self.cir1.y,             w = 200, l = 800} -- toliet paper
-            self.cir2 = {x = self.cir1.x + self.box2.w,    y = self.cir1.y} -- the circle right			
+            self.box1 = {x = self.cir1.x, y = self.cir1.y - self.cir1.r, w = 200, l = 2*self.cir1.r } -- box
+            self.box2 = {x = self.cir1.x + self.cir1.r, y = self.cir1.y, w = 200, l = 800} -- toliet paper
+            self.cir2 = {x = self.cir1.x + self.box2.w, y = self.cir1.y} -- the circle right			
 		end
 		
 		self.draw = function(self)
@@ -51,7 +52,7 @@ return {
 			
 			love.graphics.print(self.handR.y,10,10)
             love.graphics.print(self.cir1.y + 2 * self.cir1.r + 30, 50, 10)
-					
+		    love.graphics.print(self.cir1.y + 2 * self.cir1.r + 80, 100, 10)	
 			love.graphics.circle("fill", self.cir1.x, self.cir1.y, self.cir1.r, 100)
 			love.graphics.circle("fill", self.cir2.x, self.cir2.y, self.cir1.r, 100)
 			love.graphics.rectangle("fill", self.box1.x, self.box1.y, self.box1.w, self.box1.l)
