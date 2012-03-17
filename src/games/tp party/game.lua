@@ -17,9 +17,9 @@ return {
 			self.handL = {x = self.cir1.x + 36 + self.cir1.r, y = 200} -- left hand
 			self.handR = {x = self.cir2.x + -36 + self.cir1.r, y = 150} -- right hand
 			self.handLoc = {up = 150, down = 200} --up and down values
-			self.handL.img = love.graphics.newImage("hand.png")
-			self.handR.img = love.graphics.newImage("hand.png")
-			self.music = love.audio.newSource("guiles_theme_short.mp3")
+			self.handL.img = love.graphics.newImage(basePath.."hand.png")
+			self.handR.img = love.graphics.newImage(basePath.."hand.png")
+			self.music = love.audio.newSource(basePath.."guiles_theme_short.mp3")
 			self.musicStarted = false
 			self.elapsed_time = 0
 		end
