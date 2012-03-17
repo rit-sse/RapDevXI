@@ -28,7 +28,7 @@ return {
 	--The longest this game will EVER take. Note: by overriding the isDone method you can end
 	--the game sooner. This is just how long until the engine kills your game and asks it for
 	--a score by force.
-	maxDuration = 15,
+	maxDuration = 100,
 	
 	--This is where you define what an actual running version of your game is.
 	--The first parameter is a table you must fill in with your desired callbacks,
@@ -58,19 +58,24 @@ return {
 			--self.image = love.graphics.newImage(basePath.."sprite.png")
 			--self.sound = love.sound.newSource(basePath.."sound.mp3")
 
+			-- Seed RNG
+			math.randomseed(os.time())
+
 			--Also set up your own initial game state here.
 			self.elapsed_time = 0
             self.score = 1
             self.player = {}
-            --self.player.img = love.graphics.newImage("...") --todo
             self.playerX = 20
             self.playerY = 200
 
             self.enemy = {}
-            --self.enemy.img = love.graphics.newImage("...") --todo
             self.enemyX = 320
             self.enemyY = 200
             self.enemy.bullets = {}
+
+            -- Set up the background texture data structures
+            self.backgroundTextures = {}
+            self.backgroundQueue = {}
             
             self.makeBullet = function(self)
                 local b = {}
@@ -95,10 +100,19 @@ return {
 			-- Background textures
 			i = 1
 
+			-- Loop through files of the form texn.png, where n is a number,
+			-- until no more are detected.
 			while love.filesystem.exists( texturePath.."tex"..i..".png" ) do
-				local backgroundTexture = texturePath.."tex"..i..".png"
-				print( backgroundTexture )
+				local path = texturePath.."tex"..i..".png"
+				local backgroundTexture = love.graphics.newImage( path )
+				table.insert( self.backgroundTextures, backgroundTexture )
 				i = i + 1
+			end
+
+			for i = 1, 3 do
+				self.backgroundQueue[i] = {}
+				self.backgroundQueue[i].image = self.backgroundTextures[i]
+				self.backgroundQueue[i].x = -400 + ( 400 * ( i - 1 ) )
 			end
 
 			-- Sprites
@@ -119,7 +133,25 @@ return {
 				love.audio.play( self.backgroundLoop )
 			end
 
-            --enemy AI
+			-- Scroll Background --todo: Make this work for more than 3 values
+			for i = 1, 3 do
+				self.backgroundQueue[i].x = self.backgroundQueue[i].x - ( 300 * dt )
+
+				-- If the head of the queue is <= -400, pop it from the queue and
+				-- push it to the rear. BAM, sidescroller.
+				if self.backgroundQueue[i].x <= -400 then
+					local randomIndex = math.random( 1, #self.backgroundTextures )
+					self.backgroundQueue[i].image = self.backgroundTextures[randomIndex]
+					self.backgroundQueue[i].x = self.backgroundQueue[i].x + 800
+				end
+			end
+
+			-- if self.backgroundQueue[1].x <= -400 then
+			-- 	firstBackground = self.backgroundQueue[1].pop()
+			-- 	firstBac
+			-- end
+
+            --enemy AI. TODO: Make this smarter
             if self.playerY > self.enemyY then
                 self.enemyY = self.enemyY + 10*dt
             else
@@ -130,9 +162,9 @@ return {
 		
 		self.draw = function(self)
 			-- Draw the pretty scrolly background thing
-			for i=1,#self.bkgdQueue do
-                if self.bkgdQueue[i].x < 400 then
-                    love.graphics.draw(self.bkgdQueue[i].img, self.bkgdQueue[i].x, 0)
+			for i = 1, #self.backgroundQueue do
+                if self.backgroundQueue[i].x < 400 then
+                    love.graphics.draw(self.backgroundQueue[i].image, self.backgroundQueue[i].x, 0)
                 end
             end
 
@@ -157,7 +189,8 @@ return {
 			--set for the type of game.
 
 			--we are done when we are out of time.
-			return self.elapsed_time > self.time_limit
+			--return self.elapsed_time > self.time_limit
+			return false
 		end
 		
 		self.getScore = function(self)
