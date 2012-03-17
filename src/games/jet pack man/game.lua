@@ -55,13 +55,13 @@ return {
 
     -- Classes
     Opening = { }
-    function Opening:new()
-      local o = { blocked = { } }
+    function Opening:new(hc)
+      local o = { blocked = { }, x = love.graphics.getWidth() }
       for i=0, self.max do
         table.insert(o.blocked, true)
       end
 
-      o.object = hc:addRectangle(x, 0, self.image.getWidth(), love.graphics.getWidth())
+      o.object = hc:addRectangle(o.x, 0, self.image:getWidth(), love.graphics.getWidth())
       setmetatable(o, { __index = Opening })
       return o
     end
@@ -72,14 +72,13 @@ return {
     end
 
     function Opening:add_opening(top, bottom)
-      for i = top, bottom do self.o[i] = false end
+      for i = top, bottom do self.blocked[i] = false end
     end
 
     function Opening:draw()
       for i = 0, Opening.max do
-        if self[i] then
-          love.graphics.draw(self.image, self.x,
-                             self.image:getWidth(), i * self.image:getHeight())
+        if self.blocked[i] then
+          love.graphics.draw(self.image, self.x, (i - 1) * self.image:getHeight())
         end
       end
     end
@@ -138,7 +137,6 @@ return {
 		-- Callbacks
 		
 		self.getReady = function(self, basePath)
-      -- Load hardoncollider
       -- Load Background
       self.background = {
         image  = love.graphics.newImage(basePath .. "cave.jpg")
@@ -147,17 +145,18 @@ return {
       self.background.scalex = love.graphics.getWidth() / self.background.image:getWidth()
       self.background.scaley = love.graphics.getHeight() / self.background.image:getHeight()
 
-      -- Main images
+      -- Class setup
       Opening.image = love.graphics.newImage(basePath .. "wall.png")
       Wall.image    = love.graphics.newImage(basePath .. "wall.png")
-
       Opening.max   = math.floor(love.graphics.getHeight() / Opening.image:getHeight())
+
+      -- Setup collection of walls
+      self.sections = { }
+      self.cooldown_start = 3
+      self.cooldown = 0
 
       -- Set up player
       self.player = JetMan:new(basePath .. "jet-pack.png", self.hc)
-
-      -- Set up walls
-      self.sections = { }
 
 			--Aso set up your own initial game state here.
 			self.elapsed_time = 0
@@ -169,9 +168,35 @@ return {
 
       self:check_lose()
 
+      if self.cooldown < 0 then
+        self.cooldown = self.cooldown_start
+        self:add_section()
+        print("add section")
+      end
+
+      for idx, section in pairs(self.sections) do
+        section:update(dt, 86)
+      end
+
 			--here we just keep track of how much time has passed
 			self.elapsed_time = self.elapsed_time + dt
+      self.cooldown = self.cooldown - dt
 		end
+
+    self.add_section = function(self)
+      local section = Opening:new(self.hc)
+      local start = 0
+      local times = 0
+
+      for i = 0, times do
+        start = math.random(section.max - 5)
+        times = math.random(2) + 1
+
+        section:add_opening(start, start + 5)
+      end
+
+      table.insert(self.sections, section)
+    end
 
 		self.draw = function(self)
 			--here we just put how much time is left in the upper left corner
@@ -183,6 +208,11 @@ return {
 
       -- Draw player
       self.player:draw()
+
+      -- Draw sections
+      for idx, section in pairs(self.sections) do
+        section:draw()
+      end
 		end
 
     self.check_lose = function(self)
@@ -195,7 +225,7 @@ return {
     end
 
     function self:collide(self, dt, a, b, x, y)
-      -- TODO
+      print("lol")
     end
 
     function self:collide_leave(self, dt, a, b)
