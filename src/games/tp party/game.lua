@@ -20,6 +20,7 @@ return {
 			self.handL.img = love.graphics.newImage("hand.png")
 			self.handR.img = love.graphics.newImage("hand.png")
 			self.music = love.audio.newSource("guiles_theme_short.mp3")
+			self.musicStarted = false
 			self.elapsed_time = 0
 		end
 		
@@ -40,6 +41,11 @@ return {
 		
 		self.update = function(self, dt)
 			self.elapsed_time = self.elapsed_time+dt	
+
+			if not self.musicStarted then
+				love.audio.play(self.music)
+				self.musicStarted = true
+			end
 			
 			self.box1 = {x = self.cir1.x, y = self.cir1.y - self.cir1.r, w = 200, l = 2*self.cir1.r} -- box
 			self.box2 = {x = self.cir1.x + self.cir1.r, y = self.cir1.y, w = 200, l = 800} -- toliet paper
