@@ -1,5 +1,5 @@
 return {
-	standalone_difficulty = "hard",
+	standalone_difficulty = "easy",
 	--Here go all of the static info values for our game
 	--  Remember a comma after each entry, as we are in a table initialization
 	
@@ -56,85 +56,62 @@ return {
 
 
     -- Classes
-    Opening = { class = 'opening' }
-    function Opening:new(hc)
-      local o = { blocked = { }, x = love.graphics.getWidth() }
-      for i=0, self.max do
-        table.insert(o.blocked, true)
+    Section = { }
+    function Section:new(hc)
+      local o = { blocked = { }, x = love.graphics.getWidth(), hc = hc }
+      local img_height = self.image:getHeight()
+      local img_width  = self.image:getWidth()
+
+      for i=1, self.max do
+        local left = love.graphics.getWidth()
+        local top  = (i - 1) * img_height
+        local rect = hc:addRectangle(left, top, img_width, img_height)
+
+        hc:addToGroup('sections', rect)
+
+        table.insert(o.blocked, rect)
       end
 
-      o.object = hc:addRectangle(love.graphics.getWidth(), 0,
-                                 self.image:getWidth(), love.graphics.getHeight())
-      setmetatable(o, { __index = Opening })
+      setmetatable(o, { __index = Section })
       return o
     end
 
-    function Opening:update(dt, velocity)
+    function Section:update(dt, velocity)
       self.x = self.x - velocity * dt
-      self.object:move(- velocity * dt, 0)
+      
+      for idx, hc_obj in pairs(self.blocked) do
+        hc_obj:move(-velocity * dt, 0)
+      end
     end
 
-    function Opening:add_opening(top, bottom)
-      for i = top, bottom do self.blocked[i] = false end
+    function Section:add_section(top, bottom)
+      for i = top, bottom do
+        self.blocked[i] = nil
+      end
     end
 
-    function Opening:draw()
-      for i = 0, Opening.max do
+    function Section:draw()
+      for i = 1, Section.max do
         if self.blocked[i] then
+          self.blocked[i]:draw()
           love.graphics.draw(self.image, self.x, (i - 1) * self.image:getHeight())
         end
       end
     end
 
-    Wall = { class = 'wall' }
-    function Wall:new(hc)
-      local o = { blocked = { }, x = love.graphics.getWidth() }
-      for i= 0, self.max do
-        table.insert(o.blocked, false)
-      end
-
-      o.object = hc:addRectangle(love.graphics.getWidth(), 0,
-                                 self.image:getWidth(), love.graphics.getHeight())
-      setmetatable(o, { __index = Wall })
-      return o
-    end
-
-    function Wall:update(dt, velocity)
-      self.x = self.x - velocity * dt
-      self.object:move(- velocity * dt, 0)
-    end
-
-    function Wall:add_wall(top, bottom)
-      for i = top, bottom do self.blocked[i] = true end
-
-      local has_space = false
-      for i = 1, #self.blocked - 1 do has_space = has_space or not self.blocked[i] end
-
-      if has_space == false then
-        self.blocked[math.random(#self.blocked - 1) + 1] = false
-      end
-    end
-
-    function Wall:draw()
-      for i = 0, Opening.max do
-        if self.blocked[i] then
-          love.graphics.draw(self.image, self.x, (i - 1) * self.image:getHeight())
-        end
-      end
-    end
-
-
-    JetMan = { gravity = 260, thrust = 520, vertical_speed = 0, up = false, down = false,
+    JetMan = { gravity = 260, thrust = 520, vertical_speed = -128, up = false, down = false,
                horizontal_speed = 96, left = false, right = false }
     function JetMan:new(image, hc)
       local o = {
         image = love.graphics.newImage(image)
       }
-      o.y = love.graphics.getHeight() * 0.4 - o.image:getHeight() * 0.5
-      o.x = love.graphics.getWidth() * 0.1 - o.image:getWidth() * 0.5
+      local img_width  = o.image:getWidth()
+      local img_height = o.image:getHeight()
+      o.y = love.graphics.getHeight() * 0.4 - img_height * 0.5
+      o.x = love.graphics.getWidth()  * 0.1 - img_width * 0.5
 
-      o.object = hc:addRectangle(o.x,                o.y,
-                                 o.image:getWidth(), o.image:getHeight())
+      o.object = hc:addRectangle(o.x + 0.4 * img_width, o.y + 0.3 * img_height,
+                                 img_width * 0.2, img_height * 0.6)
       o.object:moveTo(love.graphics.getWidth() * 0.1,
                      love.graphics.getHeight() * 0.4)
       setmetatable(o, { __index = JetMan })
@@ -162,7 +139,7 @@ return {
       if self.up then
         self.vertical_speed = self.vertical_speed - self.thrust * dt
       elseif self.down then
-        self.vertical_speed = self.vertical_speed + self.thrust * dt
+        self.vertical_speed = self.vertical_speed + (self.thrust + self.gravity) * dt
       else
         self.vertical_speed = self.vertical_speed + self.gravity * dt
       end
@@ -179,24 +156,20 @@ return {
       self.configuration = {
         easy = {
           cooldown_time = 2,
-          section_speed = 80,
-          opening_width = 4,
-          wall_width    = 3
-        }, medium = {
-          cooldown_time = 1.4,
           section_speed = 120,
-          opening_width = 3,
-          wall_width    = 4
-        }, hard = {
+          opening_width = 2
+        }, medium = {
           cooldown_time = 1.0,
+          section_speed = 120,
+          opening_width = 2
+        }, hard = {
+          cooldown_time = 0.8,
           section_speed = 160,
-          opening_width = 2,
-          wall_width    = 4
+          opening_width = 2
         }, impossible = {
           cooldown_time = 0.8,
           section_speed = 220,
-          opening_width = 2,
-          wall_width    = 5
+          opening_width = 1
         }
       }
 
@@ -213,10 +186,8 @@ return {
       self.background.scaley = love.graphics.getHeight() / self.background.image:getHeight()
 
       -- Class setup
-      Opening.image = love.graphics.newImage(basePath .. "wall.png")
-      Wall.image    = love.graphics.newImage(basePath .. "wall.png")
-      Opening.max   = math.floor(love.graphics.getHeight() / Opening.image:getHeight())
-      Wall.max      = math.floor(love.graphics.getHeight() / Wall.image:getHeight())
+      Section.image = love.graphics.newImage(basePath .. "wall.png")
+      Section.max   = math.floor(love.graphics.getHeight() / Section.image:getHeight())
 
       -- Setup collection of walls
       self.sections = { }
@@ -233,10 +204,6 @@ return {
       if self.bgm_first_update then
         self.bgm:play()
         self.bgm_first_update = false
-      end
-
-      if self.lose then
-        love.audio.stop()
       end
     end
 
@@ -262,40 +229,43 @@ return {
 			self.elapsed_time = self.elapsed_time + dt
       self.cooldown = self.cooldown - dt
 
+      -- clean up passed sections
+      self:clean_up_sections()
+
       self.hc:update(dt)
 		end
 
-    self.add_section = function(self)
-      if math.random() > 0.4 then
-        self:add_opening(math.random(1) + 1)
-      else
-        self:add_wall(math.random(1) + 1)
+    function self:clean_up_sections()
+      if #self.sections == 0 then
+        return
+      end
+
+      local first = self.sections[1]
+      if first.x < -10 then
+        for idx = 1, #first.blocked do
+          local block = first.blocked[idx]
+          
+          if block then self.hc:remove(block) end
+        end
+
+        table.remove(self.sections, 1)
       end
     end
 
-    function self:add_opening(times)
-      local section = Opening:new(self.hc)
+    self.add_section = function(self)
+      -- self:add_section(math.random(1) + 1)
+      local times = math.random(1) + 1
+      self:add_sections(times)
+    end
+
+    function self:add_sections(times)
+      local section = Section:new(self.hc)
       local width = self.configuration[self.difficulty].opening_width
 
-      for i = 0, times do
+      for i = 1, times do
         local start = math.random(section.max - width)
-        local times = math.random(2) + 1
 
-        section:add_opening(start, start + width)
-      end
-
-      table.insert(self.sections, section)
-    end
-
-    function self:add_wall(times)
-      local section = Wall:new(self.hc)
-      local width = self.configuration[self.difficulty].wall_width
-
-      for i = 0, times do
-        local start = math.random(section.max - width)
-        local times = math.random(1) + 1
-
-        section:add_wall(start, start + width)
+        section:add_section(start, start + width)
       end
 
       table.insert(self.sections, section)
@@ -329,37 +299,12 @@ return {
     end
 
     function self:collide(dt, a, b, x, y)
-      if a == self.player.object then
-        self:collide_section(self.player, self:getSectionFromPolygon(b))
-      elseif b == self.player.object then
-        self:collide_section(self:getSectionFromPolygon(b), self.player)
-      end
-    end
-
-    function self:getSectionFromPolygon(polygon)
-      for idx, section in pairs(self.sections) do
-        if section.object == polygon then
-          return section
-        end
-      end
-
-      return nil
-    end
-
-    function self:collide_section(player, opening)
-      local height = opening.image:getHeight()
-      for idx, blocked in pairs(opening.blocked) do
-        if blocked then
-          if (idx - 1) * height < player.y and player.y + player.image:getHeight() < idx * height then
-            self.lost = true
-          end
-        end
-      end
+      self.lost = true
     end
 
     function self:collide_leave(dt, a, b)
     end
-		
+
 		self.isDone = function(self)
 			--This can return true to have the game end sooner that the time_limit
 			--set for the type of game.
