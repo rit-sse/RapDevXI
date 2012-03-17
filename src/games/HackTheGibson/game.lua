@@ -1,5 +1,5 @@
 return {
-	standalone_difficulty = "easy",
+	standalone_difficulty = "medium",
 	--Here go all of the static info values for our game
 	--  Remember a comma after each entry, as we are in a table initialization
 	
@@ -63,7 +63,9 @@ return {
 
 			--Also set up your own initial game state here.
 			self.elapsed_time = 0
-            self.score = 1
+            self.waitTime = 0
+		    self.waitCap = ({easy=3, medium=1.5, hard=1, impossible=.5})[info.difficulty]
+            self.score = 2
             
             -- Player health and position/size values
             self.player = {}
@@ -79,7 +81,7 @@ return {
             self.enemy.y = 200
             self.enemy.width = 50
             self.enemy.height = 100
-            --self.enemy.bullets = {}
+            self.enemy.bullets = {}
 
             -- Bounding boxes
             self.playerBoundingBox = {}
@@ -98,12 +100,14 @@ return {
             self.backgroundTextures = {}
             self.backgroundQueue = {}
             
-            -- self.makeBullet = function(self)
-            --     local b = {}
-            --     b.x = self.enemy.x
-            --     b.y = self.enemy.y + 20
-            --     table.insert(self.enemy.bullets, b)
-            -- end
+            self.makeBullet = function(self)
+                local b = {}
+                b.x = self.enemy.x
+                b.y = self.enemy.y + 20
+                b.width = 75
+                b.height = 50
+                table.insert(self.enemy.bullets, b)
+            end
 
             self:getAudioReady( basePath.."audio/" )
 			self:getTexturesReady( basePath.."textures/" )
@@ -139,19 +143,23 @@ return {
 			-- Sprites
 			self.player.img = love.graphics.newImage( texturePath.."player.png" )
 			self.enemy.img = love.graphics.newImage( texturePath.."enemy.png" )
+            self.enemy.bulletImg = love.graphics.newImage( texturePath.."bullet.png")
 
 		end
 
 		self.update = function(self, dt)
 			--update is called in between draws. dt is the time in seconds since the last time
-			--update was called
+            
+            print("SCORE:"..self.score)
 
 			--here we just keep track of how much time has passed
 			self.elapsed_time = self.elapsed_time + dt
+            self.waitTime = self.waitTime + dt
 
 			-- Start playing background audio loop
 			if not self.backgroundLoopStarted then
 				love.audio.play( self.backgroundLoop )
+                self.backgroundLoopStarted = true
 			end
 
 			-- Move each background rectangle.
@@ -167,15 +175,39 @@ return {
 				end
 			end
 
+            -- Move each bullet
+            for i = 1, #self.enemy.bullets do
+                print(self.enemy.bullets[i])
+                self.enemy.bullets[i].x = self.enemy.bullets[i].x - 200*dt
+                if self.enemy.bullets[i].x < -self.enemy.bullets[i].width then 
+                    local deleteTrue = i
+                else
+                    cBullet = self.enemy.bullets[i]
+                    if(cBullet.y > self.player.y and cBullet.y < self.player.y+self.player.height)
+                        or(cBullet.y+cBullet.height > self.player.y and cBullet.y+cBullet.height < self.player.y+self.player.height) then
+                        if cBullet.x > self.player.x and cBullet.x < self.player.x+self.player.width then
+                            local deleteTrue = i
+                            self.score = self.score -1
+                        end
+                    end
+                end
+            end
+            if deleteTrue then table.remove(self.enemy.bullets, deleteTrue) end
+
 			-- Handle player movement
 			playerSpeedMod = 175
 			self:handlePlayerInput( playerSpeedMod, dt )
 			self:handleEntityBounding( self.player, self.playerBoundingBox )
 
 			-- Handle AI Movement
-			aiSpeedMod = 150
+			aiSpeedMod = 50
 			self:handleAIThink( aiSpeedMod, dt )
 			self:handleEntityBounding( self.enemy, self.enemyBoundingBox )
+
+            if self.waitTime > self.waitCap then
+                self.waitTime = 0
+                self:makeBullet()
+            end
 
 		end
 		
@@ -242,10 +274,9 @@ return {
             love.graphics.draw(self.enemy.img, self.enemy.x, self.enemy.y)
 
             -- Draw the bullets?
-            -- for i=1,#self.enemy.bullets do
-            --     love.graphics.rectangle('fill', self.enemy.bullets[i].x, self.enemy.bullets[i].y)
-            -- end
-
+            for i=1,#self.enemy.bullets do
+                love.graphics.draw(self.enemy.bulletImg, self.enemy.bullets[i].x, self.enemy.bullets[i].y)
+            end
 		end
 		
 		self.isDone = function(self)
@@ -254,7 +285,7 @@ return {
 
 			--we are done when we are out of time.
 			--return self.elapsed_time > self.time_limit
-			return false
+			return self.score < 0
 		end
 		
 		self.getScore = function(self)
@@ -263,11 +294,9 @@ return {
 		end
 		
 		self.keypressed = function(self, key)
-			print(key.." was pressed")
 		end
 		
 		self.keyreleased = function(self, key)
-			print(key.." was released")
 		end
 	end
 }
