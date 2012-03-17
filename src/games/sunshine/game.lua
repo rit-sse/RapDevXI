@@ -75,12 +75,35 @@ return {
 			self.cloud2_loc = {}
 			self.cloud2_loc[0] = love.graphics.getWidth() * 0.70
 			self.cloud2_loc[1] = love.graphics.getHeight() * 0.15
+			
+			self.victory_sound = love.audio.newSource(basePath.."tada.mp3")
+			self.rain_sound = love.audio.newSource(basePath.."rain.mp3")
+			self.play_victory_sound = false
+			self.play_rain_sound = true
 
 		end
 
 		self.update = function(self, dt)
 			--here we just keep track of how much time has passed
-			self.elapsed_time = self.elapsed_time+dt		
+			self.elapsed_time = self.elapsed_time+dt
+			
+			--start the rain sound
+			if self.play_rain_sound then
+			  love.audio.play(self.rain_sound)
+			  self.play_rain_sound = false
+			end
+			
+			--if we won, play the victory sound
+			if self.play_victory_sound then
+			  --halt the rain sound 
+			  if not self.play_rain_sound then
+			    love.audio.stop(self.rain_sound)
+			  end
+			  --play victory sound and then set it to not play again
+			  print("play tada")
+			  love.audio.play(self.victory_sound)
+			  self.play_victory_sound = false
+			end		
 		end
 		
 		self.draw = function(self)			
@@ -121,7 +144,8 @@ return {
 			  -- if so play the victory sound and end the game early
 			  if self.cloud2_loc[0] > love.graphics.getWidth() then
 			    self.victory = true
-			    self.elapsed_time = self.time_limit - 2
+			    self.elapsed_time = self.time_limit - 5
+			    self.play_victory_sound = true
 			  end
 			end
 		end
