@@ -28,7 +28,7 @@ return {
 	--The longest this game will EVER take. Note: by overriding the isDone method you can end
 	--the game sooner. This is just how long until the engine kills your game and asks it for
 	--a score by force.
-	maxDuration = 100,
+	maxDuration = 30,
 	
 	--This is where you define what an actual running version of your game is.
 	--The first parameter is a table you must fill in with your desired callbacks,
@@ -41,7 +41,7 @@ return {
 	makeGameInstance = function(self, info)
 		--Each game may choose how to scale difficulty. The template imposes a time limit
 		--that is modified by the difficulty of the game
-		self.time_limit = ({easy=15, medium=10, hard=8, impossible=4})[info.difficulty]
+		self.time_limit = ({easy=10, medium=15, hard=20, impossible=30})[info.difficulty]
 		
 		--Callbacks
 		
@@ -126,44 +126,39 @@ return {
 			--update was called
 
 			--here we just keep track of how much time has passed
-			self.elapsed_time = self.elapsed_time+dt
+			self.elapsed_time = self.elapsed_time + dt
 
 			-- Start playing background audio loop
 			if not self.backgroundLoopStarted then
 				love.audio.play( self.backgroundLoop )
 			end
 
-			-- Scroll Background --todo: Make this work for more than 3 values
+			-- Move each background frame.
 			for i = 1, 3 do
-				self.backgroundQueue[i].x = self.backgroundQueue[i].x - ( 300 * dt )
+				speedMultiplier = 300
+				self.backgroundQueue[i].x = self.backgroundQueue[i].x - ( speedMultiplier * dt )
 
-				-- If the head of the queue is <= -400, pop it from the queue and
-				-- push it to the rear. BAM, sidescroller.
 				if self.backgroundQueue[i].x <= -400 then
-					local randomIndex = math.random( 1, #self.backgroundTextures )
-					self.backgroundQueue[i].image = self.backgroundTextures[randomIndex]
 					self.backgroundQueue[i].x = self.backgroundQueue[i].x + 800
+
+					randomIndex = math.random( 1, #self.backgroundTextures )
+					self.backgroundQueue[i].image = self.backgroundTextures[randomIndex]
 				end
 			end
 
-			-- if self.backgroundQueue[1].x <= -400 then
-			-- 	firstBackground = self.backgroundQueue[1].pop()
-			-- 	firstBac
-			-- end
-
             --enemy AI. TODO: Make this smarter
             if self.playerY > self.enemyY then
-                self.enemyY = self.enemyY + 10*dt
+                self.enemyY = self.enemyY + 10 * dt
             else
-                self.enemyY = self.enemyY - 10*dt
+                self.enemyY = self.enemyY - 10 * dt
             end
 
 		end
 		
 		self.draw = function(self)
 			-- Draw the pretty scrolly background thing
-			for i = 1, #self.backgroundQueue do
-                if self.backgroundQueue[i].x < 400 then
+			for i = 1, 3 do
+                if self.backgroundQueue[i].x > -400 and self.backgroundQueue[i].x < 400 then
                     love.graphics.draw(self.backgroundQueue[i].image, self.backgroundQueue[i].x, 0)
                 end
             end
@@ -199,7 +194,6 @@ return {
 		end
 		
 		self.keypressed = function(self, key)
-			
 			print(key.." was pressed")
 		end
 		
