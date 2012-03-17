@@ -54,7 +54,7 @@ return {
 			y = (love.graphics.getHeight() - self.height)/2 
 			love.graphics.draw(self.derivative, x, y,0,.5,.5)
 			y = y + self.derivative:getHeight()/2 + 30
-			x = (love.graphics.getWidth() - self.equations[self.cur].image:getWidth())/2
+			x = (love.graphics.getWidth() - self.equations[self.cur].image:getWidth()/2)/2
 			numx = x - 50
 			love.graphics.draw(self.equations[self.cur].image, x, y,0,.5,.5)
 			y = y + self.equations[self.cur].image:getHeight()/2 +20
