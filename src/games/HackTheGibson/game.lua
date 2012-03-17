@@ -113,13 +113,36 @@ return {
 			end
 
 			--here we just keep track of how much time has passed
-			self.elapsed_time = self.elapsed_time+dt			
+			self.elapsed_time = self.elapsed_time+dt
+
+            --enemy AI
+            if self.playerY > self.enemyY then
+                self.enemyY + 10*dt
+            else
+                self.enemyY - 10*dt
+            end
+
+
 		end
 		
 		self.draw = function(self)
 			--here we just put how much time is left in the upper left corner
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
+            love.graphics.setMode('replace')
+            love.graphics.draw(self.player.img, self.playerX, self.playerY)
+            love.graphics.draw(self.enemy.img, self.enemyX, self.enemyY)
+
+            for i=1,#self.enemy.bullets do
+                love.graphics.rectangle('fill', self.enemy.bullets[i].x, self.enemy.bullets[i].y)
+            end
+
+            for i=1,#self.bkgdQueue do
+                if self.bkgdQueue[i].x < 400 then
+                    love.graphics.draw(self.bkgdQueue[i].img, self.bkgdQueue[i].x, 0)
+                end
+            end
+
 		end
 		
 		self.isDone = function(self)
