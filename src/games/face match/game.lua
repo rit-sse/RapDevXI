@@ -56,12 +56,45 @@ return {
 			--DON'T START SOUNDS IN GET READY! They will begin playing during the splash screen, and
 			--be stopped before your game is actually shown
 
-			--Load all the faces
-			self.faces = {
-				love.graphics.newImage(basePath.."faces/megusta.png"),
-				love.graphics.newImage(basePath.."faces/okay.png"),
-				love.graphics.newImage(basePath.."faces/derp.png")
+			self.allFaces = {
+				"megusta.png",
+				"okay.png",
+				"derp.png",
+				"no.png",
+				"yao.png",
+				"pokerface.png"
 			}
+
+			math.randomseed(os.time())
+			local i1 = math.random(#self.allFaces);
+
+			local i2 = i1
+			repeat
+				i2 = math.random(#self.allFaces);
+			until i2 ~= i1
+
+			local i3 = i1
+			repeat
+				i3 = math.random(#self.allFaces);
+			until i3 ~= i1 and i3 ~= i2
+
+			print(i1)
+			print(i2)
+			print(i3)
+
+			self.faces = {
+				love.graphics.newImage(basePath.."faces/"..self.allFaces[i1]),
+				love.graphics.newImage(basePath.."faces/"..self.allFaces[i2]),
+				love.graphics.newImage(basePath.."faces/"..self.allFaces[i3])
+			}
+
+
+			--Load all the faces
+			--self.faces = {
+			--	love.graphics.newImage(basePath.."faces/megusta.png"),
+			--	love.graphics.newImage(basePath.."faces/okay.png"),
+			--	love.graphics.newImage(basePath.."faces/derp.png")
+			--}
 
 			--Setup all the face quads
 			self.faceQuads = {
@@ -97,9 +130,47 @@ return {
 
 			--here we just keep track of how much time has passed
 			self.elapsed_time = self.elapsed_time+dt
+
+
 			self.topPos = (self.topPos + (self.topDelta * dt)) % 1200
 			self.midPos = (self.midPos + (self.midDelta * dt)) % 1200
 			self.bottomPos = (self.bottomPos + (self.bottomDelta * dt)) % 1200
+
+			if self.state == 'stoppingT' then
+				if self.topPos >= self.topTarget then
+					self.topDelta = 0;
+					self.topPos = self.topTarget
+					self.state = 'spinMB'
+				elseif self.topTarget == 1200 and (self.topPos - self.topDelta) < 0 then
+					self.topDelta = 0;
+					self.topPos = 0
+					self.state = 'spinMB'
+				end
+
+
+			elseif self.state == 'stoppingM' then
+				if self.midPos >= self.midTarget then
+					self.midDelta = 0;
+					self.midPos = self.midTarget
+					self.state = 'spinB'
+				elseif self.midTarget == 1200 and (self.midPos - self.midDelta) < 0 then
+					self.midDelta = 0;
+					self.midPos = 0
+					self.state = 'spinB'
+				end
+
+
+			elseif self.state == 'stoppingB' then
+				if self.bottomPos >= self.bottomTarget then
+					self.bottomDelta = 0;
+					self.bottomPos = self.bottomTarget
+					self.state = 'end'
+				elseif self.bottomTarget == 1200 and (self.bottomPos - self.bottomDelta) < 0 then
+					self.bottomDelta = 0;
+					self.bottomPos = 0
+					self.state = 'end'
+				end
+			end
 		end
 		
 		self.draw = function(self)
@@ -148,12 +219,19 @@ return {
 		self.keypressed = function(self, key)
 			if key == ' ' then
 				if self.state == 'spinTMB' then
-					--local topTarget = Math.floor(self.topPos / 400) 
-					--self.topPos = 
+					self.topTarget = math.ceil(self.topPos / 400) * 400 --% 1200
+					self.topDelta = self.topDelta / 2
+					print("topTarget:"..self.topTarget)
 					self.state = 'stoppingT'
 				elseif self.state == 'spinMB' then
+					self.midTarget = math.ceil(self.midPos / 400) * 400 --% 1200
+					self.midDelta = self.midDelta / 2
+					print("midTarget:"..self.midTarget)
 					self.state = 'stoppingM'
 				elseif self.state == 'spinB' then
+					self.bottomTarget = math.ceil(self.bottomPos / 400) * 400 --% 1200
+					self.bottomDelta = self.bottomDelta / 2
+					print("bottomTarget:"..self.bottomTarget)
 					self.state = 'stoppingB'
 				end
 			end
