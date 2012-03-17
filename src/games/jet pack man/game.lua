@@ -200,6 +200,10 @@ return {
         }
       }
 
+      -- Load Music
+      self.bgm = love.audio.newSource(basePath .. "woah.mp3")
+      self.bgm_first_update = true
+
       -- Load Background
       self.background = {
         image  = love.graphics.newImage(basePath .. "cave.jpg")
@@ -225,7 +229,21 @@ return {
 			self.elapsed_time = 0
 		end
 
+    function self:ensure_playing_audio()
+      if self.bgm_first_update then
+        self.bgm:play()
+        self.bgm_first_update = false
+      end
+
+      if self.lose then
+        love.audio.stop()
+      end
+    end
+
 		self.update = function(self, dt)
+      -- Audio garbage
+      self:ensure_playing_audio()
+
       -- Update jet man
       self.player:update(dt)
 
@@ -361,6 +379,10 @@ return {
 
       return score
 		end
+
+    self.on_lose = function(self)
+      self.bgm:stop()
+    end
 		
 		self.keypressed = function(self, key)
 			if key == 'left'  then self.player.left  = true end
