@@ -8,6 +8,7 @@ listOfGames = {
 	"the car",
 	"don't blink",
 	"dodge everything",
+	"face match",
 	"ice cream truck",
 	"i will derive",
 	"waste the ink",
