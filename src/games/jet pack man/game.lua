@@ -185,6 +185,19 @@ return {
       self.background.scalex = love.graphics.getWidth() / self.background.image:getWidth()
       self.background.scaley = love.graphics.getHeight() / self.background.image:getHeight()
 
+      -- Set up particle system
+      self.particle_image = love.graphics.newImage(basePath .. "fire.png")
+      self.particle_system = love.graphics.newParticleSystem(self.particle_image, 9600)
+
+      self.particle_system:setSpeed(640)
+      self.particle_system:setSpread(0.5)
+      self.particle_system:setEmissionRate(320)
+      self.particle_system:setLifetime(-1)
+      self.particle_system:setParticleLife(.5)
+      self.particle_system:setGravity(100,200)
+      self.particle_system:setColor(220, 120, 50, 100, 20, 20, 120, 0)
+      self.particle_system:stop()
+
       -- Class setup
       Section.image = love.graphics.newImage(basePath .. "wall.png")
       Section.max   = math.floor(love.graphics.getHeight() / Section.image:getHeight())
@@ -213,6 +226,7 @@ return {
 
       -- Update jet man
       self.player:update(dt)
+      self.particle_system:setPosition(self.player.x, self.player.y)
 
       self:check_lose()
 
@@ -233,6 +247,7 @@ return {
       self:clean_up_sections()
 
       self.hc:update(dt)
+      self.particle_system:update(dt)
 		end
 
     function self:clean_up_sections()
@@ -288,6 +303,9 @@ return {
         section:draw()
       end
 
+      -- Draw particles
+      love.graphics.draw(self.particle_system)
+
 		end
 
     self.check_lose = function(self)
@@ -333,8 +351,18 @@ return {
 		self.keypressed = function(self, key)
 			if key == 'left'  then self.player.left  = true end
 			if key == 'right' then self.player.right = true end
-      if key == 'up'    then self.player.up    = true end
-      if key == 'down'  then self.player.down  = true end
+      if key == 'up'    then
+        self.player.up = true
+        self.particle_system:setDirection(math.pi / 2 + math.pi / 6)
+      end
+      if key == 'down'  then
+        self.player.down  = true
+        self.particle_system:setDirection(3 / 2 * math.pi - math.pi / 6)
+      end
+
+      if self.player.up or self.player.down then
+        self.particle_system:start()
+      end
 		end
 		
 		self.keyreleased = function(self, key)
@@ -342,6 +370,10 @@ return {
 			if key == 'right' then self.player.right = false end
       if key == 'up'    then self.player.up    = false end
       if key == 'down'  then self.player.down  = false end
+
+      if not self.player.up and not self.player.down then
+        self.particle_system:stop()
+      end
 		end
 	end
 }
