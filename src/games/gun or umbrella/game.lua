@@ -10,8 +10,6 @@ return {
 	
 	makeGameInstance = function(self, info)
 		self.getReady = function(self, basePath)
-			--self.sound = love.audio.newSource(basePath.."sound.mp3")
-			
 			self.umbrellas = {
 				love.graphics.newImage(basePath.."umbrella1.png"),
 				love.graphics.newImage(basePath.."umbrella2.png"),
@@ -21,6 +19,9 @@ return {
 				left=love.graphics.newImage(basePath.."arrowL.png"),
 				right=love.graphics.newImage(basePath.."arrowR.png")
 			}
+			
+			self.back = love.audio.newSource(basePath.."rain.mp3")
+			self.play = false
 			
 			self.done = false
 			self.score = -1
@@ -47,7 +48,13 @@ return {
 			
 		end
 		
-		self.update = function(self, dt) self.elapsed = self.elapsed+dt end
+		self.update = function(self, dt) 
+			self.elapsed = self.elapsed+dt 
+			if not self.play then
+				self.play = true
+				love.audio.play(self.back)
+			end
+		end
 		
 		self.isDone = function(self)
 			return self.done
