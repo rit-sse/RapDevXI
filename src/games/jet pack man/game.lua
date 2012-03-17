@@ -55,16 +55,46 @@ return {
 
     -- Classes
     Opening = { }
-    function Opening:new(top, bottom)
-      o = { top = top, bottom = bottom }
+    function Opening:new()
+      local o = { blocked = { } }
+      for i=0, self.max do
+        table.insert(o.blocked, true)
+      end
+
+      o.object = hc:addRectangle(x, 0, self.image.getWidth(), love.graphics.getWidth())
       setmetatable(o, { __index = Opening })
+      return o
+    end
+
+    function Opening:update(dt, velocity)
+      self.x = self.x - velocity * dt
+      self.object:move(velocity * dt, 0)
+    end
+
+    function Opening:add_opening(top, bottom)
+      for i = top, bottom do self.o[i] = false end
+    end
+
+    function Opening:draw()
+      for i = 0, Opening.max do
+        if self[i] then
+          love.graphics.draw(self.image, self.x,
+                             self.image:getWidth(), i * self.image:getHeight())
+        end
+      end
+    end
+
+    Wall = { }
+    function Wall:new(top, bottom)
+      o = { top = top, bottom = bottom }
+      setmetatable(o, { __index = Wall })
       return o
     end
 
     JetMan = { gravity = 160, thrust = 320, vertical_speed = 0, fire = false,
                horizontal_speed = 48, left = false, right = false }
     function JetMan:new(image, hc)
-      o = {
+      local o = {
         image = love.graphics.newImage(image),
         y = love.graphics.getHeight() * 0.4,
         x = love.graphics.getWidth() * 0.1
@@ -117,8 +147,17 @@ return {
       self.background.scalex = love.graphics.getWidth() / self.background.image:getWidth()
       self.background.scaley = love.graphics.getHeight() / self.background.image:getHeight()
 
+      -- Main images
+      Opening.image = love.graphics.newImage(basePath .. "wall.png")
+      Wall.image    = love.graphics.newImage(basePath .. "wall.png")
+
+      Opening.max   = math.floor(love.graphics.getHeight() / Opening.image:getHeight())
+
       -- Set up player
       self.player = JetMan:new(basePath .. "jet-pack.png", self.hc)
+
+      -- Set up walls
+      self.sections = { }
 
 			--Aso set up your own initial game state here.
 			self.elapsed_time = 0
@@ -131,7 +170,7 @@ return {
       self:check_lose()
 
 			--here we just keep track of how much time has passed
-			self.elapsed_time = self.elapsed_time+dt			
+			self.elapsed_time = self.elapsed_time + dt
 		end
 
 		self.draw = function(self)
