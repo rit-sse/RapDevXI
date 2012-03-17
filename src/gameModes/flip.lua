@@ -2,7 +2,7 @@ local makeMode = function()
 	local mode = {
 		static = false,
 		i = 1,
-		baseTime = 1.5,
+		baseTime = 2,
 		modTime = 1,
 		games = {},
 		
@@ -46,7 +46,7 @@ local makeMode = function()
 		end,
 		
 		setResults = function(self, res)
-			self.i = math.random(#self.games)--(self.i % #self.games)+1
+			self.i = math.random(#self.games*100)%#self.games+1
 			self.static = not self.static
 		end,
 		
