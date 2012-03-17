@@ -19,7 +19,9 @@ return {
 			correct = {}
 			self.pNums = {}
 			self.derivative = love.graphics.newImage(basePath.."derivative.png")
-			for i = 1, 4 do 
+			self.sound = love.audio.newSource(basePath.."jeopardy.mp3")
+			self.playing = false
+			for i = 1, 4 do
 				self.pNums[i] = love.graphics.newImage(basePath..i..".png")
 			end
 			for line in io.lines(basePath.."answers.txt") do
@@ -39,6 +41,10 @@ return {
 		end
 
 		self.update = function(self, dt)
+			if not self.playing then
+				love.audio.play(self.sound)
+				self.playing = true
+			end
 			if self.elapsed_time > (self.score+1)*5  then
 				self.lost = true
 			elseif self.solved then
