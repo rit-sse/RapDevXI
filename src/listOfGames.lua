@@ -1,5 +1,5 @@
 listOfGames = {
-  "sunshine",
+	"sunshine",
 	"HelloWorld",
 	"that floppy",
 	"bricks bricks everywhere",
@@ -8,7 +8,9 @@ listOfGames = {
 	"the car",
 	"don't blink",
 	"dodge everything",
-	"ice cream truck"
+	"ice cream truck",
+	"i will derive",
+	"waste the ink"
 }
 
 return listOfGames
