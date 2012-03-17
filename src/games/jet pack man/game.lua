@@ -1,5 +1,5 @@
 return {
-	standalone_difficulty = "easy",
+	standalone_difficulty = "medium",
 	--Here go all of the static info values for our game
 	--  Remember a comma after each entry, as we are in a table initialization
 	
@@ -41,8 +41,9 @@ return {
 	makeGameInstance = function(self, info)
 		--Each game may choose how to scale difficulty. The template imposes a time limit
 		--that is modified by the difficulty of the game
-		self.time_limit = ({easy=15, medium=10, hard=8, impossible=4})[info.difficulty]
+		self.time_limit = 15
 
+    self.difficulty = info.difficulty
     self.lost = false
 
     -- Hardon Collider
@@ -92,8 +93,8 @@ return {
       return o
     end
 
-    JetMan = { gravity = 160, thrust = 320, vertical_speed = 0, fire = false,
-               horizontal_speed = 48, left = false, right = false }
+    JetMan = { gravity = 260, thrust = 520, vertical_speed = 0, up = false, down = false,
+               horizontal_speed = 96, left = false, right = false }
     function JetMan:new(image, hc)
       local o = {
         image = love.graphics.newImage(image)
@@ -127,8 +128,10 @@ return {
         self:move(self.horizontal_speed * dt, 0)  -- positive -> right
       end
 
-      if self.fire then
+      if self.up then
         self.vertical_speed = self.vertical_speed - self.thrust * dt
+      elseif self.down then
+        self.vertical_speed = self.vertical_speed + self.thrust * dt
       else
         self.vertical_speed = self.vertical_speed + self.gravity * dt
       end
@@ -139,6 +142,29 @@ return {
 		-- Callbacks
 		
 		self.getReady = function(self, basePath)
+      math.randomseed(os.time())
+
+      -- Difficulty stuff
+      self.configuration = {
+        easy = {
+          cooldown_time = 2,
+          section_speed = 80,
+          opening_width = 4
+        }, medium = {
+          cooldown_time = 1.4,
+          section_speed = 120,
+          opening_width = 2
+        }, hard = {
+          cooldown_time = 1.0,
+          section_speed = 160,
+          opening_width = 2
+        }, impossible = {
+          cooldown_time = 0.8,
+          section_speed = 220,
+          opening_width = 1
+        }
+      }
+
       -- Load Background
       self.background = {
         image  = love.graphics.newImage(basePath .. "cave.jpg")
@@ -154,47 +180,48 @@ return {
 
       -- Setup collection of walls
       self.sections = { }
-      self.cooldown_start = 3
       self.cooldown = 0
 
       -- Set up player
       self.player = JetMan:new(basePath .. "jet-pack.png", self.hc)
 
-			--Aso set up your own initial game state here.
+			--Also set up your own initial game state here.
 			self.elapsed_time = 0
 		end
 
 		self.update = function(self, dt)
       -- Update jet man
       self.player:update(dt)
-      self.hc:update(dt)
 
       self:check_lose()
 
       if self.cooldown < 0 then
-        self.cooldown = self.cooldown_start
+        self.cooldown = self.configuration[self.difficulty].cooldown_time
         self:add_section()
       end
 
       for idx, section in pairs(self.sections) do
-        section:update(dt, 86)
+        section:update(dt, self.configuration[self.difficulty].section_speed)
       end
 
 			--here we just keep track of how much time has passed
 			self.elapsed_time = self.elapsed_time + dt
       self.cooldown = self.cooldown - dt
+
+      self.hc:update(dt)
 		end
 
     self.add_section = function(self)
       local section = Opening:new(self.hc)
       local start = 0
       local times = 0
+      local width = self.configuration[self.difficulty].opening_width
 
       for i = 0, times do
-        start = math.random(section.max - 5)
+        start = math.random(section.max - width)
         times = math.random(2) + 1
 
-        section:add_opening(start, start + 5)
+        section:add_opening(start, start + width)
       end
 
       table.insert(self.sections, section)
@@ -255,7 +282,7 @@ return {
       local height = opening.image:getHeight()
       for idx, blocked in pairs(opening.blocked) do
         if blocked then
-          if (idx - 1) * height < player.y and player.y < idx * height then
+          if (idx - 1) * height < player.y and player.y + player.image:getHeight() < idx * height then
             self.lost = true
           end
         end
@@ -276,19 +303,27 @@ return {
 		self.getScore = function(self)
 			--return a number -1 to 1. anything >0 is a "passing" score
 
-			return -1 --the player always looses. 
+			local score_ratio = self.elapsed_time / self.time_limit
+      local score = 3 * score_ratio - 2
+
+      if score < -1 then return -1 end
+      if score > 1  then return 1  end
+
+      return score
 		end
 		
 		self.keypressed = function(self, key)
 			if key == 'left'  then self.player.left  = true end
 			if key == 'right' then self.player.right = true end
-      if key == 'up'    then self.player.fire  = true end
+      if key == 'up'    then self.player.up    = true end
+      if key == 'down'  then self.player.down  = true end
 		end
 		
 		self.keyreleased = function(self, key)
 			if key == 'left'  then self.player.left  = false end
 			if key == 'right' then self.player.right = false end
-      if key == 'up'    then self.player.fire  = false end
+      if key == 'up'    then self.player.up    = false end
+      if key == 'down'  then self.player.down  = false end
 		end
 	end
 }
