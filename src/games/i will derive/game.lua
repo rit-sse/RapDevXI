@@ -16,16 +16,13 @@ return {
 		self.score = 0
 		
 		self.getReady = function(self, basePath)
-			correct = {}
+			correct = {"2","3","1","3","4","1","2","3","2","4","1","2","1","2","3","1","2","4"}
 			self.pNums = {}
 			self.derivative = love.graphics.newImage(basePath.."derivative.png")
 			self.sound = love.audio.newSource(basePath.."jeopardy.mp3")
 			self.playing = false
 			for i = 1, 4 do
 				self.pNums[i] = love.graphics.newImage(basePath..i..".png")
-			end
-			for line in io.lines(basePath.."answers.txt") do
-				table.insert(correct, line)
 			end
 			self.equations ={}
 			for i = 1, 18 do
