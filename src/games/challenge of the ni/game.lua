@@ -47,6 +47,8 @@ return {
 
 		
 		self.getReady = function(self, basePath)
+
+			math.randomseed(os.time())
 			--get ready is called during the splash screen.
 			--The intent is to load all sounds and images during getReady
 
@@ -103,13 +105,14 @@ return {
 		self.draw = function(self)
 			--here we just put how much time is left in the upper left corner
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff 
-			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
-			love.graphics.draw(self.branches, 150, -50)
+			love.graphics.draw(self.sky, 0, 0)
 
-			love.graphics.draw(self.tree, 270, 0)
+			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
 
 
 			if self.state == 'cutting' then
+				love.graphics.draw(self.branches, 150, -50)
+				love.graphics.draw(self.tree, 270, 0)
 				local i = 1
 				for i = 1, 20 do
 					if self.treeChunks[i] > 3 then
@@ -122,16 +125,25 @@ return {
 
 				end
 			elseif self.state == 'falling' then
+				love.graphics.push()
+
+				love.graphics.rotate(self.topRot)
+				
 				--draw top
-				--love.graphics
+				love.graphics.drawq(self.tree, self.treeTop, 270, 0)
+				love.graphics.drawq(self.cracks[4], self.crackTop, 270, (self.fallingSegment - 1) * 20)
+
+				love.graphics.pop()
 
 
 				--draw bottom
+				love.graphics.drawq(self.tree, self.treeBottom, 270, (self.fallingSegment * 20) - 10)
+				love.graphics.drawq(self.cracks[4], self.crackBottom, 270, (self.fallingSegment * 20) - 10)
 			end
 
 			love.graphics.draw(self.herring, 20, 200)
 			
-
+			love.graphics.draw(self.grass, 0, 360)
 
 		end
 		
@@ -156,8 +168,9 @@ return {
 			if self.treeChunks[rand] == 4 then
 				self.fallingSegment = rand
 				self.state = 'falling'
-				self.treeTop = love.graphics.newQuad(0, 0, 100, rand * 20 + 10, 100, 400)
-				self.treeBottom = love.graphics.newQuad(0, rand * 20 + 10, 100, 400 - (rand * 20 + 10), 100, 400)
+				self.treeTop = love.graphics.newQuad(0, 0, 100, (rand-1) * 20 + 10, 100, 400)
+				self.treeBottom = love.graphics.newQuad(0, rand * 20 + 10, 100, 400 - ((rand-1) * 20 + 10), 100, 400)
+				self.topRot = 0
 			end
 
 			print(key.." was pressed")
