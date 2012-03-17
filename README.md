@@ -1,5 +1,9 @@
 #RapDevXI SSE WarioWare
 
+###Stuff added to this fork
+* new game: tp party (game)
+* fix media paths for torch (game)
+
 ###Links that are useful
 * [Lua Reference Manual](http://www.lua.org/manual/5.1)
 * [Lua Online Book (Programming In Lua)](http://www.lua.org/pil/index.html)
