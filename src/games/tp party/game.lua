@@ -42,6 +42,20 @@ return {
 		self.update = function(self, dt)
 			self.elapsed_time = self.elapsed_time+dt	
 
+<<<<<<< HEAD
+            self.box1 = {x = self.cir1.x, y = self.cir1.y - self.cir1.r, w = 200, l = 2*self.cir1.r } -- box
+			if self.done == false then
+				self.box2 = {x = self.cir1.x + self.cir1.r, y = self.cir1.y, w = 200, l = 800} -- toliet paper
+			end
+            self.cir2 = {x = self.cir1.x + self.box2.w, y = self.cir1.y} -- the circle right
+
+			self.handL.x = self.cir1.x + 36 + self.cir1.r -- left hand
+            self.handR.x = self.cir2.x + -36 + self.cir1.r -- right hand
+
+			if self.done == true then
+				self.box2.y = self.box2.y + .3
+			end
+=======
 			if not self.musicStarted then
 				love.audio.play(self.music)
 				self.musicStarted = true
@@ -53,15 +67,27 @@ return {
 			
 			self.handL.x = self.cir1.x + 36 + self.cir1.r -- left hand
 			self.handR.x = self.cir2.x + -36 + self.cir1.r -- right hand			
+>>>>>>> c0cf40c80c04e172c50483922d662e38c5169abe
 		end
 		
 		self.draw = function(self)
 			--here we just put how much time is left in the upper left corner
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
+			love.graphics.setColor(255,255,255)
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
+			love.graphics.rectangle("fill", self.box2.x, self.box2.y, self.box2.w, self.box2.l)
 			
+			if self.done == true then
+				love.graphics.setColor(205,183,158)
+			end
 			love.graphics.circle("fill", self.cir1.x, self.cir1.y, self.cir1.r, 100)
 			love.graphics.circle("fill", self.cir2.x, self.cir2.y, self.cir1.r, 100)
+<<<<<<< HEAD
+		    love.graphics.rectangle("fill", self.box1.x, self.box1.y, self.box1.w, self.box1.l)
+	        love.graphics.setColor(130,130,130)
+            love.graphics.circle("fill", self.cir1.x, self.cir1.y, 3, 100)
+            love.graphics.setColor(255,255,255)
+=======
 			love.graphics.rectangle("fill", self.box1.x, self.box1.y, self.box1.w, self.box1.l)
 			love.graphics.rectangle("fill", self.box2.x, self.box2.y, self.box2.w, self.box2.l)
 			love.graphics.setColor(130,130,130)
@@ -69,6 +95,7 @@ return {
 			love.graphics.setColor(0,0,0)
 			love.graphics.circle("line", self.cir1.x, self.cir1.y, self.cir1.r, 100)
 			love.graphics.setColor(255,255,255)
+>>>>>>> c0cf40c80c04e172c50483922d662e38c5169abe
 			love.graphics.draw(self.handL.img, self.handL.x, self.handL.y, 0, -3, 3)
 			love.graphics.draw(self.handR.img, self.handR.x, self.handR.y, 0, 3, 3)
 		end
