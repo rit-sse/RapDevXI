@@ -5,31 +5,18 @@ return {
 	keys = {"arrows"},
 	maxDuration = 15,
 	makeGameInstance = function(self, info)
+        self.done = false
 		self.time_limit = ({easy=15, medium=10, hard=8, impossible=4})[info.difficulty]
 		self.getReady = function(self, basePath)
             cir1 = {x = 50,                 y = 50,         r = 30} -- the circle left
             box1 = {x = cir1.x,             y = cir1.y-cir1.r,     w = 200, l = 2*cir1.r } -- box
             box2 = {x = cir1.x + cir1.r,    y = cir1.y,     w = 200, l = 800} -- toliet paper
             cir2 = {x = cir1.x + box2.w,    y = cir1.y} -- the circle right
-            handL = {x = cir1.x + 30,       y = cir1.y+2*cir1.r + 30} -- left hand
-            handR = {x = cir2.x + 30,       y = cir2.y+2*cir2.r + 30} -- right hand
+            handL = {x = cir1.x + 30,       y = (cir1.y + (2 * cir1.r)) + 30} -- left hand
+            handR = {x = cir2.x + 30,       y = (cir2.y + (2 * cir2.r)) + 30} -- right hand
 			
             handL = love.graphics.newImage("hand.png")
             handR = love.graphics.newImage("hand.png")
-
-            --get ready is called during the splash screen.
-			--The intent is to load all sounds and images during getReady
-
-			--Concatenate basePath with any resource names. This makes your game work in both standalone
-			--and the main game mode
-
-			--DON'T START SOUNDS IN GET READY! They will begin playing during the splash screen, and
-			--be stopped before your game is actually shown
-
-			--self.image = love.graphics.newImage(basePath.."sprite.png")
-			--self.sound = love.sound.newSource(basePath.."sound.mp3")
-
-			--Aso set up your own initial game state here.
 			self.elapsed_time = 0
 		end
 
@@ -49,14 +36,10 @@ return {
         end
 
 		self.update = function(self, dt)
-			--update is called in between draws. dt is the time in seconds since the last time
-			--update was called
-
-			--here we just keep track of how much time has passed
 			self.elapsed_time = self.elapsed_time+dt	
 
-            box1 = {x = cir1.x,             y = cir1.y-cir1.r,     w = 200, l = 2*cir1.r } -- box
-            box2 = {x = cir1.x + cir1.r,    y = cir1.y,     w = 200, l = 800} -- toliet paper
+            box1 = {x = cir1.x,             y = cir1.y - cir1.r,    w = 200, l = 2*cir1.r } -- box
+            box2 = {x = cir1.x + cir1.r,    y = cir1.y,             w = 200, l = 800} -- toliet paper
             cir2 = {x = cir1.x + box2.w,    y = cir1.y} -- the circle right			
 		end
 		
