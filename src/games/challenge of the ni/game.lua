@@ -70,6 +70,8 @@ return {
 
 			self.herring = love.graphics.newImage(basePath.."herring.png")
 
+			self.branches = love.graphics.newImage(basePath.."branches.png")
+
 			self.treeChunks = {}
 			local i = 1
 			for i = 1, 20 do
@@ -92,13 +94,15 @@ return {
 			--here we just put how much time is left in the upper left corner
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
-
+			love.graphics.draw(self.branches, 150, -50)
 
 			love.graphics.draw(self.tree, 270, 0)
 
+
+
 			local i = 1
 			for i = 1, 20 do
-				if self.treeChunks[i] > 4 then
+				if self.treeChunks[i] > 3 then
 					love.graphics.setColor(0,0,0)
 					love.graphics.rectangle('fill', 270, (i-1) * 20, 100, 20)
 					love.graphics.setColor(255,255,255)
@@ -108,6 +112,7 @@ return {
 
 			end
 
+			love.graphics.draw(self.herring, 20, 200)
 
 
 		end
