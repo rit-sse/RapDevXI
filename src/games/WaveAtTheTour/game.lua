@@ -67,6 +67,11 @@ return {
 			self.img.leg2 = love.graphics.newImage(basePath.."leg2.png")
 			self.img.body = love.graphics.newImage(basePath.."leg2.png")
 			self.img.face = love.graphics.newImage(basePath.."face.png")
+			self.img.hand1 = love.graphics.newImage(basePath.."hand01.png")		
+			self.img.hand2 = love.graphics.newImage(basePath.."hand01.png")
+			self.img.hand3 = love.graphics.newImage(basePath.."hand01.png")
+			self.img.hand4 = love.graphics.newImage(basePath.."hand01.png")
+			self.img.hand5 = love.graphics.newImage(basePath.."hand01.png")
 			self.faceX = 6
 			self.faceY = 6
 			self.faceS = .7
@@ -184,12 +189,17 @@ return {
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
 			love.graphics.draw(self.img.hand,self.handY,self.handX,self.handT,1,1)
 			love.graphics.draw(self.img.face,self.faceY,self.faceX,0,self.faceS,1)
+			love.graphics.draw(self.img.hand1,self.handY-220,self.handX-130,self.handT,1,1)
+			love.graphics.draw(self.img.hand2,self.handY-100,self.handX-120,self.handT,1,1)
+			love.graphics.draw(self.img.hand3,self.handY-135,self.handX-90,self.handT,1,1)
+			love.graphics.draw(self.img.hand4,self.handY,self.handX-130,self.handT,1,1)
+			love.graphics.draw(self.img.hand5,self.handY-200,self.handX-10,self.handT,1,1)
 		end
 		
 		self.isDone = function(self)
 			--This can return true to have the game end sooner that the time_limit
 			--set for the type of game.
-			if self.leg2Y > love.graphics.getWidth() then
+			if self.leg2Y-15 > love.graphics.getWidth() then
 				return true
 			end
 			--we are done when we are out of time.
@@ -198,7 +208,7 @@ return {
 		
 		self.getScore = function(self)
 			--return a number -1 to 1. anything >0 is a "passing" score
-			if self.leg2Y > love.graphics.getWidth() then
+			if self.leg2Y-15 > love.graphics.getWidth() then
 				return 1
 			else
 				return -1 --the player always looses. 
