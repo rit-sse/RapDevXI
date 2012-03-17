@@ -46,29 +46,31 @@ return {
     self.lost = false
 
     -- Hardon Collider
-    local HC = require 'hardoncollider'
+    self.HC = require 'hardoncollider'
 
-    self.hc = HC(100, oc, ocl)
+    oc  = function(dt, a, b, x, y) self:collide(dt, a, b, x, y) end
+    ocl = function(dt, a, b)       self:collide_leave(dt, a, b) end
 
-    local oc  = function(dt, a, b, x, y) self:collide(dt, a, b, x, y) end
-    local ocl = function(dt, a, b)       self:collide_leave(dt, a, b) end
+    self.hc = self.HC(100, oc, ocl)
+
 
     -- Classes
-    Opening = { }
+    Opening = { class = 'opening' }
     function Opening:new(hc)
       local o = { blocked = { }, x = love.graphics.getWidth() }
       for i=0, self.max do
         table.insert(o.blocked, true)
       end
 
-      o.object = hc:addRectangle(o.x, 0, self.image:getWidth(), love.graphics.getWidth())
+      o.object = hc:addRectangle(love.graphics.getWidth(), 0,
+                                 self.image:getWidth(), love.graphics.getHeight())
       setmetatable(o, { __index = Opening })
       return o
     end
 
     function Opening:update(dt, velocity)
       self.x = self.x - velocity * dt
-      self.object:move(velocity * dt, 0)
+      self.object:move(- velocity * dt, 0)
     end
 
     function Opening:add_opening(top, bottom)
@@ -83,7 +85,7 @@ return {
       end
     end
 
-    Wall = { }
+    Wall = { class = 'wall' }
     function Wall:new(top, bottom)
       o = { top = top, bottom = bottom }
       setmetatable(o, { __index = Wall })
@@ -94,13 +96,13 @@ return {
                horizontal_speed = 48, left = false, right = false }
     function JetMan:new(image, hc)
       local o = {
-        image = love.graphics.newImage(image),
-        y = love.graphics.getHeight() * 0.4,
-        x = love.graphics.getWidth() * 0.1
+        image = love.graphics.newImage(image)
       }
+      o.y = love.graphics.getHeight() * 0.4 - o.image:getHeight() * 0.5
+      o.x = love.graphics.getWidth() * 0.1 - o.image:getWidth() * 0.5
 
-      o.object = hc:addRectangle(o.x + 1,                o.y + 1,
-                                 o.image:getWidth() - 1, o.image:getHeight() - 1)
+      o.object = hc:addRectangle(o.x,                o.y,
+                                 o.image:getWidth(), o.image:getHeight())
       o.object:moveTo(love.graphics.getWidth() * 0.1,
                      love.graphics.getHeight() * 0.4)
       setmetatable(o, { __index = JetMan })
@@ -165,13 +167,13 @@ return {
 		self.update = function(self, dt)
       -- Update jet man
       self.player:update(dt)
+      self.hc:update(dt)
 
       self:check_lose()
 
       if self.cooldown < 0 then
         self.cooldown = self.cooldown_start
         self:add_section()
-        print("add section")
       end
 
       for idx, section in pairs(self.sections) do
@@ -213,6 +215,7 @@ return {
       for idx, section in pairs(self.sections) do
         section:draw()
       end
+
 		end
 
     self.check_lose = function(self)
@@ -224,12 +227,42 @@ return {
       return self.lost
     end
 
-    function self:collide(self, dt, a, b, x, y)
-      print("lol")
+    function self:collide(dt, a, b, x, y)
+      if a == self.player.object then
+        self:collide_section(self.player, self:getSectionFromPolygon(b))
+      elseif b == self.player.object then
+        self:collide_section(self:getSectionFromPolygon(b), self.player)
+      end
     end
 
-    function self:collide_leave(self, dt, a, b)
-      -- TODO
+    function self:getSectionFromPolygon(polygon)
+      for idx, section in pairs(self.sections) do
+        if section.object == polygon then
+          return section
+        end
+      end
+
+      return nil
+    end
+
+    function self:collide_section(player, section)
+      if section.class == 'opening' then
+        self:collide_opening(player, section)
+      end
+    end
+
+    function self:collide_opening(player, opening)
+      local height = opening.image:getHeight()
+      for idx, blocked in pairs(opening.blocked) do
+        if blocked then
+          if (idx - 1) * height < player.y and player.y < idx * height then
+            self.lost = true
+          end
+        end
+      end
+    end
+
+    function self:collide_leave(dt, a, b)
     end
 		
 		self.isDone = function(self)
