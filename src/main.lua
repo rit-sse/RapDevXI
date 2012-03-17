@@ -43,6 +43,7 @@ framework.mode = framework.modes.initState
 
 function love.load()
     love.graphics.setMode(400,400,false,true,0)
+    love.mouse.setVisible(false)
     
 end
 
@@ -70,6 +71,9 @@ end
 function love.keypressed(key)
     if framework.currentGame ~= nil then
         pcall(function() framework.currentGame:keypressed(key) end)
+    end
+    if key == "f11" then
+        love.graphics.setMode(400,400,true,true,0)
     end
     if key == "escape" then
         love.event.push('q')
