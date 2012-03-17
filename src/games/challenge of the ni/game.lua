@@ -68,6 +68,10 @@ return {
 
 			self.tree = love.graphics.newImage(basePath.."tree.png")
 
+			self.sky = love.graphics.newImage(basePath.."sky.png")
+
+			self.grass = love.graphics.newImage(basePath.."grass.png")
+
 			self.herring = love.graphics.newImage(basePath.."herring.png")
 
 			self.branches = love.graphics.newImage(basePath.."branches.png")
@@ -78,6 +82,12 @@ return {
 				self.treeChunks[i] = 0
 			end
 
+			self.state = 'cutting'
+
+			--setup quads
+			self.crackTop = love.graphics.newQuad(0, 0, 100, 10, 100, 20)
+			self.crackBottom = love.graphics.newQuad(0, 10, 100, 10, 100, 20)
+
 			--Aso set up your own initial game state here.
 			self.elapsed_time = 0
 		end
@@ -87,32 +97,40 @@ return {
 			--update was called
 
 			--here we just keep track of how much time has passed
-			self.elapsed_time = self.elapsed_time+dt			
+			self.elapsed_time = self.elapsed_time+dt	
 		end
 		
 		self.draw = function(self)
 			--here we just put how much time is left in the upper left corner
-			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
+			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff 
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
 			love.graphics.draw(self.branches, 150, -50)
 
 			love.graphics.draw(self.tree, 270, 0)
 
 
+			if self.state == 'cutting' then
+				local i = 1
+				for i = 1, 20 do
+					if self.treeChunks[i] > 3 then
+						love.graphics.setColor(0,0,0)
+						love.graphics.rectangle('fill', 270, (i-1) * 20, 100, 20)
+						love.graphics.setColor(255,255,255)
+					elseif self.treeChunks[i] > 0 then
+						love.graphics.draw(self.cracks[self.treeChunks[i]], 270, (i-1) * 20)
+					end
 
-			local i = 1
-			for i = 1, 20 do
-				if self.treeChunks[i] > 3 then
-					love.graphics.setColor(0,0,0)
-					love.graphics.rectangle('fill', 270, (i-1) * 20, 100, 20)
-					love.graphics.setColor(255,255,255)
-				elseif self.treeChunks[i] > 0 then
-					love.graphics.draw(self.cracks[self.treeChunks[i]], 270, (i-1) * 20)
 				end
+			elseif self.state == 'falling' then
+				--draw top
+				--love.graphics
 
+
+				--draw bottom
 			end
 
 			love.graphics.draw(self.herring, 20, 200)
+			
 
 
 		end
@@ -135,6 +153,13 @@ return {
 			local rand = math.random(20)
 			self.treeChunks[rand] = self.treeChunks[rand] + 1
 			
+			if self.treeChunks[rand] == 4 then
+				self.fallingSegment = rand
+				self.state = 'falling'
+				self.treeTop = love.graphics.newQuad(0, 0, 100, rand * 20 + 10, 100, 400)
+				self.treeBottom = love.graphics.newQuad(0, rand * 20 + 10, 100, 400 - (rand * 20 + 10), 100, 400)
+			end
+
 			print(key.." was pressed")
 		end
 		
