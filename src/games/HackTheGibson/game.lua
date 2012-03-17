@@ -44,7 +44,6 @@ return {
 		self.time_limit = ({easy=15, medium=10, hard=8, impossible=4})[info.difficulty]
 		
 		--Callbacks
-
 		
 		self.getReady = function(self, basePath)
 			--get ready is called during the splash screen.
@@ -59,23 +58,19 @@ return {
 			--self.image = love.graphics.newImage(basePath.."sprite.png")
 			--self.sound = love.sound.newSource(basePath.."sound.mp3")
 
-			--Aso set up your own initial game state here.
+			self:getAudioReady( basePath.."audio/" )
+			self:getTexturesReady( basePath.."textures/" )
+
+			--Also set up your own initial game state here.
 			self.elapsed_time = 0
             self.score = 1
             self.player = {}
-            self.player.img = love.graphics.newImage("...") --todo
+            --self.player.img = love.graphics.newImage("...") --todo
             self.playerX = 20
             self.playerY = 200
 
-            
-            self.bg = {}
-            for i=1,3 do
-                self.bg[i].img = love.graphics.newImage("..."..i..".png") --todo
-                self.bg[i].x = -400 + i*400
-            end
-
             self.enemy = {}
-            self.enemy.img = love.graphics.newImage("...") --todo
+            --self.enemy.img = love.graphics.newImage("...") --todo
             self.enemyX = 320
             self.enemyY = 200
             self.enemy.bullets = {}
@@ -89,9 +84,33 @@ return {
             
 		end
 
+		self.getAudioReady = function( self, audioPath )
+			--Looping audio
+			self.backgroundLoopStarted= false
+			self.backgroundLoop = love.audio.newSource( audioPath.."voodoo_loop.ogg" )
+			self.backgroundLoop:setLooping( true )
+		end
+
+		self.getTexturesReady = function( self, texturePath )
+			-- Background textures
+			i = 1
+
+			while love.filesystem.exists( texturePath.."tex"..i..".png" ) do
+				local backgroundTexture = texturePath.."tex"..i..".png"
+				print( backgroundTexture )
+				i = i + 1
+			end
+
+			-- Sprites
+		end
+
 		self.update = function(self, dt)
 			--update is called in between draws. dt is the time in seconds since the last time
 			--update was called
+
+			if not self.backgroundLoopStarted then
+				love.audio.play( self.backgroundLoop )
+			end
 
 			--here we just keep track of how much time has passed
 			self.elapsed_time = self.elapsed_time+dt			
@@ -106,7 +125,7 @@ return {
 		self.isDone = function(self)
 			--This can return true to have the game end sooner that the time_limit
 			--set for the type of game.
-	
+
 			--we are done when we are out of time.
 			return self.elapsed_time > self.time_limit
 		end
