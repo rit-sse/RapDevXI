@@ -180,9 +180,10 @@ return {
 		end
 		
 		self.handleAIThink = function( self, aiSpeedMod, dt )
-			if self.player.y >= self.enemy.y then
+			if self.player.y > self.enemy.y then
                 self.enemy.y = self.enemy.y + aiSpeedMod * dt
-            else
+            end
+            if self.player.y < self.enemy.y then
                 self.enemy.y = self.enemy.y - aiSpeedMod * dt
             end
 		end
