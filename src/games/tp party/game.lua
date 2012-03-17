@@ -48,6 +48,8 @@ return {
 			--here we just put how much time is left in the upper left corner
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
+			
+			love.graphics.print((handR.y..", ".. cir1.y + 2 * cir1.r + 30),10,10)
 					
 			love.graphics.circle("fill", cir1.x, cir1.y, cir1.r, 100)
 			love.graphics.circle("fill", cir2.x, cir2.y, cir1.r, 100)
