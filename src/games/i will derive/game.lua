@@ -17,6 +17,11 @@ return {
 		
 		self.getReady = function(self, basePath)
 			correct = {}
+			self.pNums = {}
+			self.derivative = love.graphics.newImage(basePath.."derivative.png")
+			for i = 1, 4 do 
+				self.pNums[i] = love.graphics.newImage(basePath..i..".png")
+			end
 			for line in io.lines(basePath.."answers.txt") do
 				table.insert(correct, line)
 			end
@@ -28,6 +33,7 @@ return {
 				end
 			end
 			self.elapsed_time = 0
+			math.randomseed(os.time())
 			self.cur = math.random(self.range[1], self.range[2])
 			self.solved = false
 		end
@@ -44,21 +50,26 @@ return {
 		
 		self.draw = function(self)
 			self:calcTotalHeight()
+			x = (love.graphics.getWidth() -self.derivative:getWidth()/2)/2
+			y = (love.graphics.getHeight() - self.height)/2 
+			love.graphics.draw(self.derivative, x, y,0,.5,.5)
+			y = y + self.derivative:getHeight()/2 + 30
 			x = (love.graphics.getWidth() - self.equations[self.cur].image:getWidth())/2
-			y = (love.graphics.getHeight() - self.height)/2
-			love.graphics.draw(self.equations[self.cur].image, x, y)
-			y = y + self.equations[self.cur].image:getHeight()
+			numx = x - 50
+			love.graphics.draw(self.equations[self.cur].image, x, y,0,.5,.5)
+			y = y + self.equations[self.cur].image:getHeight()/2 +20
 			for i, pic in ipairs(self.equations[self.cur].choices) do
-				love.graphics.draw(pic, x, y)
-				y = y + pic:getHeight()
+				love.graphics.draw(self.pNums[i], numx, y,0,.5,.5)
+				love.graphics.draw(pic, x, y,0,.5,.5)
+				y = y + pic:getHeight()/2 + 15
 			end
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
 		end
 
 		self.calcTotalHeight = function(self)
-			self.height = self.equations[self.cur].image:getHeight()
+			self.height = self.derivative:getHeight()/2 + self.equations[self.cur].image:getHeight()/2 +50
 			for i, pic in ipairs(self.equations[self.cur].choices) do
-				self.height = self.height + pic:getHeight()
+				self.height = self.height + pic:getHeight()/2 + 15
 			end
 		end
 		
