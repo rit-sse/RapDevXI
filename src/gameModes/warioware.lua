@@ -1,5 +1,6 @@
 local makeMode = function() 
 	local mode = {
+		heart = love.graphics.newImage("resources/heart.gif"),
 		games = {},
 		numgames = 0,
 		curgame = 0,
@@ -66,7 +67,13 @@ local makeMode = function()
 		end,
 		
 		draw = function(self)
-			love.graphics.print(""..self.lives,love.graphics.getWidth()-30,30,0,3,3)
+			local startX = love.graphics.getWidth() - 50
+			local startY = 100
+			for heart=1,self.lives do
+				love.graphics.draw(self.heart, startX, startY)
+				startX = startX - 50
+			end
+			--love.graphics.print(""..self.lives,love.graphics.getWidth()-30,30,0,3,3)
 		end
 	}
 

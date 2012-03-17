@@ -47,7 +47,8 @@ local initState =  function()
     base.listOfGames = {}
     setmetatable(base, framework.parentGame)
     for i=1,#gameNames do
-        table.insert(base.listOfGames,{gameNames[i], false})
+        gameIcon = love.graphics.newImage("games/"..gameNames[i].."/icon.png")
+        table.insert(base.listOfGames,{gameNames[i], false, gameIcon})
     end
     base.currentPosition = 1
     base.done = false
@@ -86,6 +87,9 @@ local initState =  function()
 	love.graphics.print('>', 5,by)
 	love.graphics.print('>', 10,by)
 	
+        local gameIcon = self.listOfGames[self.currentPosition][3]
+        love.graphics.draw(gameIcon, 200, 120)
+
         for i=self.currentPosition-pm,self.currentPosition+pm do
 		local reali = i
 		if reali < 1 then reali = reali+#self.listOfGames end
