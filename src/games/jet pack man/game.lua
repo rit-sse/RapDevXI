@@ -1,5 +1,5 @@
 return {
-	standalone_difficulty = "medium",
+	standalone_difficulty = "hard",
 	--Here go all of the static info values for our game
 	--  Remember a comma after each entry, as we are in a table initialization
 	
@@ -87,11 +87,42 @@ return {
     end
 
     Wall = { class = 'wall' }
-    function Wall:new(top, bottom)
-      o = { top = top, bottom = bottom }
+    function Wall:new(hc)
+      local o = { blocked = { }, x = love.graphics.getWidth() }
+      for i= 0, self.max do
+        table.insert(o.blocked, false)
+      end
+
+      o.object = hc:addRectangle(love.graphics.getWidth(), 0,
+                                 self.image:getWidth(), love.graphics.getHeight())
       setmetatable(o, { __index = Wall })
       return o
     end
+
+    function Wall:update(dt, velocity)
+      self.x = self.x - velocity * dt
+      self.object:move(- velocity * dt, 0)
+    end
+
+    function Wall:add_wall(top, bottom)
+      for i = top, bottom do self.blocked[i] = true end
+
+      local has_space = false
+      for i = top, bottom do has_space = has_space or not self.blocked[i] end
+
+      if has_space == false then
+        self.blocked[math.random(#self.blocked - 1) + 1] = false
+      end
+    end
+
+    function Wall:draw()
+      for i = 0, Opening.max do
+        if self.blocked[i] then
+          love.graphics.draw(self.image, self.x, (i - 1) * self.image:getHeight())
+        end
+      end
+    end
+
 
     JetMan = { gravity = 260, thrust = 520, vertical_speed = 0, up = false, down = false,
                horizontal_speed = 96, left = false, right = false }
@@ -149,19 +180,23 @@ return {
         easy = {
           cooldown_time = 2,
           section_speed = 80,
-          opening_width = 4
+          opening_width = 4,
+          wall_width    = 3
         }, medium = {
           cooldown_time = 1.4,
           section_speed = 120,
-          opening_width = 2
+          opening_width = 3,
+          wall_width    = 4
         }, hard = {
           cooldown_time = 1.0,
           section_speed = 160,
-          opening_width = 2
+          opening_width = 2,
+          wall_width    = 4
         }, impossible = {
           cooldown_time = 0.8,
           section_speed = 220,
-          opening_width = 1
+          opening_width = 2,
+          wall_width    = 5
         }
       }
 
@@ -177,6 +212,7 @@ return {
       Opening.image = love.graphics.newImage(basePath .. "wall.png")
       Wall.image    = love.graphics.newImage(basePath .. "wall.png")
       Opening.max   = math.floor(love.graphics.getHeight() / Opening.image:getHeight())
+      Wall.max      = math.floor(love.graphics.getHeight() / Wall.image:getHeight())
 
       -- Setup collection of walls
       self.sections = { }
@@ -212,16 +248,36 @@ return {
 		end
 
     self.add_section = function(self)
+      if math.random() > 0.3 then
+        self:add_opening(math.random(1) + 1)
+      else
+        self:add_wall(math.random(1) + 1)
+      end
+    end
+
+    function self:add_opening(times)
       local section = Opening:new(self.hc)
-      local start = 0
-      local times = 0
       local width = self.configuration[self.difficulty].opening_width
 
       for i = 0, times do
-        start = math.random(section.max - width)
-        times = math.random(2) + 1
+        local start = math.random(section.max - width)
+        local times = math.random(2) + 1
 
         section:add_opening(start, start + width)
+      end
+
+      table.insert(self.sections, section)
+    end
+
+    function self:add_wall(times)
+      local section = Wall:new(self.hc)
+      local width = self.configuration[self.difficulty].wall_width
+
+      for i = 0, times do
+        local start = math.random(section.max - width)
+        local times = math.random(1) + 1
+
+        section:add_wall(start, start + width)
       end
 
       table.insert(self.sections, section)
@@ -272,13 +328,7 @@ return {
       return nil
     end
 
-    function self:collide_section(player, section)
-      if section.class == 'opening' then
-        self:collide_opening(player, section)
-      end
-    end
-
-    function self:collide_opening(player, opening)
+    function self:collide_section(player, opening)
       local height = opening.image:getHeight()
       for idx, blocked in pairs(opening.blocked) do
         if blocked then
