@@ -59,6 +59,23 @@ return {
 			--self.image = love.graphics.newImage(basePath.."sprite.png")
 			--self.sound = love.audio.newSource(basePath.."sound.mp3")
 
+			self.cracks = {
+				love.graphics.newImage(basePath.."crack1.png"),
+				love.graphics.newImage(basePath.."crack2.png"),
+				love.graphics.newImage(basePath.."crack3.png"),
+				love.graphics.newImage(basePath.."crack4.png")
+			}
+
+			self.tree = love.graphics.newImage(basePath.."tree.png")
+
+			self.herring = love.graphics.newImage(basePath.."herring.png")
+
+			self.treeChunks = {}
+			local i = 1
+			for i = 1, 20 do
+				self.treeChunks[i] = 0
+			end
+
 			--Aso set up your own initial game state here.
 			self.elapsed_time = 0
 		end
@@ -75,6 +92,24 @@ return {
 			--here we just put how much time is left in the upper left corner
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
+
+
+			love.graphics.draw(self.tree, 270, 0)
+
+			local i = 1
+			for i = 1, 20 do
+				if self.treeChunks[i] > 4 then
+					love.graphics.setColor(0,0,0)
+					love.graphics.rectangle('fill', 270, (i-1) * 20, 100, 20)
+					love.graphics.setColor(255,255,255)
+				elseif self.treeChunks[i] > 0 then
+					love.graphics.draw(self.cracks[self.treeChunks[i]], 270, (i-1) * 20)
+				end
+
+			end
+
+
+
 		end
 		
 		self.isDone = function(self)
@@ -92,6 +127,8 @@ return {
 		end
 		
 		self.keypressed = function(self, key)
+			local rand = math.random(20)
+			self.treeChunks[rand] = self.treeChunks[rand] + 1
 			
 			print(key.." was pressed")
 		end
