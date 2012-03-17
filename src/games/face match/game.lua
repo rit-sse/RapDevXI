@@ -60,6 +60,7 @@ return {
 			self.openchest = love.audio.newSource(basePath..'openchest.ogg', 'static')
 			self.bgm = love.audio.newSource(basePath..'bgm.ogg')
 			self.musicstarted = false
+			self.endingremain = 4.5
 
 			self.allFaces = {
 				"megusta.png",
@@ -111,9 +112,6 @@ return {
 			-- 'stoppingM', 'spinB', 'stoppingB', 'end'}
 			self.state = 'spinTMB'
 
-			--self.image = love.graphics.newImage(basePath.."sprite.png")
-			--self.sound = love.sound.newSource(basePath.."sound.mp3")
-
 			--Aso set up your own initial game state here.
 			self.elapsed_time = 0
 		end
@@ -122,6 +120,10 @@ return {
 			if not self.musicstarted then
 				love.audio.play(self.bgm)
 				self.musicstarted = true
+			end
+
+			if self.state == 'win' or self.state == 'lose' then 
+				self.endingremain = self.endingremain - dt
 			end
 
 			--update is called in between draws. dt is the time in seconds since the last time
@@ -167,9 +169,11 @@ return {
 					if self.topTarget == self.midTarget and self.topTarget == self.bottomTarget then
 						self.state = 'win'
 						love.audio.play(self.openchest)
+						self.endingremain = 2.5
 					else 
 						self.state = 'lose'
 						love.audio.play(self.failhorn)
+						self.endingremain = 4.5
 					end
 				elseif self.bottomTarget == 1200 and (self.bottomPos - self.bottomDelta) < 0 then
 					self.bottomDelta = 0;
@@ -178,9 +182,11 @@ return {
 					if self.topTarget == self.midTarget and self.topTarget == self.bottomTarget then
 						self.state = 'win'
 						love.audio.play(self.openchest)
+						self.endingremain = 2.5
 					else 
 						self.state = 'lose'
 						love.audio.play(self.failhorn)
+						self.endingremain = 4.5
 					end
 				end
 			end
@@ -220,13 +226,16 @@ return {
 			--set for the type of game.
 	
 			--we are done when we are out of time.
-			return self.elapsed_time > self.time_limit
+			return self.elapsed_time > self.time_limit or self.endingremain <= 0
 		end
 		
 		self.getScore = function(self)
 			--return a number -1 to 1. anything >0 is a "passing" score
-
-			return -1 --the player always looses. 
+			if self.state == 'win' then
+				return 1
+			else
+				return -1
+			end
 		end
 		
 		self.keypressed = function(self, key)
