@@ -241,7 +241,8 @@ return {
       end
 
       local first = self.sections[1]
-      if first.x < -10 then
+      local width = Section.image:getWidth()
+      if first.x < -width then
         for idx = 1, #first.blocked do
           local block = first.blocked[idx]
           
