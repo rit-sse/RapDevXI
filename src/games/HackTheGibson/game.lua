@@ -64,25 +64,46 @@ return {
 			--Also set up your own initial game state here.
 			self.elapsed_time = 0
             self.score = 1
+            
+            -- Player health and position/size values
             self.player = {}
-            self.playerX = 20
-            self.playerY = 200
+            self.player.health = 3
+            self.player.x = 20
+            self.player.y = 200
+            self.player.width = 50
+            self.player.height = 100
 
+            -- Enemy position/size values
             self.enemy = {}
-            self.enemyX = 320
-            self.enemyY = 200
-            self.enemy.bullets = {}
+            self.enemy.x = 320
+            self.enemy.y = 200
+            self.enemy.width = 50
+            self.enemy.height = 100
+            --self.enemy.bullets = {}
+
+            -- Bounding boxes
+            self.playerBoundingBox = {}
+			self.playerBoundingBox.left = 0
+			self.playerBoundingBox.right = 200
+			self.playerBoundingBox.top = 0
+			self.playerBoundingBox.bottom = 400
+
+			self.enemyBoundingBox = {}
+			self.enemyBoundingBox.left = 200
+			self.enemyBoundingBox.right = 400
+			self.enemyBoundingBox.top = 0
+			self.enemyBoundingBox.bottom = 400
 
             -- Set up the background texture data structures
             self.backgroundTextures = {}
             self.backgroundQueue = {}
             
-            self.makeBullet = function(self)
-                local b = {}
-                b.x = self.enemyX
-                b.y = self.enemyY + 20
-                table.insert(self.enemy.bullets, b)
-            end
+            -- self.makeBullet = function(self)
+            --     local b = {}
+            --     b.x = self.enemy.x
+            --     b.y = self.enemy.y + 20
+            --     table.insert(self.enemy.bullets, b)
+            -- end
 
             self:getAudioReady( basePath.."audio/" )
 			self:getTexturesReady( basePath.."textures/" )
@@ -103,8 +124,8 @@ return {
 			-- Loop through files of the form texn.png, where n is a number,
 			-- until no more are detected.
 			while love.filesystem.exists( texturePath.."tex"..i..".png" ) do
-				local path = texturePath.."tex"..i..".png"
-				local backgroundTexture = love.graphics.newImage( path )
+				path = texturePath.."tex"..i..".png"
+				backgroundTexture = love.graphics.newImage( path )
 				table.insert( self.backgroundTextures, backgroundTexture )
 				i = i + 1
 			end
@@ -133,7 +154,7 @@ return {
 				love.audio.play( self.backgroundLoop )
 			end
 
-			-- Move each background frame.
+			-- Move each background rectangle.
 			for i = 1, 3 do
 				speedMultiplier = 300
 				self.backgroundQueue[i].x = self.backgroundQueue[i].x - ( speedMultiplier * dt )
@@ -146,15 +167,62 @@ return {
 				end
 			end
 
-            --enemy AI. TODO: Make this smarter
-            if self.playerY > self.enemyY then
-                self.enemyY = self.enemyY + 10 * dt
-            else
-                self.enemyY = self.enemyY - 10 * dt
-            end
+			-- Handle player movement
+			playerSpeedMod = 175
+			self:handlePlayerInput( playerSpeedMod, dt )
+			self:handleEntityBounding( self.player, self.playerBoundingBox )
+
+			-- Handle AI Movement
+			aiSpeedMod = 150
+			self:handleAIThink( aiSpeedMod, dt )
+			self:handleEntityBounding( self.enemy, self.enemyBoundingBox )
 
 		end
 		
+		self.handleAIThink = function( self, aiSpeedMod, dt )
+			if self.player.y >= self.enemy.y then
+                self.enemy.y = self.enemy.y + aiSpeedMod * dt
+            else
+                self.enemy.y = self.enemy.y - aiSpeedMod * dt
+            end
+		end
+
+		self.handlePlayerInput = function( self, multi, dt )
+			if love.keyboard.isDown( "up" ) then
+				self.player.y = self.player.y - ( multi * dt )
+			end
+
+			if love.keyboard.isDown( "down" ) then
+				self.player.y = self.player.y + ( multi * dt )
+			end
+
+			if love.keyboard.isDown( "left" ) then
+				self.player.x = self.player.x - ( multi * dt )
+			end
+
+			if love.keyboard.isDown( "right" ) then
+				self.player.x = self.player.x + ( multi * dt )
+			end
+		end
+
+		self.handleEntityBounding = function( self, entity, boundingBox )
+			if entity.x < boundingBox.left then
+				entity.x = boundingBox.left
+			end
+
+			if entity.x + entity.width > boundingBox.right then
+				entity.x = boundingBox.right - entity.width
+			end
+
+			if entity.y < boundingBox.top then
+				entity.y = boundingBox.top
+			end
+
+			if entity.y + entity.height > boundingBox.bottom then
+				entity.y = boundingBox.bottom - entity.height
+			end
+		end
+
 		self.draw = function(self)
 			-- Draw the pretty scrolly background thing
 			for i = 1, 3 do
@@ -169,13 +237,13 @@ return {
 
 			-- Draw the player and the enemy
             love.graphics.setColorMode('replace')
-            love.graphics.draw(self.player.img, self.playerX, self.playerY)
-            love.graphics.draw(self.enemy.img, self.enemyX, self.enemyY)
+            love.graphics.draw(self.player.img, self.player.x, self.player.y)
+            love.graphics.draw(self.enemy.img, self.enemy.x, self.enemy.y)
 
             -- Draw the bullets?
-            for i=1,#self.enemy.bullets do
-                love.graphics.rectangle('fill', self.enemy.bullets[i].x, self.enemy.bullets[i].y)
-            end
+            -- for i=1,#self.enemy.bullets do
+            --     love.graphics.rectangle('fill', self.enemy.bullets[i].x, self.enemy.bullets[i].y)
+            -- end
 
 		end
 		
