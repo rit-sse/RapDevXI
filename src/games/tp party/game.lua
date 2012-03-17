@@ -75,7 +75,7 @@ return {
 		
 		self.isDone = function(self)
 			--This can return true to have the game end sooner that the time_limit
-			--set for the type of game.
+			--set for the type of game
 			
 			--we are done when we are out of time.
 			return self.elapsed_time > self.time_limit
