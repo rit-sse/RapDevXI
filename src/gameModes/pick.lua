@@ -11,7 +11,11 @@ local makeMode = function()
 		sel = 1,
 		dif = 1,
 		continue = true,
-		givePick = false, --start opposite as we get the results of the gameMode first
+		givePick = true,
+		
+		lastResult = 0,
+		eatFirst = true,
+		
 		setGameList = function(self,list)
 			self.games = list
 		end,
@@ -31,10 +35,13 @@ local makeMode = function()
 		nextDifficulty = function(self)
 			return self.games[self.sel].difficulties[self.dif]
 		end,
-		setResults = function(self, res) 
-			print("got results")
-			print(res)
-			self.givePick = not self.givePick
+		setResults = function(self, res)
+			if self.eatFirst then
+				self.eatFirst = false
+			else				
+				self.lastResult = res
+				self.givePick = not self.givePick
+			end
 		end
 	}
 	local pickGame = {
@@ -93,6 +100,10 @@ local makeMode = function()
 				end
 				
 				love.graphics.print("Up/Down to change game. Left/Right to select difficulty",15, 320)
+				
+				if self.selector.lastResult ~= nil then
+					love.graphics.print("Results of last game played: "..self.selector.lastResult, 15, 335)
+				end
 				
 			end
 			self.keypressed = function(self,key)
