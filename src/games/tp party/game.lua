@@ -43,18 +43,6 @@ return {
 			self.elapsed_time = self.elapsed_time+dt	
 
 <<<<<<< HEAD
-            self.box1 = {x = self.cir1.x, y = self.cir1.y - self.cir1.r, w = 200, l = 2*self.cir1.r } -- box
-			if self.done == false then
-				self.box2 = {x = self.cir1.x + self.cir1.r, y = self.cir1.y, w = 200, l = 800} -- toliet paper
-			end
-            self.cir2 = {x = self.cir1.x + self.box2.w, y = self.cir1.y} -- the circle right
-
-			self.handL.x = self.cir1.x + 36 + self.cir1.r -- left hand
-            self.handR.x = self.cir2.x + -36 + self.cir1.r -- right hand
-
-			if self.done == true then
-				self.box2.y = self.box2.y + .3
-			end
 =======
 			if not self.musicStarted then
 				love.audio.play(self.music)
