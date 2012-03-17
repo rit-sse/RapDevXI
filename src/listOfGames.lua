@@ -13,7 +13,8 @@ listOfGames = {
 	"i will derive",
 	"waste the ink",
 	"WaveAtTheTour",
-	"jet pack man"
+	"jet pack man",
+	'gun or umbrella'
 }
 
 return listOfGames
