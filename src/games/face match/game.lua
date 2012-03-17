@@ -58,6 +58,8 @@ return {
 
 			self.failhorn = love.audio.newSource(basePath..'failhorn.ogg', 'static')
 			self.openchest = love.audio.newSource(basePath..'openchest.ogg', 'static')
+			self.select = love.audio.newSource(basePath..'select.ogg', 'static')
+			self.stop = love.audio.newSource(basePath..'stop.ogg', 'static')
 			self.bgm = love.audio.newSource(basePath..'bgm.ogg')
 			self.musicstarted = false
 			self.endingremain = 4.5
@@ -142,10 +144,12 @@ return {
 					self.topDelta = 0;
 					self.topPos = self.topTarget
 					self.state = 'spinMB'
+					love.audio.play(self.stop)
 				elseif self.topTarget == 1200 and (self.topPos - self.topDelta) < 0 then
 					self.topDelta = 0;
 					self.topPos = 0
 					self.state = 'spinMB'
+					love.audio.play(self.stop)
 				end
 
 
@@ -154,10 +158,12 @@ return {
 					self.midDelta = 0;
 					self.midPos = self.midTarget
 					self.state = 'spinB'
+					love.audio.play(self.stop)
 				elseif self.midTarget == 1200 and (self.midPos - self.midDelta) < 0 then
 					self.midDelta = 0;
 					self.midPos = 0
 					self.state = 'spinB'
+					love.audio.play(self.stop)
 				end
 
 
@@ -244,16 +250,19 @@ return {
 					self.topTarget = math.ceil(self.topPos / 400) * 400 --% 1200
 					self.topDelta = self.topDelta / 2
 					print("topTarget:"..self.topTarget)
+					love.audio.play(self.select)
 					self.state = 'stoppingT'
 				elseif self.state == 'spinMB' then
 					self.midTarget = math.ceil(self.midPos / 400) * 400 --% 1200
 					self.midDelta = self.midDelta / 2
 					print("midTarget:"..self.midTarget)
+					love.audio.play(self.select)
 					self.state = 'stoppingM'
 				elseif self.state == 'spinB' then
 					self.bottomTarget = math.ceil(self.bottomPos / 400) * 400 --% 1200
 					self.bottomDelta = self.bottomDelta / 2
 					print("bottomTarget:"..self.bottomTarget)
+					love.audio.play(self.select)
 					self.state = 'stoppingB'
 				end
 			end

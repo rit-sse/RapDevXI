@@ -1,6 +1,6 @@
 return {
 
-	difficulties = {"impossible","easy","medium","hard","impossible"},
+	difficulties = {"easy","medium","hard","impossible"},
     PR = "child",
 	keys = {"arrows"},
 	maxDuration = 30,

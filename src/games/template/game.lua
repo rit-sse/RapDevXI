@@ -57,7 +57,7 @@ return {
 			--be stopped before your game is actually shown
 
 			--self.image = love.graphics.newImage(basePath.."sprite.png")
-			--self.sound = love.sound.newSource(basePath.."sound.mp3")
+			--self.sound = love.audio.newSource(basePath.."sound.mp3")
 
 			--Aso set up your own initial game state here.
 			self.elapsed_time = 0
