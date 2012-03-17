@@ -42,7 +42,7 @@ return {
 		--Each game may choose how to scale difficulty. The template imposes a time limit
 		--that is modified by the difficulty of the game
 		self.time_limit = ({easy=25, medium=20, hard=15, impossible=6})[info.difficulty]
-		
+		self.speedMult = ({easy=1, medium=1.5, hard=2, impossible=3})[info.difficulty]
 		--Callbacks
 
 		
@@ -101,13 +101,13 @@ return {
 			}
 
 			--Setup vars for movement of faces
-			self.topDelta = 400
+			self.topDelta = 400 * self.speedMult
 			self.topPos = 0
 
-			self.midDelta = 500
+			self.midDelta = 500 * self.speedMult
 			self.midPos = 0
 
-			self.bottomDelta = 600
+			self.bottomDelta = 600 * self.speedMult
 			self.bottomPos = 0
 
 			--state will be one of {'directions', 'spinTMB', 'stoppingT', 'spinMB',
@@ -201,8 +201,28 @@ return {
 		self.draw = function(self)
 			--here we just put how much time is left in the upper left corner
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
-			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
-			love.graphics.setBackgroundColor(150, 150, 150)
+			love.graphics.setColor(150,150,200)
+			love.graphics.rectangle('fill', 0, 50, 400, 300)
+			love.graphics.setColor(255,255,255)
+
+			love.graphics.print( string.format("%2.1fs left", (self.time_limit-self.elapsed_time)), 175, 375)
+			if self.state == 'win' then
+				love.graphics.print("You won!", 130, 10, 0, 2.5)
+			elseif self.state == 'lose' then
+				love.graphics.print("You lost!", 125, 10, 0, 2.5)
+			else
+				love.graphics.print("Match the faces!", 65, 5, 0, 2.5)
+			end
+
+
+			if self.state == 'spinTMB' then
+				love.graphics.print("Press SPACE to stop top segment", 100, 360)
+			elseif self.state == 'spinMB' then 
+				love.graphics.print("Press SPACE to stop middle segment", 100, 360)
+			elseif self.state == 'spinB' then
+				love.graphics.print("Press SPACE to stop bottom segment", 100, 360)
+			end
+			
 
 			--Draw top sections
 			love.graphics.drawq(self.faces[1], self.faceQuads[1], self.topPos + 50, 50)
