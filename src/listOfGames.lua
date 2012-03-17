@@ -1,4 +1,5 @@
 listOfGames = {
+  "sunshine",
 	"HelloWorld",
 	"that floppy",
 	"bricks bricks everywhere",
