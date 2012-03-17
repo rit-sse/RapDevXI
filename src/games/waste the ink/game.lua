@@ -98,6 +98,8 @@ return {
 			--here we just keep track of how much time has passed
 			self.elapsed_time = self.elapsed_time+dt
 
+			dt = dt * 35
+
 			if self.first_update then 
 				self.first_update = false
 				love.audio.play(self.aud.background)
@@ -106,7 +108,7 @@ return {
 			bt = love.graphics.getHeight() - 10
 			rt = love.graphics.getWidth() - 10
 
-			speed = self.difficulties[info.difficulty] / 2
+			speed = (self.difficulties[info.difficulty] / 2)*dt
 
 			if love.keyboard.isDown("up") then
 				if self.loc.y > 0 then
