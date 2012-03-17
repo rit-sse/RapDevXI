@@ -18,7 +18,7 @@ return {
 	--  "sse"	   approprate only to show to SSE members
 	--  "deans car" this game will be deleted out of the repository on Monday before anyone sees it who wasn't here
 	--			  (grab your own local copy)
-	PR = "child",
+	PR = "rit",
 	
 	--Keys is an indication to the user that says where to put their hands.
 	--It needs to be a list with any values from:
@@ -58,9 +58,6 @@ return {
 			--self.image = love.graphics.newImage(basePath.."sprite.png")
 			--self.sound = love.sound.newSource(basePath.."sound.mp3")
 
-			self:getAudioReady( basePath.."audio/" )
-			self:getTexturesReady( basePath.."textures/" )
-
 			--Also set up your own initial game state here.
 			self.elapsed_time = 0
             self.score = 1
@@ -81,6 +78,9 @@ return {
                 b.y = self.enemyY + 20
                 table.insert(self.enemy.bullets, b)
             end
+
+            self:getAudioReady( basePath.."audio/" )
+			self:getTexturesReady( basePath.."textures/" )
             
 		end
 
@@ -102,18 +102,22 @@ return {
 			end
 
 			-- Sprites
+			self.player.img = love.graphics.newImage( texturePath.."player.png" )
+			self.enemy.img = love.graphics.newImage( texturePath.."enemy.png" )
+
 		end
 
 		self.update = function(self, dt)
 			--update is called in between draws. dt is the time in seconds since the last time
 			--update was called
 
+			--here we just keep track of how much time has passed
+			self.elapsed_time = self.elapsed_time+dt
+
+			-- Start playing background audio loop
 			if not self.backgroundLoopStarted then
 				love.audio.play( self.backgroundLoop )
 			end
-
-			--here we just keep track of how much time has passed
-			self.elapsed_time = self.elapsed_time+dt
 
             --enemy AI
             if self.playerY > self.enemyY then
@@ -122,25 +126,28 @@ return {
                 self.enemyY = self.enemyY - 10*dt
             end
 
-
 		end
 		
 		self.draw = function(self)
+			-- Draw the pretty scrolly background thing
+			for i=1,#self.bkgdQueue do
+                if self.bkgdQueue[i].x < 400 then
+                    love.graphics.draw(self.bkgdQueue[i].img, self.bkgdQueue[i].x, 0)
+                end
+            end
+
 			--here we just put how much time is left in the upper left corner
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
+
+			-- Draw the player and the enemy
             love.graphics.setColorMode('replace')
             love.graphics.draw(self.player.img, self.playerX, self.playerY)
             love.graphics.draw(self.enemy.img, self.enemyX, self.enemyY)
 
+            -- Draw the bullets?
             for i=1,#self.enemy.bullets do
                 love.graphics.rectangle('fill', self.enemy.bullets[i].x, self.enemy.bullets[i].y)
-            end
-
-            for i=1,#self.bkgdQueue do
-                if self.bkgdQueue[i].x < 400 then
-                    love.graphics.draw(self.bkgdQueue[i].img, self.bkgdQueue[i].x, 0)
-                end
             end
 
 		end
