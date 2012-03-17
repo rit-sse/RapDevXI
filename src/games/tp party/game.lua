@@ -56,8 +56,11 @@ return {
 			
 			love.graphics.circle("fill", self.cir1.x, self.cir1.y, self.cir1.r, 100)
 			love.graphics.circle("fill", self.cir2.x, self.cir2.y, self.cir1.r, 100)
-			love.graphics.rectangle("fill", self.box1.x, self.box1.y, self.box1.w, self.box1.l)
+		    love.graphics.rectangle("fill", self.box1.x, self.box1.y, self.box1.w, self.box1.l)
 			love.graphics.rectangle("fill", self.box2.x, self.box2.y, self.box2.w, self.box2.l)
+	        love.graphics.setColor(130,130,130)
+            love.graphics.circle("fill", self.cir1.x, self.cir1.y, 3, 100)
+            love.graphics.setColor(255,255,255)
 			love.graphics.draw(self.handL.img, self.handL.x, self.handL.y, 0, -3, 3)
 			love.graphics.draw(self.handR.img, self.handR.x, self.handR.y, 0, 3, 3)
 		end
@@ -72,7 +75,9 @@ return {
 		
 		self.getScore = function(self)
 			--return a number -1 to 1. anything >0 is a "passing" score
-
+            if self.done then
+                return 1
+            end
 			return -1 --the player always looses. 
 		end
 		
