@@ -1,58 +1,18 @@
 return {
 	standalone_difficulty = "easy",
-	--Here go all of the static info values for our game
-	--	Remember a comma after each entry, as we are in a table initialization
-	
-	--Difficulties should be a list of difficulties this game can be.
-	--For Example:
-	--	If your game going to be a medium difficulty, and can't
-	--	be made easier or harder just make it {"medium"}
-	
-	--	If your game can be made to be easy or impossible,
-	--	make it {"easy","impossible"}
 	difficulties = {"easy","medium","hard","impossible"},
-	
-	--PR is how appropriate your game is. Valid values are:
-	--	"child"	 approprate to show at imagine RIT
-	--	"rit"	   approprate to show to other RIT students
-	--	"sse"	   approprate only to show to SSE members
-	--	"deans car" this game will be deleted out of the repository on Monday before anyone sees it who wasn't here
-	--		(grab your own local copy)
 	PR = "child",
-	
-	--Keys is an indication to the user that says where to put their hands.
-	--It needs to be a list with any values from:
-	--	{"arrows","wasd","full keyboard","mouse","space"}
 	keys = {"arrows"},
-	
-	--The longest this game will EVER take. Note: by overriding the isDone method you can end
-	--the game sooner. This is just how long until the engine kills your game and asks it for
-	--a score by force.
 	maxDuration = 15,
-	
-	--This is where you define what an actual running version of your game is.
-	--The first parameter is a table you must fill in with your desired callbacks,
-	--as well as any user data. Info is a table with key/values:
-	--	difficulty = a value from the difficulties list defined above. You should change at least some aspect
-	--		of how your game is initialized based on this difficulty.
-	--
-	--	player = some string naming the current player. Don't do anything with this but display it, if even that.
-	
 	makeGameInstance = function(self, info)
-		--Each game may choose how to scale difficulty. The template imposes a time limit
-		--that is modified by the difficulty of the game
 		self.time_limit = ({easy=15, medium=10, hard=8, impossible=4})[info.difficulty]
-		
-		--Callbacks
-
-		
 		self.getReady = function(self, basePath)
             cir1 = {x = 50,                 y = 50,         r = 30} -- the circle left
             box1 = {x = cir1.x,             y = cir1.y-cir1.r,     w = 200, l = 2*cir1.r } -- box
             box2 = {x = cir1.x + cir1.r,    y = cir1.y,     w = 200, l = 800} -- toliet paper
             cir2 = {x = cir1.x + box2.w,    y = cir1.y} -- the circle right
-            handL = {x = cir1.x + 30,       y = cir1.y+2*cir1.r+ 30} -- left hand
-            handR = {x = cir2.x + 30,       y = cir2.y+2*cir2.r+ 30} -- right hand
+            handL = {x = cir1.x + 30,       y = cir1.y+2*cir1.r + 30} -- left hand
+            handR = {x = cir2.x + 30,       y = cir2.y+2*cir2.r + 30} -- right hand
 			
             handL = love.graphics.newImage("hand.png")
             handR = love.graphics.newImage("hand.png")
@@ -74,9 +34,14 @@ return {
 		end
 
         function love.keypressed(key)
-            if hand2.y == 2*cir1.r + 30 and key == "right" then
-                hand2.y = 2*cir1.r + 80
-                hand1.y = 2*cir1.r 30
+            if hand2.y == 2 * cir1.r + 30 and key == "right" then
+                hand2.y = 2 * cir1.r + 80
+                hand1.y = 2 * cir1.r + 30
+                if cir1.r > 5 then -- 5 is the end goal
+                    cir1.r = cir1.r - 3
+                else
+                    self.done = true
+                end
             elseif hand1.y == 2*cir1.r + 30 and key == "left" then
                 hand1.y = 2*cir1.r + 80
                 hand2.y = 2*cir1.r + 30
@@ -122,10 +87,6 @@ return {
 		end
 		
 		self.keypressed = function(self, key)
-			if key == "right" then
-			cir1.r = cir1.r-1
-			end
-			
 			print(key.." was pressed")
 		end
 		
