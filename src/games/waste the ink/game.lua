@@ -1,5 +1,5 @@
 return {
-	standalone_difficulty = "medium",
+	standalone_difficulty = "easy",
 	--Here go all of the static info values for our game
 	--  Remember a comma after each entry, as we are in a table initialization
 	
@@ -65,18 +65,30 @@ return {
 			self.img.holder = love.graphics.newImage(basePath.."ink_holder.png")
 			self.img.dot = love.graphics.newImage(basePath.."dot.png")
 			self.img.pen = love.graphics.newImage(basePath.."pen.png")
-			--self.sound = love.sound.newSource(basePath.."sound.mp3")
+
+			--self.audio = love.audio.newSource(basePath.."audio.mp3")
+			self.aud = {}
+			self.aud.one = love.audio.newSource(basePath.."one.ogg")
+			self.aud.two = love.audio.newSource(basePath.."two.ogg")
+			self.aud.three = love.audio.newSource(basePath.."three.ogg")
+			self.aud.four = love.audio.newSource(basePath.."four.ogg")
+			self.aud.background = love.audio.newSource(basePath.."background_noise.ogg")
+			self.aud.background:setLooping(true)
 
 			--Aso set up your own initial game state here.
 			self.elapsed_time = 0
 
 			self.difficulties = {easy=5, medium=6, hard=6, impossible=7}
 
-			self.space_pressed = false
+			self.aud_num = 1
+			self.aud_num_start = 1
+			self.aud_num_max = 4
 			self.ink_percent = 1.0
 
 			self.dots = {}
 			self.loc = {x=0, y=0}
+
+			self.first_update = true
 		end
 
 		self.update = function(self, dt)
@@ -85,6 +97,11 @@ return {
 
 			--here we just keep track of how much time has passed
 			self.elapsed_time = self.elapsed_time+dt
+
+			if self.first_update then 
+				self.first_update = false
+				love.audio.play(self.aud.background)
+			end
 
 			bt = love.graphics.getHeight() - 10
 			rt = love.graphics.getWidth() - 10
@@ -173,9 +190,30 @@ return {
 				end
 				self.ink_percent = self.ink_percent - (.1/dif)
 				table.insert(self.dots, dot)
+				self:play_sound()
 			end
 		end
 		
+		self.play_sound = function(self)
+			if self.aud_num == 1 then
+				love.audio.play(self.aud.one)
+			end
+			if self.aud_num == 2 then
+				love.audio.play(self.aud.two)
+			end
+			if self.aud_num == 3 then
+				love.audio.play(self.aud.three)
+			end
+			if self.aud_num == 4 then
+				love.audio.play(self.aud.four)
+			end
+
+			self.aud_num = self.aud_num + 1
+			if self.aud_num > self.aud_num_max then
+				self.aud_num = self.aud_num_start
+			end
+		end
+
 		self.keyreleased = function(self, key)
 			print(key.." was released")
 		end
