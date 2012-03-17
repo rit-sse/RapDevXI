@@ -10,7 +10,9 @@ listOfGames = {
 	"dodge everything",
 	"ice cream truck",
 	"i will derive",
-	"waste the ink"
+	"waste the ink",
+	"WaveAtTheTour",
+	"jet pack man"
 }
 
 return listOfGames
