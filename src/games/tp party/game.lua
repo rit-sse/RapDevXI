@@ -11,7 +11,7 @@ return {
 		
 		self.getReady = function(self, basePath)
 			self.cir1 = {x = 50, y = 50, r = 30} -- the circle left
-			self.box1 = {x = self.cir1.x, y = self.cir1.y-self.cir1.r, w = 200, l = 2*self.cir1.r } -- box
+			self.box1 = {x = self.cir1.x, y = self.cir1.y-self.cir1.r, w = 200, l = 2*self.cir1.r} -- box
 			self.box2 = {x = self.cir1.x + self.cir1.r, y = self.cir1.y, w = 200, l = 800} -- toliet paper
 			self.cir2 = {x = self.cir1.x + self.box2.w, y = self.cir1.y, r = self.cir1.r} -- the circle right
 			self.handL = {x = self.cir1.x + 36 + self.cir1.r, y = 200} -- left hand
@@ -19,6 +19,7 @@ return {
 			self.handLoc = {up = 150, down = 200} --up and down values
 			self.handL.img = love.graphics.newImage("hand.png")
 			self.handR.img = love.graphics.newImage("hand.png")
+			self.music = love.audio.newSource("guiles_theme_short.mp3")
 			self.elapsed_time = 0
 		end
 		
@@ -40,7 +41,7 @@ return {
 		self.update = function(self, dt)
 			self.elapsed_time = self.elapsed_time+dt	
 			
-			self.box1 = {x = self.cir1.x, y = self.cir1.y - self.cir1.r, w = 200, l = 2*self.cir1.r } -- box
+			self.box1 = {x = self.cir1.x, y = self.cir1.y - self.cir1.r, w = 200, l = 2*self.cir1.r} -- box
 			self.box2 = {x = self.cir1.x + self.cir1.r, y = self.cir1.y, w = 200, l = 800} -- toliet paper
 			self.cir2 = {x = self.cir1.x + self.box2.w, y = self.cir1.y} -- the circle right
 			
