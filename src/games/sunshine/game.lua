@@ -100,7 +100,6 @@ return {
 			    love.audio.stop(self.rain_sound)
 			  end
 			  --play victory sound and then set it to not play again
-			  print("play tada")
 			  love.audio.play(self.victory_sound)
 			  self.play_victory_sound = false
 			end		
