@@ -108,7 +108,7 @@ return {
       for i = top, bottom do self.blocked[i] = true end
 
       local has_space = false
-      for i = top, bottom do has_space = has_space or not self.blocked[i] end
+      for i = 1, #self.blocked - 1 do has_space = has_space or not self.blocked[i] end
 
       if has_space == false then
         self.blocked[math.random(#self.blocked - 1) + 1] = false
@@ -248,7 +248,7 @@ return {
 		end
 
     self.add_section = function(self)
-      if math.random() > 0.3 then
+      if math.random() > 0.4 then
         self:add_opening(math.random(1) + 1)
       else
         self:add_wall(math.random(1) + 1)
