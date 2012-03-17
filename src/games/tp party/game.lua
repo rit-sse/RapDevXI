@@ -42,8 +42,6 @@ return {
 		self.update = function(self, dt)
 			self.elapsed_time = self.elapsed_time+dt	
 
-<<<<<<< HEAD
-=======
 			if not self.musicStarted then
 				love.audio.play(self.music)
 				self.musicStarted = true
@@ -55,7 +53,6 @@ return {
 			
 			self.handL.x = self.cir1.x + 36 + self.cir1.r -- left hand
 			self.handR.x = self.cir2.x + -36 + self.cir1.r -- right hand			
->>>>>>> c0cf40c80c04e172c50483922d662e38c5169abe
 		end
 		
 		self.draw = function(self)
@@ -70,12 +67,6 @@ return {
 			end
 			love.graphics.circle("fill", self.cir1.x, self.cir1.y, self.cir1.r, 100)
 			love.graphics.circle("fill", self.cir2.x, self.cir2.y, self.cir1.r, 100)
-<<<<<<< HEAD
-		    love.graphics.rectangle("fill", self.box1.x, self.box1.y, self.box1.w, self.box1.l)
-	        love.graphics.setColor(130,130,130)
-            love.graphics.circle("fill", self.cir1.x, self.cir1.y, 3, 100)
-            love.graphics.setColor(255,255,255)
-=======
 			love.graphics.rectangle("fill", self.box1.x, self.box1.y, self.box1.w, self.box1.l)
 			love.graphics.rectangle("fill", self.box2.x, self.box2.y, self.box2.w, self.box2.l)
 			love.graphics.setColor(130,130,130)
@@ -83,7 +74,6 @@ return {
 			love.graphics.setColor(0,0,0)
 			love.graphics.circle("line", self.cir1.x, self.cir1.y, self.cir1.r, 100)
 			love.graphics.setColor(255,255,255)
->>>>>>> c0cf40c80c04e172c50483922d662e38c5169abe
 			love.graphics.draw(self.handL.img, self.handL.x, self.handL.y, 0, -3, 3)
 			love.graphics.draw(self.handR.img, self.handR.x, self.handR.y, 0, 3, 3)
 		end
