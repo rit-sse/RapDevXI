@@ -59,6 +59,8 @@ local initState =  function()
     base.keyed = false
     base.key = ""
     
+    base.nselected = 0
+    
     base.update = function(self, dt)
 	self.keytime = self.keytime - dt
 	if self.keytime <0 then
@@ -100,6 +102,9 @@ local initState =  function()
         love.graphics.print("Press Left/Right to enable/disable selected game", 15, ny+5)
         love.graphics.print("Press 'a' to select all games", 15, ny+20)
 	love.graphics.print("Press 'o' to turn of all games", 15, ny+35)
+	
+	local color = self.nselected==0 and 60 or 255
+	love.graphics.setColor(color,color,color)
         love.graphics.print("PRESS ENTER TO CONTINUE", 15, ny+50)
     end 
 
@@ -116,18 +121,23 @@ local initState =  function()
         end
         if key == 'left' or key == 'right' then
             self.listOfGames[self.currentPosition][2] = not self.listOfGames[self.currentPosition][2]
+	    self.nselected = self.nselected + (self.listOfGames[self.currentPosition][2] and 1 or -1)
         end
         if key == 'a' then
             for i,game in ipairs(self.listOfGames) do
                 game[2] = true
+		self.nselected = #self.listOfGames
             end
         end
         if key == 'o' then
             for i,game in ipairs(self.listOfGames) do
                 game[2] = false
+		self.nselected = 0
             end
         end
         if key == 'return' then
+		if self.nselected ==0 then return end
+	
             framework.gameList = {}
             for i=1,#self.listOfGames do
                 if self.listOfGames[i][2] then
