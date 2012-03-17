@@ -6,7 +6,8 @@ listOfGames = {
     "torch",
 	"the car",
 	"don't blink",
-	"dodge everything"
+	"dodge everything",
+	"face match"
 }
 
 return listOfGames
