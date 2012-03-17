@@ -1,12 +1,14 @@
 listOfGames = {
+  "sunshine",
 	"HelloWorld",
 	"that floppy",
 	"bricks bricks everywhere",
 	"ddr",
-    "torch",
+	"torch",
 	"the car",
 	"don't blink",
-	"dodge everything"
+	"dodge everything",
+	"ice cream truck"
 }
 
 return listOfGames
