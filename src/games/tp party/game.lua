@@ -11,7 +11,7 @@ return {
             cir1 = {x = 50,                 y = 50,         r = 30} -- the circle left
             box1 = {x = cir1.x,             y = cir1.y-cir1.r,     w = 200, l = 2*cir1.r } -- box
             box2 = {x = cir1.x + cir1.r,    y = cir1.y,     w = 200, l = 800} -- toliet paper
-            cir2 = {x = cir1.x + box2.w,    y = cir1.y} -- the circle right
+            cir2 = {x = cir1.x + box2.w,    y = cir1.y,     r = cir1.r} -- the circle right
             handL = {x = cir1.x + 30,       y = (cir1.y + (2 * cir1.r)) + 30} -- left hand
             handR = {x = cir2.x + 30,       y = (cir2.y + (2 * cir2.r)) + 30} -- right hand
 			
@@ -20,18 +20,18 @@ return {
 			self.elapsed_time = 0
 		end
 
-        function love.keypressed(key)
-            if hand2.y == 2 * cir1.r + 30 and key == "right" then
-                hand2.y = 2 * cir1.r + 80
-                hand1.y = 2 * cir1.r + 30
+        function love.keypressed(self, key)
+            if handR.y == cir1.y + 2 * cir1.r + 30 and key == "right" then
+                handR.y = cir1.y + 2 * cir1.r + 80
+                handL.y = cir1.y + 2 * cir1.r + 30
                 if cir1.r > 5 then -- 5 is the end goal
                     cir1.r = cir1.r - 3
                 else
                     self.done = true
                 end
-            elseif hand1.y == 2*cir1.r + 30 and key == "left" then
-                hand1.y = 2*cir1.r + 80
-                hand2.y = 2*cir1.r + 30
+            elseif handL.y == cir1.y + 2*cir1.r + 30 and key == "left" then
+                handR.y = cir1.y + 2*cir1.r + 80
+                handR.y = cir1.y + 2*cir1.r + 30
             end
         end
 
@@ -49,10 +49,10 @@ return {
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
 					
-			love.graphics.circle("line", cir1.x, cir1.y, cir1.r, 100)
-			love.graphics.circle("line", cir2.x, cir2.y, cir1.r, 100)
-			love.graphics.rectangle("line", box1.x, box1.y, box1.w, box1.l)
-			love.graphics.rectangle("line", box2.x, box2.y, box2.w, box2.l)
+			love.graphics.circle("fill", cir1.x, cir1.y, cir1.r, 100)
+			love.graphics.circle("fill", cir2.x, cir2.y, cir1.r, 100)
+			love.graphics.rectangle("fill", box1.x, box1.y, box1.w, box1.l)
+			love.graphics.rectangle("fill", box2.x, box2.y, box2.w, box2.l)
 		end
 		
 		self.isDone = function(self)
@@ -69,12 +69,5 @@ return {
 			return -1 --the player always looses. 
 		end
 		
-		self.keypressed = function(self, key)
-			print(key.." was pressed")
-		end
-		
-		self.keyreleased = function(self, key)
-			print(key.." was released")
-		end
 	end
 }
