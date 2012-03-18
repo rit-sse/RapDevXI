@@ -18,7 +18,8 @@ listOfGames = {
 	"fix the kerning",
 	"MatchParens",
 	"cannon",
-	"catch the toast"
+	"catch the toast",
+	"tp party"
 }
 
 return listOfGames
