@@ -1,5 +1,5 @@
 return {
-	standalone_difficulty = "hard",
+	standalone_difficulty = "impossible",
 	difficulties = {"easy","medium","hard","impossible"},
 	PR = "child",
 	keys = {"arrows"},
@@ -26,7 +26,9 @@ return {
 		self.collider = HC(100, on_collision)
 
 		self.getReady = function(self, basePath)
-			self.ant = {img = love.graphics.newImage(basePath.."ant.png"), x = 0, y = 351, colObj= self.collider:addRectangle(0, 351, 49,49)}
+			self.ant = {img1 = love.graphics.newImage(basePath.."ant1.png"), img2=love.graphics.newImage(basePath.."ant2.png"),
+				 x = 0, y = 351, colObj= self.collider:addRectangle(0, 351, 49,49)}
+			self.ant.cur = self.ant.img1
 			self.grass = love.graphics.newImage(basePath.."grass.png")
 			self.foodImg = {love.graphics.newImage(basePath.."pancake.png"), love.graphics.newImage(basePath.."waffle.png"),
 						love.graphics.newImage(basePath.."frenchtoast.png")}
@@ -63,9 +65,18 @@ return {
 	        	rn = math.random(1,3)
 	        	table.insert(self.food, {hit=false, img=self.foodImg[rn], y = 0, x = rx, colObj=self:mkObj(rx,rn)})
 	        	self.lastfood = self.elapsed_time
+	        	self:swapAnt()
 	        end
 			self.elapsed_time = self.elapsed_time+dt
 			self.collider:update(dt)
+		end
+
+		self.swapAnt = function(self)
+			if self.ant.img1 == self.ant.cur then
+				self.ant.cur = self.ant.img2
+			else
+				self.ant.cur = self.ant.img1
+			end
 		end
 
 		self.mkObj = function(self, x, num)
@@ -81,7 +92,7 @@ return {
 		
 		self.draw = function(self)
 			love.graphics.draw(self.grass, 0,0)
-			love.graphics.draw(self.ant.img, self.ant.x, self.ant.y)
+			love.graphics.draw(self.ant.cur, self.ant.x, self.ant.y)
 			for i,v in ipairs(self.food) do
 				if not v.hit  then 
 					love.graphics.draw(v.img, v.x, v.y)
