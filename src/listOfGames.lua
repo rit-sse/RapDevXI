@@ -23,7 +23,7 @@ listOfGames = {
 	"cannon",
 	"pirate",
 	"leek spin",
-	"challenge of ni"
+	"challenge of the ni"
 }
 
 return listOfGames
