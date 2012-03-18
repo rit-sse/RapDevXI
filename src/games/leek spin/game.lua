@@ -57,6 +57,16 @@ return {
 
 			--self.image = love.graphics.newImage(basePath.."sprite.png")
 			--self.sound = love.sound.newSource(basePath.."sound.mp3")
+      self.bgm = love.audio.newSource(basePath .. "loituma.mp3")
+      self.bgm_on = false
+
+      self.quads = { false, false, false, false }
+      self.spins_required = { easy       = 3,
+                              medium     = 5,
+                              hard       = 7,
+                              impossible = 9 }
+      self.spins_left = self.spins_required[info.difficulty]
+      print(info.difficulty)
 
       -- Setup background
       self.bg = love.graphics.newImage(basePath .. "bg.png")
@@ -72,9 +82,60 @@ return {
 			self.elapsed_time = 0
 		end
 
+    function self:ensure_bgm()
+      if not self.bgm_on then
+        self.bgm:play()
+        self.bgm_on = true
+      end
+    end
+
+    function self:update_spin_quads()
+      local bg_width    = love.graphics.getWidth()
+      local bg_height   = love.graphics.getHeight()
+      local screen_x    = bg_width  * self.leek.bg_center_x
+      local screen_y    = bg_height * self.leek.bg_center_y
+      local x = love.mouse.getX() - screen_x
+      local y = love.mouse.getY() - screen_y
+
+      if x >=0 and y >= 0 then      -- Quadrant 1
+        self.quads[1] = true
+      elseif x >=0 and y < 0 then   -- Quadrant 1
+        self.quads[2] = true
+      elseif x < 0 and y < 0 then   -- Quadrant 1
+        self.quads[3] = true
+      elseif x < 0 and y >= 0 then  -- Quadrant 1
+        self.quads[4] = true
+      end
+
+      if self:has_spun() then
+        self:reset_quads()
+        self.spins_left = self.spins_left - 1
+        print(self.spins_left)
+      end
+    end
+
+    function self:has_spun()
+      local has_spun = true
+
+      for q = 1, 4 do
+        has_spun = has_spun and self.quads[q]
+      end
+
+      return has_spun
+    end
+
+    function self:reset_quads()
+      for q = 1, 4 do
+        self.quads[q] = false
+      end
+    end
+
 		self.update = function(self, dt)
 			--update is called in between draws. dt is the time in seconds since the last time
 			--update was called
+      self:ensure_bgm()
+
+      self:update_spin_quads()
 
 			--here we just keep track of how much time has passed
 			self.elapsed_time = self.elapsed_time+dt			
