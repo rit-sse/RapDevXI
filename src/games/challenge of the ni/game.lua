@@ -1,5 +1,5 @@
 return {
-	standalone_difficulty = "medium",
+	standalone_difficulty = "easy",
 	--Here go all of the static info values for our game
 	--  Remember a comma after each entry, as we are in a table initialization
 	
@@ -28,7 +28,7 @@ return {
 	--The longest this game will EVER take. Note: by overriding the isDone method you can end
 	--the game sooner. This is just how long until the engine kills your game and asks it for
 	--a score by force.
-	maxDuration = 15,
+	maxDuration = 30,
 	
 	--This is where you define what an actual running version of your game is.
 	--The first parameter is a table you must fill in with your desired callbacks,
@@ -64,7 +64,7 @@ return {
 			self.sound = {}
 			self.sound.start = love.audio.newSource(basePath.."nisound.ogg")
 			self.sound.fall = love.audio.newSource(basePath.."fall.mp3")
-			self.sound.hit = love.audio.newSOurce(basePath.."hit.mp3")
+			self.sound.hit = love.audio.newSource(basePath.."hit.mp3")
 
 			self.cracks = {
 				love.graphics.newImage(basePath.."crack1.png"),
@@ -90,16 +90,24 @@ return {
 			self.herring.init_y = 200
 			self.herring.x = self.herring.init_x
 			self.herring.y = self.herring.init_y
-			self.herring.width = 80
-			self.herring.height = 80
+			self.herring.width = 53
+			self.herring.height = 30
 			self.herring.state = 'up'
-			self.herring.speed_y = ({easy=300, medium=500, hard=700, impossible=900})[info.difficulty]
-			self.herring.speed_x = 800
+			self.herring.speed_y = ({easy=400, medium=500, hard=800, impossible=1000})[info.difficulty]
+			self.herring.speed_x = self.herring.speed_y + 500
+			self.herring.init_angle = 0
+			self.herring.angle = self.herring.init_angle
+			self.herring.init_speed_angle = 10 + (self.herring.speed_y / 10)
+			self.herring.speed_angle = self.herring.init_speed_angle
     
             self.branches = {}
 			self.branches.img = love.graphics.newImage(basePath.."branches.png")
 			self.branches.x = 150
 			self.branches.y = -50
+			self.branches.fall_speed = 100
+			self.branches.roll_angle_speed = math.pi/4
+			self.branches.roll_x_speed = 100
+			self.branches.angle = 0
 
 			self.treeChunks = {}
 			local i = 1
@@ -129,7 +137,16 @@ return {
 			if self.state == 'throwing' then
                 self:throw(dt)
             elseif self.state == 'falling' then
-                self.topRot = self.topRot + math.pi / 2 * dt
+                if self.topRot <= math.pi then
+                    self.topRot = self.topRot + math.pi / 2 * dt
+                end
+                
+                if self.branches.y <= 175 then
+                    self.branches.y = self.branches.y + self.branches.fall_speed * dt
+                else 
+                    self.branches.angle = self.branches.angle - self.branches.roll_angle_speed * dt
+                    self.branches.x = self.branches.x - self.branches.roll_x_speed * dt
+                end
                 
                 self.herring.state = 'gone'
             else
@@ -156,12 +173,17 @@ return {
 		
 		self.throw = function(self, dt)
             speed = self.herring.speed_x * dt
+            angle_speed = self.herring.speed_angle * dt
             if self.tree.x - self.herring.x - (self.herring.width / 2) <= 0 then
                 spot = math.ceil(self.herring.y / 20) + 1
+                if spot > 20 then
+                    spot = 20
+                end
                 print("hit chunk"..spot.." self.herring.y="..self.herring.y)
                 self.treeChunks[spot] = self.treeChunks[spot] + 1
                 
                 self.herring.x = self.herring.init_x
+                self.herring.angle = self.herring.init_angle
                 
                 self.state = 'cutting'
                 
@@ -179,6 +201,7 @@ return {
                 end
             else
                 self.herring.x = self.herring.x + speed
+                self.herring.angle = self.herring.angle + angle_speed
             end
 		end
 		
@@ -187,11 +210,20 @@ return {
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff 
 			love.graphics.draw(self.sky, 0, 0)
 
-			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
+			love.graphics.print( string.format("%2.1f left", (self.time_limit-self.elapsed_time)), 0,0)
 
 
+            --draw branches
+            love.graphics.push()
+            love.graphics.translate(self.branches.x+150, self.branches.y+120)
+            love.graphics.rotate(self.branches.angle)
+            love.graphics.draw(self.branches.img, -150, -100)
+            love.graphics.pop()
+            
+            
+            
 			if self.state == 'cutting' or self.state == 'throwing' then
-				love.graphics.draw(self.branches.img, 150, -50)
+				
 				love.graphics.draw(self.tree.img, self.tree.x, self.tree.y)
 				local i = 1
 				for i = 1, 20 do
@@ -205,17 +237,12 @@ return {
 
 				end
 			elseif self.state == 'falling' then
+                --draw top
 				love.graphics.push()
                 
                 love.graphics.translate(self.tree.x + self.tree.width, ((self.fallingSegment-1) * 20 + 10))
 				love.graphics.rotate(self.topRot)
 				
-				
-				--love.graphics.translate(, (self.fallingSegment * 20))
-				
-				
-				
-				--draw top
 				love.graphics.drawq(self.tree.img, self.treeTop, -self.tree.width, -((self.fallingSegment-1) * 20 + 10))
 				for i=1,self.fallingSegment-1 do
 				    if self.treeChunks[i] > 0 then
@@ -223,6 +250,12 @@ return {
 				    end
 				end
 				love.graphics.drawq(self.cracks[4], self.crackTop, -self.tree.width, -10)
+				
+				--draw extra top
+				love.graphics.push()
+				love.graphics.scale(1, -1)
+				love.graphics.draw(self.tree.img, -self.tree.width, -(((self.fallingSegment-1) * 20 + 10) * 2 + 400))
+				love.graphics.pop()
 
 				love.graphics.pop()
 
@@ -238,7 +271,11 @@ return {
             end
 
             if not (self.herring.state == 'gone') then
-                love.graphics.draw(self.herring.img, self.herring.x, self.herring.y)
+                love.graphics.push()
+                love.graphics.translate(self.herring.x, self.herring.y)
+                love.graphics.rotate(self.herring.angle)
+                love.graphics.draw(self.herring.img, -(self.herring.width/2), -(self.herring.height/2))
+                love.graphics.pop()
             end
 			
 			love.graphics.draw(self.grass, 0, 360)
@@ -264,7 +301,7 @@ return {
 		end
 		
 		self.keypressed = function(self, key)
-            if key == ' ' then
+            if key == ' ' and self.state == 'cutting' then
                 self.state = 'throwing'
             end
 
