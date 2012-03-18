@@ -18,7 +18,7 @@ return {
 				easy = {
 					{"()(((", 3},
 					{"(()(", 2},
-					{"()()((()))", 0}
+					{"()()((())", 1}
 				},
 				medium = {
 					{"(((((())(", 4},
@@ -95,11 +95,11 @@ return {
 				self.useranswer = self.useranswer - 1
 				self.userinput = self.answers[self.useranswer + 1]
 			end
-			if key == "=" and self.useranswer and self.useranswer < 6 then
+			if key == "=" or key == "0" and self.useranswer and self.useranswer < 6 then
 				self.useranswer = self.useranswer + 1
 				self.userinput = self.answers[self.useranswer + 1]
 			end
-			if tonumber(key) and tonumber(key) + 1 then
+			if tonumber(key) and tonumber(key) + 1 and tonumber(key) > 0 then
 				self.useranswer = tonumber(key)
 				self.userinput = self.answers[self.useranswer + 1]
 			end
