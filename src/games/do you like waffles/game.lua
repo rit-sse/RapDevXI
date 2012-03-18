@@ -33,7 +33,7 @@ return {
 			self.foodImg = {love.graphics.newImage(basePath.."pancake.png"), love.graphics.newImage(basePath.."waffle.png"),
 						love.graphics.newImage(basePath.."frenchtoast.png")}
 			self.music = love.audio.newSource(basePath.."waffles.mp3")
-			self.eat = love.audio.newSource(basePath.."chomp.mp3")
+			--self.eat = love.audio.newSource(basePath.."chomp.mp3")
 			self.playing = false
 			math.randomseed(os.time())
 			self.elapsed_time = 0
@@ -111,7 +111,7 @@ return {
 			for i,v in ipairs(self.food) do
 				if food == v.colObj then
 					v.hit = true
-					love.audio.play(self.eat)
+				--	love.audio.play(self.eat)
 				end
 			end
 		end
