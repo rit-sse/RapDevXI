@@ -20,7 +20,8 @@ local makeMode = function()
 					end
 					self.___olddraw = self.draw
 					self.draw = function(self)
-						self:___olddraw()
+						love.graphics.setColor(255,255,255)
+						pcall(function() self:___olddraw() end)
 						love.graphics.setColor(255,255,255)
 						love.graphics.draw(tvimage,0,0)
 					end
