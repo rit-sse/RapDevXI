@@ -1,6 +1,6 @@
 return {
 	standalone_difficulty = "easy",
-	difficulties = {"easy"},
+	difficulties = {"easy", "medium", "hard", "impossible"},
 	PR = "child",
 	keys = {"space"},
 	maxDuration = 6,
@@ -10,6 +10,20 @@ return {
 		-- Callbacks
 
 		self.getReady = function(self, basePath)
+			-- Difficulty parameters
+			self.toastVel = ({easy = 275.0, medium = 275.0, hard = 275.0,
+				impossible = 185.0})[info.difficulty]
+			self.toastAcel = ({easy = 500.0, medium = 500.0, hard = 500.0,
+				impossible = 0})[info.difficulty]
+			self.toastType = ({easy = "normal", medium = "bite",
+				hard = "eaten", impossible = "eaten"})[info.difficulty]
+
+
+			-- Load audio clips
+			self.popup = love.audio.newSource(basePath.."pop.mp3")
+			self.music = love.audio.newSource(basePath.."flea.mp3")
+			self.playing = false
+
 			-- Scale all the graphics
 			self.scale = 4
 
@@ -22,7 +36,7 @@ return {
 
 			-- Determine the toast launch time
 			math.randomseed(os.time())
-			self.launch_time = math.random(0.74, 1.5)
+			self.launch_time = math.random(1.0, 1.75)
 
 			-- Set up the background
 			self.background = love.graphics.newImage(basePath.."background.png")
@@ -35,6 +49,12 @@ return {
 			self.toast.yVel = 0
 			self.toast.img = love.graphics.newImage(basePath.."toast.png")
 			self.toast.img:setFilter("nearest", "nearest")
+			self.toast.bite = {}
+			self.toast.bite.img = love.graphics.newImage(basePath.."toast-bite.png")
+			self.toast.bite.img:setFilter("nearest", "nearest")
+			self.toast.eaten = {}
+			self.toast.eaten.img = love.graphics.newImage(basePath.."toast-eaten.png")
+			self.toast.eaten.img:setFilter("nearest", "nearest")
 
 			-- Set up the toaster
 			self.toaster = {}
@@ -75,10 +95,17 @@ return {
 		end
 
 		self.update = function(self, dt)
+			-- Start the music!
+			if not self.playing then
+				self.playing = true
+				love.audio.play(self.music)
+			end
+
 			-- Determine when to launch the toast
 			if not self.launched and self.elapsed_time > self.launch_time then
+				love.audio.play(self.popup)
 				self.launched = true
-				self.toast.yVel = 275.0
+				self.toast.yVel = self.toastVel
 				self.toaster.handle.yVel = 100.0
 				self.toaster.on = false
 			end
@@ -86,13 +113,22 @@ return {
 			-- Update the toast position
 			if not self.done and self.launched and not self.caught then
 				self.toast.y = self.toast.y - (self.toast.yVel * dt)
-				self.toast.yVel = self.toast.yVel - (500.0 * dt)
+				self.toast.yVel = self.toast.yVel - (self.toastAcel * dt)
 
+				-- Check if the toast has gone back into the toaster
 				if self.toast.y > 66 then
 					self.toast.y = 66
 					self.toast.yVel = 0
 
 					-- Quit in just a litte bit
+					self.timeout = 0.75
+					self.done = true
+
+				-- Check if the toast has gone off the screen in impossible mode
+				elseif self.toastAcel == 0 and self.toast.y < -23 then
+					self.toast.yVel = 0
+
+					-- Quit in just a little bit
 					self.timeout = 0.75
 					self.done = true
 				end
@@ -132,8 +168,16 @@ return {
 				self.hand.y * self.scale, 0, self.scale, self.scale, 0, 0)
 
 			-- Draw the toast
-			love.graphics.draw(self.toast.img, self.toast.x * self.scale,
-				self.toast.y * self.scale, 0, self.scale, self.scale, 0, 0)
+			if self.toastType == "normal" then
+				love.graphics.draw(self.toast.img, self.toast.x * self.scale,
+					self.toast.y * self.scale, 0, self.scale, self.scale, 0, 0)
+			elseif self.toastType == "bite" then
+				love.graphics.draw(self.toast.bite.img, self.toast.x * self.scale,
+					self.toast.y * self.scale, 0, self.scale, self.scale, 0, 0)
+			elseif self.toastType == "eaten" then
+				love.graphics.draw(self.toast.eaten.img, self.toast.x * self.scale,
+					self.toast.y * self.scale, 0, self.scale, self.scale, 0, 0)
+			end
 
 			-- Draw the thumb
 			if self.hand.thumb_up then
@@ -186,15 +230,25 @@ return {
 				self.hand.x = 42
 
 				-- Check to see if we caught the toast!
-				--   (toast.y between 23 and 51)
-				if self.toast.y >= 23 and self.toast.y <= 51 then
+				if (self.toastType == "normal" and self.toast.y >= 23
+									and self.toast.y <= 51) or
+					(self.toastType == "bite" and self.toast.y >= 23
+									and self.toast.y <= 42) or
+					(self.toastType == "eaten" and self.toast.y >= 23
+									and self.toast.y <= 36) then
+					
 					-- Close the thumb, stop the toast movement
-					self.hand.thumb_up = false
 					self.toast.yVel = 0
 					self.caught = true
 					self.done = true
 					self.timeout = 0.75
 				end
+
+				self.hand.thumb_up = false
+			end
+
+			if key == 'a' then
+				self.hand.thumb_up = not self.hand.thumb_up
 			end
 		end
 		
