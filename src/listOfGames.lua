@@ -8,7 +8,6 @@ listOfGames = {
 	"the car",
 	"don't blink",
 	"dodge everything",
-	"tp party",
 	"face match",
 	"ice cream truck",
 	"i will derive",
@@ -19,7 +18,8 @@ listOfGames = {
 	"fix the kerning",
 	"MatchParens",
 	"cannon",
-	"catch the toast"
+	"catch the toast",
+	"tp party"
 }
 
 return listOfGames
