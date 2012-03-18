@@ -103,7 +103,7 @@ return {
 				self.useranswer = tonumber(key)
 				self.userinput = self.answers[self.useranswer + 1]
 			end
-			if key == "enter" then
+			if key == "return" then
 				self.doneearly = true
 			end
 			print(key.." was pressed")
