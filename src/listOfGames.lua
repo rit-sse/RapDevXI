@@ -20,11 +20,13 @@ listOfGames = {
 	"MatchParens",
 	"cannon",
 	"catch the toast",
+	"RockClimb",
 	"pirate",
 	"leek spin",
 	"challenge of the ni",
 	"tp party",
-	"the final sacrifice"
+	"the final sacrifice",
+	"do you like waffles"
 }
 
 return listOfGames
