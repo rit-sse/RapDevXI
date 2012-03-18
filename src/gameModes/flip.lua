@@ -20,8 +20,18 @@ local makeMode = function()
 					end
 					self.___olddraw = self.draw
 					self.draw = function(self)
+						love.graphics.push()
+						love.graphics.translate(7,31)
+						love.graphics.scale(330/400,330/400)
 						love.graphics.setColor(255,255,255)
 						pcall(function() self:___olddraw() end)
+						love.graphics.pop()
+						love.graphics.setColor(0,0,0)
+						
+						love.graphics.rectangle("fill",7,11,330,31-11)
+						love.graphics.rectangle("fill",7,360,330,18)
+						
+						
 						love.graphics.setColor(255,255,255)
 						love.graphics.draw(tvimage,0,0)
 					end

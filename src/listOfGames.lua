@@ -15,10 +15,16 @@ listOfGames = {
 	"WaveAtTheTour",
 	"jet pack man",
 	'gun or umbrella',
+	"challenge of the ni",
 	"fix the kerning",
 	"MatchParens",
 	"cannon",
-	"catch the toast"
+	"catch the toast",
+	"RockClimb",
+	"pirate",
+	"leek spin",
+	"challenge of the ni",
+	"tp party"
 }
 
 return listOfGames

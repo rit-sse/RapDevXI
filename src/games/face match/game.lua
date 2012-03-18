@@ -73,7 +73,6 @@ return {
 				"pokerface.png"
 			}
 
-			math.randomseed(os.time())
 			local i1 = math.random(#self.allFaces);
 
 			local i2 = i1
