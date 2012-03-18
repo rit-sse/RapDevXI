@@ -15,6 +15,7 @@ listOfGames = {
 	"WaveAtTheTour",
 	"jet pack man",
 	'gun or umbrella',
+	"challenge of the ni",
 	"fix the kerning",
 	"MatchParens",
 	"cannon",
