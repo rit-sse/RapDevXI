@@ -14,7 +14,8 @@ listOfGames = {
 	"waste the ink",
 	"WaveAtTheTour",
 	"jet pack man",
-	'gun or umbrella'
+	'gun or umbrella',
+	"challenge of the ni"
 }
 
 return listOfGames

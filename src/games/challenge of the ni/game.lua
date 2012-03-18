@@ -180,7 +180,10 @@ return {
                 spot = math.ceil(self.herring.y / 20) + 1
                 if spot > 20 then
                     spot = 20
+                elseif spot <= 0 then
+                    spot = 1
                 end
+                
                 print("hit chunk"..spot.." self.herring.y="..self.herring.y)
                 self.treeChunks[spot] = self.treeChunks[spot] + 1
                 
