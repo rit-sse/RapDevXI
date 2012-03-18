@@ -46,9 +46,6 @@ return {
 				"))))))"
 			}
 
-			print(math.random(1, #self.strings))
-			math.randomseed(os.time())
-			print(math.random(1, #self.strings))
 			local choice = math.random(1, #self.strings)
 			self.string = self.strings[choice]
 
