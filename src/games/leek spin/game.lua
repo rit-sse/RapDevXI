@@ -1,5 +1,5 @@
 return {
-	standalone_difficulty = "easy",
+	standalone_difficulty = "impossible",
 	--Here go all of the static info values for our game
 	--  Remember a comma after each entry, as we are in a table initialization
 	
@@ -51,6 +51,8 @@ return {
 
 			--Concatenate basePath with any resource names. This makes your game work in both standalone
 			--and the main game mode
+      
+      self.difficulty = info.difficulty
 
 			--DON'T START SOUNDS IN GET READY! They will begin playing during the splash screen, and
 			--be stopped before your game is actually shown
@@ -61,11 +63,21 @@ return {
       self.bgm_on = false
 
       self.quads = { false, false, false, false }
-      self.spins_required = { easy       = 3,
-                              medium     = 5,
-                              hard       = 7,
-                              impossible = 9 }
-      self.spins_left = self.spins_required[info.difficulty]
+      self.configuration = {
+        leeks_required = {
+          easy       = 3,
+          medium     = 5,
+          hard       = 7,
+          impossible = 9
+        }, spins_required = {
+          easy       = 3,
+          medium     = 5,
+          hard       = 7,
+          impossible = 9
+        }
+      }
+      self.spins_left = self.configuration.spins_required[self.difficulty]
+      self.leeks_left = self.configuration.leeks_required[self.difficulty]
       print(info.difficulty)
 
       -- Setup background
@@ -77,6 +89,7 @@ return {
         bg_center_x = 0.50,
         bg_center_y = 0.50
       }
+      self.leek_counter = love.graphics.newImage(basePath .. "leek-counter.png")
 
 			--Aso set up your own initial game state here.
 			self.elapsed_time = 0
@@ -110,8 +123,15 @@ return {
       if self:has_spun() then
         self:reset_quads()
         self.spins_left = self.spins_left - 1
-        print(self.spins_left)
+
+        if self:has_leeked() then
+          self:next_leek()
+        end
       end
+    end
+
+    function self:has_leeked()
+      return self.spins_left == 0
     end
 
     function self:has_spun()
@@ -128,6 +148,11 @@ return {
       for q = 1, 4 do
         self.quads[q] = false
       end
+    end
+
+    function self:next_leek()
+      self.spins_left = self.configuration.spins_required[self.difficulty]
+      self.leeks_left = self.leeks_left - 1
     end
 
 		self.update = function(self, dt)
@@ -148,6 +173,7 @@ return {
 
       self:draw_background()
       self:draw_leek()
+      self:draw_leek_counters()
     end
 
     function self:draw_background()
@@ -155,6 +181,21 @@ return {
       local scaley = love.graphics.getHeight() / self.bg:getHeight()
 
       love.graphics.draw(self.bg, 0, 0, 0, scalex, scaley)
+    end
+
+    function self:draw_leek_counters()
+      local scale  = 0.5
+      local width  = scale * self.leek_counter:getWidth()
+      local height = scale * self.leek_counter:getHeight()
+      local xstart = love.graphics.getWidth() - 1.5 * width
+      local ystart = 0.5 * height
+
+      for left = 1, self.leeks_left + 1 do
+        love.graphics.draw(self.leek_counter,
+            xstart, ystart, 0, scale, scale)
+
+        ystart = ystart + height
+      end
     end
 
     function self:draw_leek()
