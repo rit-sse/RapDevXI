@@ -21,7 +21,6 @@ return {
 			self.done = false
 
 			-- Determine the toast launch time
-			math.randomseed(os.time())
 			self.launch_time = math.random(0.74, 1.5)
 
 			-- Set up the background

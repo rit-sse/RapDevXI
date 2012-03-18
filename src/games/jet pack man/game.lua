@@ -150,7 +150,6 @@ return {
 		-- Callbacks
 		
 		self.getReady = function(self, basePath)
-      math.randomseed(os.time())
 
       -- Difficulty stuff
       self.configuration = {

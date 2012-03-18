@@ -42,7 +42,7 @@ return {
 	makeGameInstance = function(self, info)
 		--Each game may choose how to scale difficulty. The template imposes a time limit
 		--that is modified by the difficulty of the game
-		self.time_limit = ({easy=12, medium=10, hard=8, impossible=6})[info.difficulty]
+		self.time_limit = ({easy=20, medium=12, hard=8, impossible=7})[info.difficulty]
 		
 		--Callbacks
 
