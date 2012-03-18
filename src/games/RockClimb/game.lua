@@ -1,20 +1,17 @@
 return {
-	standalone_difficulty = "easy",
+	standalone_difficulty = "hard",
 	difficulties = {"easy","medium","hard","impossible"},
 	PR = "child",
-	keys = {"arrows"},
+	keys = {"mouse"},
 	maxDuration = 30,
 	makeGameInstance = function(self, info)
-		--Each game may choose how to scale difficulty. The template imposes a time limit
-		--that is modified by the difficulty of the game
 		self.time_limit = ({easy=30, medium=30, hard=30, impossible=30})[info.difficulty]
 		self.lava_speed = ({easy=1, medium=10, hard=15, impossible=20})[info.difficulty]
-		self.rock_rate = ({easy=10, medium=20, hard=30, impossible=40})[info.difficulty]
-		self.rock_rad = ({easy=40, medium=35, hard=30, impossible=25})[info.difficulty]
-		self.gravity = ({easy=7, medium=8, hard=9, impossible=10})[info.difficulty]
-		self.stun_period = ({easy=0, medium=0.4, hard=0.7, impossible=1})[info.difficulty]
-		self.seek_rate = ({easy=10, medium=9, hard=8, impossible=7})[info.difficulty]
-
+		self.rock_rate = ({easy=30, medium=25, hard=20, impossible=15})[info.difficulty]
+		self.rock_rad = ({easy=25, medium=30, hard=35, impossible=40})[info.difficulty]
+		self.gravity = ({easy=7, medium=10, hard=13, impossible=16})[info.difficulty]
+		self.stun_period = ({easy=5, medium=4, hard=3, impossible=1})[info.difficulty]
+		self.seek_rate = ({easy=30, medium=29, hard=28, impossible=27})[info.difficulty]
 		
 		self.bottom = 0
 		self.lava = {y = 10}
@@ -29,18 +26,21 @@ return {
 		self.lastRock = 400
 		self.rocks = {
 			{x = 50, y = 150,  r = 15, seeking = false},
-			{x = 250, y = 150, r = 15, seeking = false},
-			{x = 50, y = 200,  r = 15, seeking = false},
+			--{x = 250, y = 150, r = 15, seeking = false},
+			--{x = 50, y = 200,  r = 15, seeking = false},
 			{x = 250, y = 200, r = 15, seeking = false},
 			{x = 50, y = 250,  r = 15, seeking = false},
-			{x = 250, y = 250, r = 15, seeking = false},
-			{x = 50, y = 300,  r = 15, seeking = false},
+			--{x = 250, y = 250, r = 15, seeking = false},
+			--{x = 50, y = 300,  r = 15, seeking = false},
 			{x = 250, y = 300, r = 15, seeking = false},
 			{x = 50, y = 350,  r = 15, seeking = false},
-			{x = 250, y = 350, r = 15, seeking = false},
-			{x = 50, y = 400,  r = 15, seeking = false},
+			--{x = 250, y = 350, r = 15, seeking = false},
+			--{x = 50, y = 400,  r = 15, seeking = false},
 			{x = 250, y = 400, r = 15, seeking = false}
 		}
+
+		self.curTime = 0
+		self.lastColl = -10
 
 		math.randomseed(os.time())
 		
@@ -52,7 +52,7 @@ return {
 			newy = height - newy
 			newy = newy + self.bottom
 
-			print("Translated "..x..", "..y.." to "..newx..", "..newy)
+			--print("Translated "..x..", "..y.." to "..newx..", "..newy)
 			return newx, newy
 		end
 
@@ -75,6 +75,10 @@ return {
 
 		self.moveLava = function(self, dt)
 			self.lava.y = self.lava.y + self.lava_speed * dt
+
+			if self.lava.y < self.bottom then
+				self.lava.y = self.lava.y + self.lava_speed * dt
+			end
 		end
 
 		self.moveFloor = function(self, dt)
@@ -87,7 +91,16 @@ return {
 
 			self.person.dy = self.person.dy - self.gravity * dt
 
-			if self.curRock then
+			local colliding = self:overlapsAny(self.person)
+
+			if colliding and self.lastColl + self.stun_period < self.curTime then
+				self.person.dy = self.person.dy / 2
+				self.person.dx = self.person.dx / 2
+				self.lastColl = self.curTime
+			end
+
+			-- Grabbing a rock?
+			if self.curRock and not colliding then
 				if self.person.x < self.curRock.x then
 					self.person.dx = self.person.dx + self.seek_rate * dt
 				elseif self.person.x > self.curRock.x then
@@ -101,9 +114,20 @@ return {
 				end
 			end
 
+			-- On the floor?
 			if self.person.y - self.person.r <= self.floor.y then
 				self.person.y = self.floor.y + self.person.r
-				self.person.dy = 0
+				self.person.dy = math.max(0, self.person.dy)
+			end
+
+			local width = love.graphics.getWidth()
+			if self.person.x + self.person.r >= width then
+				print(math.min(self.person.dx, -self.person.dx))
+				self.person.dx = math.min(self.person.dx, -self.person.dx)
+			end
+			if self.person.x - self.person.r <= 0 then
+				print(math.min(self.person.dx, -self.person.dx))
+				self.person.dx = math.max(self.person.dx, -self.person.dx)
 			end
 
 			self.person.y = self.person.y + self.person.dy * dt
@@ -132,6 +156,8 @@ return {
 			self:moveFloor(dt)
 			self:movePerson(dt)
 			self:makeRocks(dt)
+
+			self.curTime = self.curTime + dt
 		end
 		
 		self.drawLava = function(self)
@@ -174,8 +200,8 @@ return {
 
 		self.draw = function(self)
 			self:drawFloor()
-			self:drawPerson()
 			self:drawRocks()
+			self:drawPerson()
 			self:drawLava()
 		end
 		
