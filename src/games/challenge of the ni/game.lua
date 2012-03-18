@@ -1,5 +1,5 @@
 return {
-	standalone_difficulty = "easy",
+	standalone_difficulty = "impossible",
 	--Here go all of the static info values for our game
 	--  Remember a comma after each entry, as we are in a table initialization
 	
@@ -41,8 +41,8 @@ return {
 	makeGameInstance = function(self, info)
 		--Each game may choose how to scale difficulty. The template imposes a time limit
 		--that is modified by the difficulty of the game
-		self.time_limit = ({easy=30, medium=30, hard=30, impossible=30})[info.difficulty]
-		
+		self.time_limit = ({easy=30, medium=20, hard=10, impossible=5})[info.difficulty]
+
 		--Callbacks
 
 		
@@ -93,7 +93,7 @@ return {
 			self.herring.height = 30
 			self.herring.state = 'up'
 			self.herring.speed_y = ({easy=400, medium=500, hard=800, impossible=1000})[info.difficulty]
-			self.herring.speed_x = self.herring.speed_y + 500
+			self.herring.speed_x = 800
 			self.herring.init_angle = 0
 			self.herring.angle = self.herring.init_angle
 			self.herring.init_speed_angle = 10 + (self.herring.speed_y / 10)
@@ -151,24 +151,34 @@ return {
                 
                 self.herring.state = 'gone'
             else
-                if self.herring.y + self.herring.height >= love.graphics.getHeight() and self.herring.state == 'down' then
-                    self.herring.state = 'up'
-                end
-                if self.herring.y <= 0 and self.herring.state == 'up' then
-                    self.herring.state = 'down'
-                end
-                
-                speed = self.herring.speed_y * dt
-                if self.herring.state == 'up' then
-                    self.herring.y = self.herring.y - speed
-                elseif self.herring.state == 'down' then
-                    self.herring.y = self.herring.y + speed
-                end
+            	speed = self.herring.speed_y * dt
+            	self:adjust_herring_y(speed)
 			end
 			
 			if self.first_update then
                 love.audio.play(self.sound.start)
                 self.first_update = false
+            end
+		end
+
+		self.adjust_herring_y = function(self, speed)
+			if self.herring.y + self.herring.height >= love.graphics.getHeight() and self.herring.state == 'down' then
+                self.herring.state = 'up'
+            end
+            if self.herring.y <= 0 and self.herring.state == 'up' then
+                self.herring.state = 'down'
+            end
+            
+            if self.herring.state == 'up' then
+                self.herring.y = self.herring.y - speed
+            elseif self.herring.state == 'down' then
+                self.herring.y = self.herring.y + speed
+            end
+
+            if self.herring.y > love.graphics.getHeight() then
+            	self.herring.y = love.graphics.getHeight() - self.herring.height
+            elseif self.herring.y < 0 then
+            	self.herring.y = 0
             end
 		end
 		
@@ -188,6 +198,8 @@ return {
                 
                 self.herring.x = self.herring.init_x
                 self.herring.angle = self.herring.init_angle
+                
+                self:adjust_herring_y(100)
                 
                 self.state = 'cutting'
                 
