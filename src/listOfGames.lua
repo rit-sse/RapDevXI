@@ -16,7 +16,8 @@ listOfGames = {
 	"jet pack man",
 	'gun or umbrella',
 	"fix the kerning",
-	"MatchParens"
+	"MatchParens",
+	"cannon"
 }
 
 return listOfGames
