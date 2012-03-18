@@ -23,7 +23,7 @@ return {
 	--Keys is an indication to the user that says where to put their hands.
 	--It needs to be a list with any values from:
 	--  {"arrows","wasd","full keyboard","mouse","space"}
-	keys = {"arrows"},
+	keys = {"mouse"},
 	
 	--The longest this game will EVER take. Note: by overriding the isDone method you can end
 	--the game sooner. This is just how long until the engine kills your game and asks it for
@@ -41,10 +41,9 @@ return {
 	makeGameInstance = function(self, info)
 		--Each game may choose how to scale difficulty. The template imposes a time limit
 		--that is modified by the difficulty of the game
-		self.time_limit = ({easy=15, medium=10, hard=8, impossible=4})[info.difficulty]
+		self.time_limit = 10
 		
 		--Callbacks
-
 		
 		self.getReady = function(self, basePath)
 			--get ready is called during the splash screen.
@@ -58,6 +57,16 @@ return {
 
 			--self.image = love.graphics.newImage(basePath.."sprite.png")
 			--self.sound = love.sound.newSource(basePath.."sound.mp3")
+
+      -- Setup background
+      self.bg = love.graphics.newImage(basePath .. "bg.png")
+      self.leek = {
+        image = love.graphics.newImage(basePath .. "leek.png"),
+        rotation_center_x = 0.70,
+        rotation_center_y = 0.70,
+        bg_center_x = 1/2,
+        bg_center_y = 1/2
+      }
 
 			--Aso set up your own initial game state here.
 			self.elapsed_time = 0
@@ -75,7 +84,46 @@ return {
 			--here we just put how much time is left in the upper left corner
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
-		end
+
+      self:draw_background()
+      self:draw_leek()
+    end
+
+    function self:draw_background()
+      local scalex = love.graphics.getWidth() / self.bg:getWidth()
+      local scaley = love.graphics.getHeight() / self.bg:getHeight()
+
+      love.graphics.draw(self.bg, 0, 0, 0, scalex, scaley)
+    end
+
+    function self:draw_leek()
+      local bg_width    = love.graphics.getWidth()
+      local bg_height   = love.graphics.getHeight()
+      local leek_width  = self.leek.image:getWidth()
+      local leek_height = self.leek.image:getHeight()
+
+      local screen_x    = bg_width  * self.leek.bg_center_x
+      local screen_y    = bg_height * self.leek.bg_center_y
+
+      local offset_x    = leek_width  * self.leek.rotation_center_x
+      local offset_y    = leek_height * self.leek.rotation_center_y
+
+      local radians     = self:getMouseRadians(screen_x, screen_y)
+
+      love.graphics.draw(self.leek.image,
+          screen_x, screen_y, radians, 1, 1, offset_x, offset_y)
+    end
+
+    function self:getMouseRadians(sx, sy)
+      local x = love.mouse.getX() - sx
+      local y = love.mouse.getY() - sy
+
+      if x > 0 then
+        return math.atan(y / x) + math.pi / 2
+      else
+        return 3 * math.pi / 2 + math.atan(y / x)
+      end
+    end
 		
 		self.isDone = function(self)
 			--This can return true to have the game end sooner that the time_limit
@@ -89,15 +137,6 @@ return {
 			--return a number -1 to 1. anything >0 is a "passing" score
 
 			return -1 --the player always looses. 
-		end
-		
-		self.keypressed = function(self, key)
-			
-			print(key.." was pressed")
-		end
-		
-		self.keyreleased = function(self, key)
-			print(key.." was released")
 		end
 	end
 }
