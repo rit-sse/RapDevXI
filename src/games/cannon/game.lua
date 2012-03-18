@@ -4,7 +4,7 @@ return {
 	
 	PR = "child",
 	
-	keys = {"arrows"},
+	keys = {"space"},
 	maxDuration = 10,
 	
 	
