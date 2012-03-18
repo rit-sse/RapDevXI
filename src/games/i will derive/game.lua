@@ -11,7 +11,7 @@ return {
 	
 	makeGameInstance = function(self, info)
 		self.time_limit = 15
-		self.range = ({easy={1,6}, medium={7,12}, hard={13,18}})[info.difficulty]
+		self.range = ({medium={1,6}, hard={7,12}, impossible={13,18}})[info.difficulty]
 		self.lost = false
 		self.score = 0
 		
