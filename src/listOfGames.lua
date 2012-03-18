@@ -20,10 +20,10 @@ listOfGames = {
 	"MatchParens",
 	"cannon",
 	"catch the toast",
-	"cannon",
 	"pirate",
 	"leek spin",
-	"challenge of the ni"
+	"challenge of the ni",
+	"tp party"
 }
 
 return listOfGames
