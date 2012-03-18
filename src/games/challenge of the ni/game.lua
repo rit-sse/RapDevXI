@@ -63,8 +63,8 @@ return {
 			
 			self.sound = {}
 			self.sound.start = love.audio.newSource(basePath.."nisound.ogg")
-			self.sound.fall = love.audio.newSource(basePath.."fall.mp3")
-			self.sound.hit = love.audio.newSource(basePath.."hit.mp3")
+			self.sound.fall = love.audio.newSource(basePath.."fall.ogg")
+			self.sound.hit = love.audio.newSource(basePath.."hit.mp3", 'static')
 
 			self.cracks = {
 				love.graphics.newImage(basePath.."crack1.png"),
@@ -116,7 +116,8 @@ return {
 			end
 
 			self.state = 'cutting'
-
+            self.fallingTime = 0;
+            
 			--setup quads
 			self.crackTop = love.graphics.newQuad(0, 0, 100, 10, 100, 20)
 			self.crackBottom = love.graphics.newQuad(0, 10, 100, 10, 100, 20)
@@ -137,6 +138,7 @@ return {
 			if self.state == 'throwing' then
                 self:throw(dt)
             elseif self.state == 'falling' then
+                self.fallingTime = self.fallingTime + dt
                 if self.topRot <= math.pi then
                     self.topRot = self.topRot + math.pi / 2 * dt
                 end
@@ -190,6 +192,7 @@ return {
                  if self.treeChunks[spot] == 4 then
                     self.fallingSegment = spot
                     self.state = 'falling'
+                    self.fallingTime = 0
                     self.treeTop = love.graphics.newQuad(0, 0, 100, (spot-1) * 20 + 10, self.tree.width, self.tree.height)
                     self.treeBottom = love.graphics.newQuad(0, (spot-1) * 20 + 10, 100, 400 - ((spot-1) * 20 + 10), self.tree.width, self.tree.height)
                     self.topRot = 0
@@ -253,8 +256,10 @@ return {
 				
 				--draw extra top
 				love.graphics.push()
-				love.graphics.scale(1, -1)
-				love.graphics.draw(self.tree.img, -self.tree.width, -(((self.fallingSegment-1) * 20 + 10) * 2 + 400))
+				love.graphics.translate(-self.tree.width, -((self.fallingSegment-1) * 20 + 10) - 400)
+				love.graphics.scale(-1,1)
+				love.graphics.rotate(math.pi)
+				love.graphics.draw(self.tree.img, 0, -400 )
 				love.graphics.pop()
 
 				love.graphics.pop()
@@ -287,7 +292,7 @@ return {
 			--set for the type of game.
 	
 			--we are done when we are out of time.
-			return self.elapsed_time > self.time_limit
+			return self.elapsed_time > self.time_limit or self.fallingTime > 10
 		end
 		
 		self.getScore = function(self)
