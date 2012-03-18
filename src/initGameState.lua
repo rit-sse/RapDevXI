@@ -59,6 +59,7 @@ local initState =  function()
     base.keytime = 0
     base.keyed = false
     base.key = ""
+    base.keyaccel = 0
     
     base.nselected = 0
     
@@ -109,13 +110,17 @@ local initState =  function()
 	
 	local color = self.nselected==0 and 60 or 255
 	love.graphics.setColor(color,color,color)
-        love.graphics.print("PRESS ENTER TO CONTINUE", 15, ny+50)
+        love.graphics.print("Press Enter To Continue", 15, ny+50)
+	love.graphics.setColor(255,255,255)
+	love.graphics.print("Press F11 for Fullscreen", love.graphics.getWidth()/2, ny+50)
     end 
 
     base.keypressed = function(self, key)
 	self.keyed = true
 	self.key = key
-	self.keytime = keyrep
+	self.keytime = keyrep-self.keyaccel
+	self.keyaccel = self.keyaccel +0.01
+	if self.keyaccel >0.1 then self.keyaccel = 0.1 end
     
         if key == 'up' then
             self.currentPosition = ((self.currentPosition -2) % #self.listOfGames)+1
@@ -154,6 +159,7 @@ local initState =  function()
     
     base.keyreleased = function(self, key)
 	self.keyed = false
+	self.keyaccel = 0
     end
 
     framework.mode = framework.modes.chooser

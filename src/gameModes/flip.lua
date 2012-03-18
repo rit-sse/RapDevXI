@@ -1,8 +1,9 @@
+local tvimage = love.graphics.newImage("gameModes/flip_data/tv.png")
 local makeMode = function() 
 	local mode = {
 		static = false,
 		i = 1,
-		baseTime = 1.5,
+		baseTime = 2,
 		modTime = 1,
 		games = {},
 		
@@ -16,6 +17,13 @@ local makeMode = function()
 					list[i].makeGameInstance(self,info)
 					self.isDone = function(self)
 						return false
+					end
+					self.___olddraw = self.draw
+					self.draw = function(self)
+						love.graphics.setColor(255,255,255)
+						pcall(function() self:___olddraw() end)
+						love.graphics.setColor(255,255,255)
+						love.graphics.draw(tvimage,0,0)
 					end
 				end
 				gameWrapper.___skipSplash = true
@@ -46,7 +54,7 @@ local makeMode = function()
 		end,
 		
 		setResults = function(self, res)
-			self.i = math.random(#self.games)--(self.i % #self.games)+1
+			self.i = math.random(#self.games*100)%#self.games+1
 			self.static = not self.static
 		end,
 		
@@ -77,6 +85,9 @@ local makeMode = function()
 						0,0,0,
 						love.graphics.getWidth()/400, 
 						love.graphics.getHeight()/400,0,0)
+					
+						love.graphics.setColor(255,255,255)
+						love.graphics.draw(tvimage,0,0)
 				end
 				
 			end
