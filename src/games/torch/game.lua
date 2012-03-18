@@ -13,15 +13,14 @@ return {
             for i=1,self.targets do
                 self.P[i] = {}
             end
-            math.randomseed(os.time())
             for i=1,self.targets do 
                 self.P[i].x = math.random(50,350)
                 self.P[i].y = math.random(50,350)
                 self.P[i].onFire = false
             end
-            self.torch.img = love.graphics.newImage("games/torch/torch.png")
-            self.torch.sImg = love.graphics.newImage("games/torch/torchstaff.png")
-            self.person = love.graphics.newImage("games/torch/person.png")
+            self.torch.img = love.graphics.newImage(basePath.."/torch.png")
+            self.torch.sImg = love.graphics.newImage(basePath.."/torchstaff.png")
+            self.person = love.graphics.newImage(basePath.."/person.png")
             self.speedFactor = ({easy = 1, medium = 2, hard = 3})[info.difficulty]
             self.done = false
             

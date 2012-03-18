@@ -32,7 +32,6 @@ return {
 				end
 			end
 			self.elapsed_time = 0
-			math.randomseed(os.time())
 			self.cur = math.random(self.range[1], self.range[2])
 			self.solved = false
 		end
