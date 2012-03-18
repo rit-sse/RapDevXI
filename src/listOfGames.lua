@@ -23,7 +23,8 @@ listOfGames = {
 	"pirate",
 	"leek spin",
 	"challenge of the ni",
-	"tp party"
+	"tp party",
+	"the final sacrifice"
 }
 
 return listOfGames
