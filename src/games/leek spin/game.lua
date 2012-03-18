@@ -1,5 +1,5 @@
 return {
-	standalone_difficulty = "impossible",
+	standalone_difficulty = "hard",
 	--Here go all of the static info values for our game
 	--  Remember a comma after each entry, as we are in a table initialization
 	
@@ -41,7 +41,7 @@ return {
 	makeGameInstance = function(self, info)
 		--Each game may choose how to scale difficulty. The template imposes a time limit
 		--that is modified by the difficulty of the game
-		self.time_limit = 10
+		self.time_limit = 16
 		
 		--Callbacks
 		
@@ -70,10 +70,10 @@ return {
           hard       = 7,
           impossible = 9
         }, spins_required = {
-          easy       = 3,
+          easy       = 2,
           medium     = 5,
           hard       = 7,
-          impossible = 9
+          impossible = 7
         }
       }
       self.spins_left = self.configuration.spins_required[self.difficulty]
@@ -190,7 +190,8 @@ return {
       local xstart = love.graphics.getWidth() - 1.5 * width
       local ystart = 0.5 * height
 
-      for left = 1, self.leeks_left + 1 do
+      print(self.leeks_left)
+      for left = 1, self.leeks_left do
         love.graphics.draw(self.leek_counter,
             xstart, ystart, 0, scale, scale)
 
@@ -232,22 +233,16 @@ return {
 			--set for the type of game.
 	
 			--we are done when we are out of time.
-			return self.elapsed_time > self.time_limit or self.leeks_left <= 0
+			return self.elapsed_time > self.time_limit
 		end
 		
 		self.getScore = function(self)
 			--return a number -1 to 1. anything >0 is a "passing" score
-
-      local total_spins_required =
-          self.configuration.spins_required[self.difficulty] * self.configuration.leeks_required[self.difficulty]
-
-      local total_spins_left = self.leeks_left * self.configuration.spins_required[self.difficulty] + self.spins_left
-
-      if self.leeks_left <= 0 then
-        return 1
-      else
-        return - total_spins_left / total_spins_required
+      if self.leeks_left > 0 then
+        return -1
       end
+
+      return 1
 		end
 	end
 }
