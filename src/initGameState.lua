@@ -1,5 +1,7 @@
 local framework = require('framework')
 
+local keyrep = 0.15
+
 local loadGame = function(gameName)
 	local gameClass = nil
 	if pcall(function()
@@ -45,7 +47,8 @@ local initState =  function()
     base.listOfGames = {}
     setmetatable(base, framework.parentGame)
     for i=1,#gameNames do
-        table.insert(base.listOfGames,{gameNames[i], false})
+        gameIcon = love.graphics.newImage("games/"..gameNames[i].."/icon.png")
+        table.insert(base.listOfGames,{gameNames[i], false, gameIcon})
     end
     base.currentPosition = 1
     base.done = false
@@ -53,18 +56,72 @@ local initState =  function()
         return self.done
     end
 
-    base.draw = function(self, dt)
-        love.graphics.setColor(255,255,255)
-        output = self.currentPosition..": "
-        output = output..self.listOfGames[self.currentPosition][1].." | "
-        output = output..((self.listOfGames[self.currentPosition][2]) and "on" or "off")
-        love.graphics.print("Press 'a' to select all games", 10, love.graphics.getHeight() / 4)
-        love.graphics.print("Press 'o' to turn of all games", 10, love.graphics.getHeight() / 4 + 20)
-        love.graphics.print(output, 10, love.graphics.getHeight()/2)
-        love.graphics.print("PRESS ENTER TO CONTINUE", 10, (love.graphics.getHeight()/2)+20)
+    base.keytime = 0
+    base.keyed = false
+    base.key = ""
+    base.keyaccel = 0
+    
+    base.nselected = 0
+    
+    base.update = function(self, dt)
+	self.keytime = self.keytime - dt
+	if self.keytime <0 then
+		self.keytime = keyrep
+		if self.keyed then
+			self:keypressed(self.key)
+		end
+		
+	end
+    end
+    
+    base.draw = function(self)
+	local pm = 9
+	local by = 15+15*(pm)
+	local ny = by+15*(pm+1)+10
+	
+	love.graphics.setColor(20,20,20)
+	love.graphics.rectangle("fill",5,5,love.graphics.getWidth()-10, love.graphics.getWidth()-10)
+	love.graphics.setColor(255,255,255)
+        love.graphics.rectangle('line',10,by-pm*15-5,love.graphics.getWidth()-20,15*(pm*2+1)+10)
+	love.graphics.rectangle('line',10,ny,love.graphics.getWidth()-20,love.graphics.getHeight()-ny-10)
+	
+	love.graphics.print('>', 5,by)
+	love.graphics.print('>', 10,by)
+	
+        local gameIcon = self.listOfGames[self.currentPosition][3]
+        love.graphics.draw(gameIcon, 200, 120)
+
+        for i=self.currentPosition-pm,self.currentPosition+pm do
+		local reali = i
+		if reali < 1 then reali = reali+#self.listOfGames end
+		if reali > #self.listOfGames then reali = reali-#self.listOfGames end
+	
+		local color = (self.listOfGames[reali][2]) and 255 or 60
+		love.graphics.setColor( color,color,color)
+		
+		local output = self.listOfGames[reali][1]
+		love.graphics.print(output, 20, by+(i-self.currentPosition)*15)
+	end
+	
+	love.graphics.setColor(255,255,255)
+        love.graphics.print("Press Left/Right to enable/disable selected game", 15, ny+5)
+        love.graphics.print("Press 'a' to select all games", 15, ny+20)
+	love.graphics.print("Press 'o' to turn of all games", 15, ny+35)
+	
+	local color = self.nselected==0 and 60 or 255
+	love.graphics.setColor(color,color,color)
+        love.graphics.print("Press Enter To Continue", 15, ny+50)
+	love.graphics.setColor(255,255,255)
+	love.graphics.print("Press F11 for Fullscreen", love.graphics.getWidth()/2, ny+50)
     end 
 
     base.keypressed = function(self, key)
+	self.keyed = true
+	self.key = key
+	self.keytime = keyrep-self.keyaccel
+	self.keyaccel = self.keyaccel +0.01
+	if self.keyaccel >0.1 then self.keyaccel = 0.1 end
+    
         if key == 'up' then
             self.currentPosition = ((self.currentPosition -2) % #self.listOfGames)+1
         end
@@ -73,18 +130,23 @@ local initState =  function()
         end
         if key == 'left' or key == 'right' then
             self.listOfGames[self.currentPosition][2] = not self.listOfGames[self.currentPosition][2]
+	    self.nselected = self.nselected + (self.listOfGames[self.currentPosition][2] and 1 or -1)
         end
         if key == 'a' then
             for i,game in ipairs(self.listOfGames) do
                 game[2] = true
+		self.nselected = #self.listOfGames
             end
         end
         if key == 'o' then
             for i,game in ipairs(self.listOfGames) do
                 game[2] = false
+		self.nselected = 0
             end
         end
         if key == 'return' then
+		if self.nselected ==0 then return end
+	
             framework.gameList = {}
             for i=1,#self.listOfGames do
                 if self.listOfGames[i][2] then
@@ -94,6 +156,11 @@ local initState =  function()
             self.done = true
         end
     end 
+    
+    base.keyreleased = function(self, key)
+	self.keyed = false
+	self.keyaccel = 0
+    end
 
     framework.mode = framework.modes.chooser
         framework.limit = -1 -- about to be in the game menu, no limit on time

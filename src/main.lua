@@ -4,8 +4,11 @@
 
 local HC = require 'hardoncollider'
 
+math.randomseed(tonumber(tostring(os.time()):reverse():sub(1,6)))
+
 local framework = {
     currentGame = nil,
+    fullscreen = false,
 	modes = {},
     parentGame = {
         __index = {
@@ -41,6 +44,7 @@ framework.mode = framework.modes.initState
 
 function love.load()
     love.graphics.setMode(400,400,false,true,0)
+    love.mouse.setVisible(false)
     
 end
 
@@ -68,6 +72,10 @@ end
 function love.keypressed(key)
     if framework.currentGame ~= nil then
         pcall(function() framework.currentGame:keypressed(key) end)
+    end
+    if key == "f11" then
+        framework.fullscreen = not framework.fullscreen
+        love.graphics.setMode(400,400,framework.fullscreen,true,0)
     end
     if key == "escape" then
         love.event.push('q')
