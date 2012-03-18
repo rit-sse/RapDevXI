@@ -13,7 +13,6 @@ return {
             for i=1,self.targets do
                 self.P[i] = {}
             end
-            math.randomseed(os.time())
             for i=1,self.targets do 
                 self.P[i].x = math.random(50,350)
                 self.P[i].y = math.random(50,350)

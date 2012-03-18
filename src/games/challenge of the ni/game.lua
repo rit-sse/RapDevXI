@@ -48,7 +48,6 @@ return {
 		
 		self.getReady = function(self, basePath)
 
-			math.randomseed(os.time())
 			--get ready is called during the splash screen.
 			--The intent is to load all sounds and images during getReady
 
