@@ -232,13 +232,22 @@ return {
 			--set for the type of game.
 	
 			--we are done when we are out of time.
-			return self.elapsed_time > self.time_limit
+			return self.elapsed_time > self.time_limit or self.leeks_left <= 0
 		end
 		
 		self.getScore = function(self)
 			--return a number -1 to 1. anything >0 is a "passing" score
 
-			return -1 --the player always looses. 
+      local total_spins_required =
+          self.configuration.spins_required[self.difficulty] * self.configuration.leeks_required[self.difficulty]
+
+      local total_spins_left = self.leeks_left * self.configuration.spins_required[self.difficulty] + self.spins_left
+
+      if self.leeks_left <= 0 then
+        return 1
+      else
+        return - total_spins_left / total_spins_required
+      end
 		end
 	end
 }
