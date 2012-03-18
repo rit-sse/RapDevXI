@@ -1,18 +1,19 @@
 return {
-	standalone_difficulty = "hard",
+	standalone_difficulty = "impossible",
 	difficulties = {"easy","medium","hard","impossible"},
 	PR = "child",
 	keys = {"mouse"},
 	maxDuration = 30,
 	makeGameInstance = function(self, info)
 		self.time_limit = ({easy=30, medium=30, hard=30, impossible=30})[info.difficulty]
-		self.lava_speed = ({easy=1, medium=10, hard=15, impossible=20})[info.difficulty]
+		self.lava_speed = ({easy=12, medium=14, hard=16, impossible=20})[info.difficulty]
 		self.rock_rate = ({easy=30, medium=25, hard=20, impossible=15})[info.difficulty]
 		self.rock_rad = ({easy=25, medium=30, hard=35, impossible=40})[info.difficulty]
-		self.gravity = ({easy=7, medium=10, hard=13, impossible=16})[info.difficulty]
+		self.gravity = ({easy=10, medium=12, hard=14, impossible=16})[info.difficulty]
 		self.stun_period = ({easy=5, medium=4, hard=3, impossible=1})[info.difficulty]
 		self.seek_rate = ({easy=30, medium=29, hard=28, impossible=27})[info.difficulty]
-		
+		self.init_vel = ({easy=20, medium=15, hard=10, impossible=5})[info.difficulty]
+
 		self.bottom = 0
 		self.lava = {y = 10}
 
@@ -21,6 +22,7 @@ return {
 
 		self.died = false
 		self.person = {x = 150, y = 100, dx = 0, dy = 0, h = 20, r = 10}
+		self.person.dy = self.init_vel
 
 		self.curRock = nil
 		self.lastRock = 400
@@ -38,6 +40,21 @@ return {
 			--{x = 50, y = 400,  r = 15, seeking = false},
 			{x = 250, y = 400, r = 15, seeking = false}
 		}
+
+		self.messages = {
+			{"Climb",    0, .5, 170, 110},
+			{"Climb",    0, .5, 170, 140},
+			{"Climb",    0, .5, 170, 170},
+			{"------->", 0, .5, 170, 200},
+			{"Climb",    .75, 1.25, 170, 110},
+			{"Climb",    .75, 1.25, 170, 140},
+			{"Climb",    .75, 1.25, 170, 170},
+			{"------->", .75, 1.25, 170, 200},
+			{"!Climb!",    1.5, 5, 140, 110},
+			{"!Climb!",    1.5, 5, 140, 140},
+			{"!Climb!",    1.5, 5, 140, 170}
+		}
+			
 
 		self.curTime = 0
 		self.lastColl = -10
@@ -69,6 +86,8 @@ return {
 		self.getReady = function(self, basePath)
 			--self.image = love.graphics.newImage(basePath.."sprite.png")
 			--self.sound = love.audio.newSource(basePath.."sound.mp3")
+			self.magnet = love.graphics.newImage(basePath.."magnet.png")
+			self.music = love.audio.newSource(basePath.."windmill.mp3")
 			self:transCoord(self.person.x, self.person.y)
 			self.elapsed_time = 0
 		end
@@ -151,11 +170,18 @@ return {
 			end
 		end
 
+		self.updateMouse = function(self)
+			self.mouse = {x = love.mouse.getX(), y = love.mouse.getY()}
+		end
+
 		self.update = function(self, dt)
+			if self.music then love.audio.play(self.music); self.music = nil end
+
 			self:moveLava(dt)
 			self:moveFloor(dt)
 			self:movePerson(dt)
 			self:makeRocks(dt)
+			self:updateMouse(dt)
 
 			self.curTime = self.curTime + dt
 		end
@@ -198,11 +224,27 @@ return {
 			end
 		end
 
+		self.drawMouse = function(self)
+			if self.mouse then
+				love.graphics.draw(self.magnet, self.mouse.x - 5, self.mouse.y - 5)
+			end
+		end
+
+		self.drawMessages = function(self)
+			for i,msg in ipairs(self.messages) do
+				if msg[2] < self.curTime and msg[3] > self.curTime then
+					love.graphics.print(msg[1], msg[4], msg[5], 0, 1.4, 1.4)
+				end
+			end
+		end
+
 		self.draw = function(self)
 			self:drawFloor()
 			self:drawRocks()
 			self:drawPerson()
 			self:drawLava()
+			self:drawMouse()
+			self:drawMessages()
 		end
 		
 		self.isDone = function(self)

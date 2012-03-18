@@ -25,6 +25,9 @@ end
 
 local ready = false
 local elapsed = 0
+
+love.mouse.setVisible(false)
+
 function love.update(dt)
 	if not ready then
 		ready = true
