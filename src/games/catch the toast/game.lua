@@ -79,14 +79,14 @@ return {
 			if not self.launched and self.elapsed_time > self.launch_time then
 				self.launched = true
 				self.toast.yVel = 275.0
-				self.toaster.handle.yVel = 5.0
+				self.toaster.handle.yVel = 100.0
 				self.toaster.on = false
 			end
 
 			-- Update the toast position
 			if not self.done and self.launched and not self.caught then
 				self.toast.y = self.toast.y - (self.toast.yVel * dt)
-				self.toast.yVel = self.toast.yVel - 10.0
+				self.toast.yVel = self.toast.yVel - (500.0 * dt)
 
 				if self.toast.y > 66 then
 					self.toast.y = 66
@@ -100,7 +100,7 @@ return {
 
 			-- Update the toaster handle position
 			if self.toaster.handle.yVel > 0 then
-				self.toaster.handle.y = self.toaster.handle.y - self.toaster.handle.yVel
+				self.toaster.handle.y = self.toaster.handle.y - (self.toaster.handle.yVel * dt)
 
 				-- Stop the handle when its reached the top
 				if self.toaster.handle.y < 74 then
