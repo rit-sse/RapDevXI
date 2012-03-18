@@ -245,10 +245,6 @@ return {
 
 				self.hand.thumb_up = false
 			end
-
-			if key == 'a' then
-				self.hand.thumb_up = not self.hand.thumb_up
-			end
 		end
 		
 		self.keyreleased = function(self, key)
