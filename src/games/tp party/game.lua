@@ -31,7 +31,10 @@ return {
 				if self.cir1.r > 5 then -- 5 is the end goal
 					self.cir1.r = self.cir1.r - .75
 				else
-					self.done = true
+					if not self.done then
+						self.done = true
+						self.win_time = self.elapsed_time
+					end
 				end
 			elseif self.handR.y == self.handLoc.down and key == "left" then
 				self.handR.y = self.handLoc.up
@@ -60,7 +63,6 @@ return {
 			-- look at https://love2d.org/wiki/love.graphics for fun drawing stuff
 			love.graphics.setColor(255,255,255)
 			love.graphics.print( (self.time_limit-self.elapsed_time).."s left", 0,0)
-			love.graphics.rectangle("fill", self.box2.x, self.box2.y, self.box2.w, self.box2.l)
 			
 			if self.done == true then
 				love.graphics.setColor(205,183,158)
@@ -68,7 +70,13 @@ return {
 			love.graphics.circle("fill", self.cir1.x, self.cir1.y, self.cir1.r, 100)
 			love.graphics.circle("fill", self.cir2.x, self.cir2.y, self.cir1.r, 100)
 			love.graphics.rectangle("fill", self.box1.x, self.box1.y, self.box1.w, self.box1.l)
-			love.graphics.rectangle("fill", self.box2.x, self.box2.y, self.box2.w, self.box2.l)
+			if not self.done then
+				love.graphics.rectangle("fill", self.box2.x, self.box2.y, self.box2.w, self.box2.l)
+			else
+				love.graphics.setColor(255,255,255)
+				love.graphics.rectangle("fill", self.box2.x, self.box2.y+800*(self.elapsed_time-self.win_time), self.box2.w, self.box2.l)
+				love.graphics.setColor(205,183,158)
+			end
 			love.graphics.setColor(130,130,130)
 			love.graphics.circle("fill", self.cir1.x, self.cir1.y, 3, 100)
 			love.graphics.setColor(0,0,0)
