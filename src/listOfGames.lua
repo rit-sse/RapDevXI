@@ -26,7 +26,8 @@ listOfGames = {
 	"challenge of the ni",
 	"tp party",
 	"do you like waffles",
-	"HackTheGibson"
+	"HackTheGibson",
+	"the final sacrifice"
 }
 
 return listOfGames
