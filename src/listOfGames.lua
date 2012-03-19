@@ -23,10 +23,10 @@ listOfGames = {
 	"RockClimb",
 	"pirate",
 	"leek spin",
-	"challenge of the ni",
 	"tp party",
-	"the final sacrifice",
 	"do you like waffles",
+	"HackTheGibson",
+	"the final sacrifice",
 	"tiptoe in the tulips",
 	"what is love"
 }
