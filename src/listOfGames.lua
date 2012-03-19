@@ -25,7 +25,8 @@ listOfGames = {
 	"leek spin",
 	"challenge of the ni",
 	"tp party",
-	"do you like waffles"
+	"do you like waffles",
+	"HackTheGibson"
 }
 
 return listOfGames
