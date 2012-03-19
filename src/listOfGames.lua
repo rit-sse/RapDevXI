@@ -23,7 +23,6 @@ listOfGames = {
 	"RockClimb",
 	"pirate",
 	"leek spin",
-	"challenge of the ni",
 	"tp party",
 	"do you like waffles",
 	"HackTheGibson",
