@@ -19,10 +19,31 @@ return {
 				left=love.graphics.newImage(basePath.."arrowL.png"),
 				right=love.graphics.newImage(basePath.."arrowR.png")
 			}
+
+			self.policeCharger = {
+				img=love.graphics.newImage(basePath.."policeCharger.png"),
+				width=224,
+				height=120
+			}
+			self.policeCharger.x = love.graphics.getWidth()
+			self.policeCharger.y = love.graphics.getHeight() * 1/8
+			self.policeCharger.dx = -self.policeCharger.x
+
+			self.policeInter = {
+				img=love.graphics.newImage(basePath.."policeInter.png"),
+				width=322,
+				height=120
+			}
+			self.policeInter.x = -self.policeInter.width
+			self.policeInter.y = love.graphics.getHeight() * 2/3
+			self.policeInter.dx = self.policeInter.width * 2
 			
 			self.back = love.audio.newSource(basePath.."rain.mp3")
+			self.siren = love.audio.newSource(basePath.."siren.ogg")
 			self.play = false
-			
+			self.policeTime = 2
+
+			self.state = 'playing'			
 			self.done = false
 			self.score = -1
 			self.img = 1
@@ -45,6 +66,11 @@ return {
 			love.graphics.print("Umbrella",10,12,0,2,2)
 			love.graphics.print("Gun",love.graphics.getWidth()/2+80,12,0,2,2)
 			
+			if self.state == 'police' then
+				love.graphics.setColor(255,255,255)
+				love.graphics.draw(self.policeCharger.img, self.policeCharger.x, self.policeCharger.y)
+				love.graphics.draw(self.policeInter.img, self.policeInter.x, self.policeInter.y)
+			end
 			
 		end
 		
@@ -53,6 +79,25 @@ return {
 			if not self.play then
 				self.play = true
 				love.audio.play(self.back)
+			end
+
+			if self.state == 'police' then
+				local derp = 0
+
+				if self.policeInter.x <= -self.policeInter.width * 1/6 then
+					self.policeInter.x = self.policeInter.x + self.policeInter.dx * dt
+					derp = derp + 1
+				end
+
+				if self.policeCharger.x >= love.graphics.getWidth() * 5/8 then
+					self.policeCharger.x = self.policeCharger.x + self.policeCharger.dx * dt
+					derp = derp + 1
+				end
+
+				self.policeTime = self.policeTime - dt
+				if self.policeTime < 0 then
+					self.done = true
+				end
 			end
 		end
 		
@@ -65,16 +110,21 @@ return {
 		end
 		
 		self.keypressed = function(self, key)
-			if key =='left' then
-				if self.img ==3 then
-					self.done = true
-					self.score = 1
+			if self.state == 'playing' then
+				if key =='left' then
+					if self.img ==3 then
+						self.done = true
+						self.score = 1
+					end
+					self.img = self.img +1
 				end
-				self.img = self.img +1
-			end
-			if key =='right' then
-				self.score = -1
-				self.done = true
+				if key =='right' then
+					love.audio.stop(self.back)
+					love.audio.play(self.siren)
+					self.score = -1
+					self.state = 'police'
+					self.done = false
+				end
 			end
 		end
 		
