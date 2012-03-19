@@ -1,5 +1,5 @@
 return {
-	standalone_difficulty = "medium",
+	standalone_difficulty = "impossible",
 	--Here go all of the static info values for our game
 	--  Remember a comma after each entry, as we are in a table initialization
 	
@@ -64,7 +64,7 @@ return {
 			--Also set up your own initial game state here.
 			self.elapsed_time = 0
             self.waitTime = 0
-		    self.waitCap = ({easy=3, medium=1.5, hard=1, impossible=.5})[info.difficulty]
+		    self.waitCap = ({easy=1.5, medium=1.0, hard=.5, impossible=.4})[info.difficulty]
             self.score = 2
             
             -- Player health and position/size values
@@ -73,14 +73,14 @@ return {
             self.player.x = 20
             self.player.y = 200
             self.player.width = 50
-            self.player.height = 100
+            self.player.height = 61
 
             -- Enemy position/size values
             self.enemy = {}
             self.enemy.x = 320
             self.enemy.y = 200
-            self.enemy.width = 50
-            self.enemy.height = 100
+            self.enemy.width = 100
+            self.enemy.height = 116
             self.enemy.bullets = {}
 
             -- Bounding boxes
@@ -104,8 +104,8 @@ return {
                 local b = {}
                 b.x = self.enemy.x
                 b.y = self.enemy.y + 20
-                b.width = 75
-                b.height = 50
+                b.width = 20
+                b.height = 13
                 table.insert(self.enemy.bullets, b)
             end
 
@@ -178,7 +178,7 @@ return {
             -- Move each bullet
             for i = 1, #self.enemy.bullets do
                 print(self.enemy.bullets[i])
-                self.enemy.bullets[i].x = self.enemy.bullets[i].x - 200*dt
+                self.enemy.bullets[i].x = self.enemy.bullets[i].x - 300*dt
                 if self.enemy.bullets[i].x < -self.enemy.bullets[i].width then 
                     local deleteTrue = i
                 else
@@ -195,19 +195,16 @@ return {
             if deleteTrue then table.remove(self.enemy.bullets, deleteTrue) end
 
 			-- Handle player movement
-			playerSpeedMod = 175
+			playerSpeedMod = 200
 			self:handlePlayerInput( playerSpeedMod, dt )
 			self:handleEntityBounding( self.player, self.playerBoundingBox )
 
 			-- Handle AI Movement
-			aiSpeedMod = 50
+			aiSpeedMod = 100
 			self:handleAIThink( aiSpeedMod, dt )
 			self:handleEntityBounding( self.enemy, self.enemyBoundingBox )
 
-            if self.waitTime > self.waitCap then
-                self.waitTime = 0
-                self:makeBullet()
-            end
+
 
 		end
 		
@@ -217,6 +214,12 @@ return {
             end
             if self.player.y < self.enemy.y then
                 self.enemy.y = self.enemy.y - aiSpeedMod * dt
+            end
+
+            -- Fire bullets
+            if self.waitTime > self.waitCap then
+                self.waitTime = 0
+                self:makeBullet()
             end
 		end
 
