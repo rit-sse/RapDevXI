@@ -123,7 +123,20 @@ return {
 		end
 		
 		self.getScore = function(self)
-			return -1
+			local crushed = true
+			for i=1,self.columns do
+				for j=1,self.rows do
+					if self.flowerbed[i][j] == 0 then
+						crushed = false
+					end
+				end
+			end
+
+			if crushed then
+				return 1
+			else
+				return -1
+			end
 		end
 		
 		self.keypressed = function(self, key)
