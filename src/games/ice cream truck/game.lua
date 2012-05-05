@@ -20,7 +20,7 @@ return {
 	--  "sse"	   approprate only to show to SSE members
 	--  "deans car" this game will be deleted out of the repository on Monday before anyone sees it who wasn't here
 	--			  (grab your own local copy)
-	PR = "sse",
+	PR = "child",
 	
 	--Keys is an indication to the user that says where to put their hands.
 	--It needs to be a list with any values from:
@@ -58,7 +58,7 @@ return {
 			self.img.truck = love.graphics.newImage(basePath.."truck.png")
 			self.img.star = love.graphics.newImage(basePath.."star.png")
 			self.snd.star = love.audio.newSource(basePath.."star.mp3")
-			self.snd.song = love.audio.newSource(basePath.."background.mp3")
+			self.snd.song = love.audio.newSource(basePath.."icecreamtrucksong.ogg")
 			--self.sound = love.sound.newSource(basePath.."sound.mp3")
 
 			--Aso set up your own initial game state here.
